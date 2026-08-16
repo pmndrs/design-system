@@ -1,9 +1,9 @@
-# Distributed Poimandres design-system
-
 [![](https://img.shields.io/badge/figma_light-171c23.svg?logo=figma)](figma/Light.tokens.json)
 [![](https://img.shields.io/badge/figma_dark-171c23.svg?logo=figma)](figma/Dark.tokens.json)
 
-## Try it
+# Distributed Poimandres design-system
+
+Try it:
 
 ```sh
 cd /tmp && rm -rf pmndrs-foo && \

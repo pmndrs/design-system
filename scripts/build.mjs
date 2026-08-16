@@ -16,15 +16,15 @@
  * The palette itself is never stored anywhere but the output. Change the seed,
  * run this, and the 252 declarations follow.
  *
- * `--check` asserts the output is current without writing — that is what `lgtm`
- * runs, so a seed change that skipped the rebuild fails rather than shipping.
+ * Asserting the committed files are current is `build.test.mjs`'s job — it reads
+ * the `outputs` exported here, so a seed change that skipped the rebuild fails
+ * rather than shipping, and the check cannot drift from what this writes.
  */
 import { readFileSync, writeFileSync } from 'node:fs'
 import { builder } from 'material-theme-builder'
 import { items, registry, version } from '../registry.config.mjs'
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
 
-const check = process.argv.includes('--check')
 const registryUrl = new URL('../registry.json', import.meta.url)
 
 /**
@@ -116,32 +116,28 @@ const built = {
 
 const root = new URL('../', import.meta.url)
 
-/** @returns the paths whose content is not what this build would write. */
-function reconcile(outputs) {
-  const stale = []
-  for (const [url, next] of outputs) {
-    if (readFileSync(url, 'utf8') === next) continue
-    stale.push(url.pathname.replace(root.pathname, ''))
-    if (!check) writeFileSync(url, next)
-  }
-  return stale
-}
-
-const outputs = [[registryUrl, JSON.stringify(built, null, 2) + '\n']]
+/**
+ * Every file this build owns, as `[url, content]`. Exported rather than written
+ * on import: `build.test.mjs` asserts the committed copies against exactly these
+ * strings, so there is one definition of what the output should be and no second
+ * implementation of the comparison to keep in step.
+ */
+export const outputs = [[registryUrl, JSON.stringify(built, null, 2) + '\n']]
 for (const doc of docs) {
   const url = new URL(doc, import.meta.url)
   outputs.push([url, readFileSync(url, 'utf8').replace(installRef, `pmndrs/design-system/$1#${version}`)])
 }
 
-const counts = `${Object.keys(palette[':root']).length} light, ${Object.keys(palette['.dark']).length} dark`
-const stale = reconcile(outputs)
+if (import.meta.main) {
+  const written = []
+  for (const [url, next] of outputs) {
+    if (readFileSync(url, 'utf8') === next) continue
+    writeFileSync(url, next)
+    written.push(url.pathname.replace(root.pathname, ''))
+  }
 
-if (!stale.length) {
-  console.log(`✔ ${version} is current everywhere (${pmndrsMtb.source}, ${counts})`)
-} else if (check) {
-  console.error(`✖ out of date with registry.config.mjs: ${stale.join(', ')}`)
-  console.error('  Run `npm run build` and commit the result.')
-  process.exit(1)
-} else {
-  console.log(`✔ built ${stale.join(', ')} at ${version} (${pmndrsMtb.source}, ${counts})`)
+  const counts = `${Object.keys(palette[':root']).length} light, ${Object.keys(palette['.dark']).length} dark`
+  const summary = written.length ? `built ${written.join(', ')} at ${version}` : `${version} is current everywhere`
+
+  console.log(`✔ ${summary} (${pmndrsMtb.source}, ${counts})`)
 }

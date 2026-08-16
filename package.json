@@ -2,7 +2,7 @@
   "name": "@pmndrs/design-system",
   "version": "0.3.0",
   "private": true,
-  "description": "Tier 1 of the pmndrs UI distribution: the MD3 colour layer and the poimandres shadcn preset",
+  "description": "The shared pmndrs colour layer (Material Design 3) and the poimandres shadcn preset",
   "license": "MIT",
   "homepage": "https://github.com/pmndrs/design-system",
   "repository": {
@@ -12,10 +12,9 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "check-build": "node scripts/build.mjs --check",
     "check-registry": "shadcn registry validate ./registry.json",
-    "check-preset": "node scripts/check-preset.mjs",
-    "lgtm": "npm run check-build && npm run check-registry && npm run check-preset",
+    "test": "node --test",
+    "lgtm": "npm run check-registry && npm test",
     "changeset": "changeset",
     "version": "changeset version && npm install --package-lock-only && npm run build",
     "release": "changeset publish"

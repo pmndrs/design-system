@@ -59,6 +59,17 @@ an MD3 role only where shadcn has none — `bg-surface-dim`, `bg-primary-contain
 `text-on-primary-fixed`, the tonal shades. Where they're 1:1 (`border-outline-variant` vs
 `border-border`), prefer the stock one.
 
+## Figma
+
+`figma/Light.tokens.json` and `figma/Dark.tokens.json` — the same palette as DTCG tokens,
+two modes of one variable collection. Figma has no native importer, so bring them in with
+a plugin that reads DTCG (Tokens Studio, or any *import variables* one).
+
+Roles stay aliased onto the tonal shades there (`{ref.palette.Neutral.98}`) exactly as
+`var()` does in the CSS, and both come off the same seed in the same build — so a designer
+picking `Surface Container Low` gets the hex the site renders, and a reseed moves the two
+together. Take the files from the tag the site installs, not `main`.
+
 ## Reseeding
 
 Only if your site wants a palette other than the pmndrs one. Install **`md3-base`** — the
@@ -146,7 +157,9 @@ npm run lgtm    # registry.json is current and valid, preset code round-trips
 | `registry/md3-base/md3.ts` | the seed |
 
 252 of `registry.json`'s lines are the palette computed from that seed, which is why
-none of it is hand-maintained. `lgtm` fails if the output has drifted from its sources.
+none of it is hand-maintained. The same run writes `figma/*.tokens.json` from the same
+seed — also generated, also committed, also never edited. `lgtm` fails if any output has
+drifted from its sources.
 
 No check here parses TSX or resolves a CSS variable, so a block using a token its
 dependencies don't supply fails silently. **Try it** above is the only check that

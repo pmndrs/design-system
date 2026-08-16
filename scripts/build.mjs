@@ -17,11 +17,15 @@
  * The palette itself is never stored anywhere but the output. Change the seed,
  * run this, and the 252 declarations follow.
  *
+ * `figma/*.tokens.json` is the same palette for the other half of the team, and
+ * is generated here for the same reason: one seed, or designers and engineers
+ * drift.
+ *
  * Asserting the committed files are current is `build.test.mjs`'s job — it reads
  * the `outputs` exported here, so a seed change that skipped the rebuild fails
  * rather than shipping, and the check cannot drift from what this writes.
  */
-import { readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { builder } from 'material-theme-builder'
 import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
@@ -171,10 +175,15 @@ function parseBlocks(css) {
  * The pmndrs default, so no `THEME_*` is read: those are a consumer's to set,
  * and baking one deployment's environment into the published item would be a
  * good way to ship a surprise.
+ *
+ * One theme for both outputs, CSS and Figma — they are the same palette and have
+ * no business being computed twice.
  */
+const { source, ...options } = pmndrsMtb
+const theme = builder(source, options)
+
 function bakePalette() {
-  const { source, ...options } = pmndrsMtb
-  const { ':root': light, '.dark': dark } = parseBlocks(builder(source, options).toCss())
+  const { ':root': light, '.dark': dark } = parseBlocks(theme.toCss())
   if (!light || !dark) throw new Error('toCss() no longer emits `:root` and `.dark`')
 
   // The 168 `--md-ref-palette-*` tonal shades are scheme-independent, so `.dark`
@@ -215,10 +224,31 @@ for (const doc of docs) {
   outputs.push([url, readFileSync(url, 'utf8').replace(installRef, `pmndrs/design-system/$1#${version}`)])
 }
 
+/**
+ * The palette as DTCG tokens: `Light` and `Dark` become two modes of one Figma
+ * variable collection, and the roles stay aliased onto the tonal shades
+ * (`"$value": "{ref.palette.Neutral.98}"`) exactly as `var()` does in the CSS.
+ *
+ * Committed, and 190 kB of it, for the reason the palette is: nothing here is
+ * published to npm, so a tag is the only address a designer can be handed.
+ *
+ * These come off the same `theme` as the bake above — same `allPalettes`, same
+ * merged colours — so what a designer picks in Figma is the hex the site
+ * renders, not a close one. That is a property of `toFigmaTokens()` and
+ * `toCss()` sharing a context, so it holds by construction; the `toJson()`
+ * divergence documented above is the reminder of what it would cost to lose it.
+ */
+for (const [name, tokens] of Object.entries(theme.toFigmaTokens())) {
+  outputs.push([new URL(`../figma/${name}`, import.meta.url), JSON.stringify(tokens, null, 2) + '\n'])
+}
+
 if (import.meta.main) {
   const written = []
   for (const [url, next] of outputs) {
-    if (readFileSync(url, 'utf8') === next) continue
+    // Missing counts as stale rather than fatal — `figma/` is a directory this
+    // creates, and deleting an output should be a way to regenerate it.
+    if (existsSync(url) && readFileSync(url, 'utf8') === next) continue
+    mkdirSync(new URL('./', url), { recursive: true })
     writeFileSync(url, next)
     written.push(url.pathname.replace(root.pathname, ''))
   }

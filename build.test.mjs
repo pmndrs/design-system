@@ -9,7 +9,7 @@
  * strings `npm run build` writes rather than a second opinion about them.
  */
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import { outputs } from './scripts/build.mjs'
 
@@ -19,8 +19,10 @@ for (const [url, next] of outputs) {
   const path = url.pathname.replace(root.pathname, '')
 
   // No diff: one of these is a 300-line generated file, and `npm run build`
-  // shows the change far better than an assertion dump would.
+  // shows the change far better than an assertion dump would. A missing file is
+  // the same failure as a stale one — say so, rather than throwing ENOENT.
   test(`${path} is current`, () => {
-    assert.equal(readFileSync(url, 'utf8'), next, `${path} is out of date — run \`npm run build\` and commit the result.`)
+    const current = existsSync(url) ? readFileSync(url, 'utf8') : null
+    assert.equal(current, next, `${path} is out of date — run \`npm run build\` and commit the result.`)
   })
 }

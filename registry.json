@@ -63,7 +63,7 @@
       "description": "The pmndrs Material Design 3 colour layer. Additive to the stock shadcn tokens — blocks use `bg-primary` by default and reach for `bg-surface-dim` only where shadcn has no equivalent. Nothing to mount.",
       "author": "pmndrs",
       "registryDependencies": [
-        "pmndrs/design-system/md3-base#md3-bake"
+        "pmndrs/design-system/md3-base#v0.3.0"
       ],
       "css": {
         ":root": {

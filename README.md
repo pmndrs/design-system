@@ -17,11 +17,10 @@ npx shadcn@latest add pmndrs/design-system/md3#v0.3.0   # colours
 npx shadcn@latest apply b5cR4Y50S --only theme          # radius + typography
 ```
 
-Colours render immediately. The palette is baked into the CSS, so there is nothing to
-mount, no provider, no client JavaScript.
+The palette is baked into the CSS: nothing to mount, no provider, no client JavaScript.
 
-`--only theme,font` instead, if your site doesn't self-host its typography. Run `apply`
-on its own branch — it rewrites CSS variables, and the item's remap has to survive it.
+Use `--only theme,font` if your site doesn't self-host its typography. Run `apply` on its
+own branch — it rewrites CSS variables, and the item's remap has to survive it.
 
 ## Try it
 
@@ -50,29 +49,26 @@ printf '%s' 'export default function Home() {
 npx next dev
 ```
 
-Mint surfaces, filled buttons, `bg-surface-dim` and `bg-primary-container` both rendering
-— with nothing mounted. Add `dark` to `<html>` for the dark scheme.
+Mint surfaces and both MD3 roles rendering, with nothing mounted. Add `dark` to `<html>`
+for the dark scheme.
 
 ## Tokens
 
-shadcn's tokens are the base; MD3 is additive. Write `bg-primary`,
-`text-muted-foreground`, `border-border` as usual, and reach for an MD3 role only where
-shadcn has no equivalent — `bg-surface-dim`, `bg-primary-container`,
-`text-on-primary-fixed`, the tonal shades. Where the two are 1:1 (`border-outline-variant`
-vs `border-border`), prefer the stock one.
+shadcn's are the base, MD3 is additive. `bg-primary`, `border-border` as usual; reach for
+an MD3 role only where shadcn has none — `bg-surface-dim`, `bg-primary-container`,
+`text-on-primary-fixed`, the tonal shades. Where they're 1:1 (`border-outline-variant` vs
+`border-border`), prefer the stock one.
 
 ## Reseeding
 
-Skip unless your site wants a palette other than the pmndrs one.
-
-Install **`md3-base`** rather than `md3` — the same plumbing without the baked palette,
-since you supply one:
+Only if your site wants a palette other than the pmndrs one. Install **`md3-base`** — the
+same plumbing without the baked palette, since you supply one:
 
 ```sh
 npx shadcn@latest add pmndrs/design-system/md3-base#v0.3.0
 ```
 
-Then emit it from a React Server Component. `builder` is the root export and carries no
+Emit it from a React Server Component — `builder` is the root export and carries no
 `'use client'`, so no palette code reaches the browser:
 
 ```tsx
@@ -84,9 +80,9 @@ const css = builder(source, rest).toCss()
 // <style dangerouslySetInnerHTML={{ __html: css }} /> in <head>
 ```
 
-`<Mtb>` from `material-theme-builder/react` does the same as a client component. Avoid it
-where you render on the server; use it where there is no build to hook — a Storybook
-preview decorator, say. With `next-themes`, nest `<ThemeProvider>` inside it.
+`<Mtb>` from `material-theme-builder/react` does the same as a client component — use it
+only where there is no server render to hook, a Storybook decorator say. With
+`next-themes`, nest `<ThemeProvider>` inside it.
 
 The seed comes from the environment, so a deployment moves the palette without touching
 code:
@@ -95,12 +91,12 @@ code:
 THEME_PRIMARY=#5de4c7 THEME_SCHEME=tonalSpot THEME_CONTRAST=0
 ```
 
-`THEME_CONTRAST` is the one to remember: it moves the M3 *role* assignments, not just the
-tonal hexes, so it is the setting a baked palette cannot approximate.
+`THEME_CONTRAST` moves the M3 *role* assignments, not just the tonal hexes — the one
+setting a baked palette cannot approximate.
 
 ### Colours M3 has no role for
 
-Alert levels, a status palette: those belong to the site or block that needs them, not
+Alert levels, a status palette: they belong to the site or block that needs them, not
 here. Spread the seed rather than editing the installed file:
 
 ```ts
@@ -110,10 +106,10 @@ export const myMtb = {
 } satisfies MtbConfig
 ```
 
-Each custom colour also needs four `@theme` lines of your own — `--color-note`,
-`--color-on-note`, `--color-note-container`, `--color-on-note-container`. The package maps
-standard M3 roles only, and a missing line means Tailwind emits **no rule at all** for
-`bg-note-container`, with no error.
+Each also needs four `@theme` lines of your own — `--color-note`, `--color-on-note`,
+`--color-note-container`, `--color-on-note-container`. The package maps standard M3 roles
+only, and a missing line means Tailwind emits **no rule at all** for `bg-note-container`,
+with no error.
 
 ## Authoring a block
 
@@ -141,13 +137,11 @@ npm run bake   # regenerate the palette after changing the seed
 npm run lgtm   # bake is current, registry.json valid, preset code round-trips
 ```
 
-`registry/md3/md3.ts` is the only place the seed lives. `md3` is composed on top of
-`md3-base` through `registryDependencies`, and carries nothing but the 252 generated
-declarations `bake` writes.
+`registry/md3/md3.ts` is the only place the seed lives. `md3` composes on top of
+`md3-base` and carries nothing but the 252 generated declarations `bake` writes.
 
-No check here parses TSX or resolves a CSS variable. A block using a token its
-dependencies don't supply fails silently — Tailwind emits no rule and no error for an
-unknown utility. Installing into a scratch app outside any pmndrs repo is the only thing
-that catches it, which is what **Try it** above is for.
+No check here parses TSX or resolves a CSS variable, so a block using a token its
+dependencies don't supply fails silently. **Try it** above is the only check that
+catches it.
 
 Design decisions, measurements and CLI traps: [#1](https://github.com/pmndrs/design-system/issues/1).

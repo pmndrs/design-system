@@ -14,7 +14,7 @@
       ],
       "files": [
         {
-          "path": "registry/md3/md3.ts",
+          "path": "registry/md3-base/md3.ts",
           "type": "registry:lib"
         }
       ],

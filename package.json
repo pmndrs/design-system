@@ -11,11 +11,11 @@
   },
   "type": "module",
   "scripts": {
-    "bake": "node scripts/bake-md3.mjs",
-    "check-bake": "node scripts/bake-md3.mjs --check",
+    "build": "node scripts/build-registry.mjs",
+    "check-build": "node scripts/build-registry.mjs --check",
     "check-registry": "shadcn registry validate ./registry.json",
     "check-preset": "node scripts/check-preset.mjs",
-    "lgtm": "npm run check-bake && npm run check-registry && npm run check-preset"
+    "lgtm": "npm run check-build && npm run check-registry && npm run check-preset"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",

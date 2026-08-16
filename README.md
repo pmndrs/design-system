@@ -133,12 +133,20 @@ is the pmndrs baseline.
 
 ```sh
 npm install
-npm run bake   # regenerate the palette after changing the seed
-npm run lgtm   # bake is current, registry.json valid, preset code round-trips
+npm run build   # regenerate registry.json
+npm run lgtm    # registry.json is current and valid, preset code round-trips
 ```
 
-`registry/md3/md3.ts` is the only place the seed lives. `md3` composes on top of
-`md3-base` and carries nothing but the 252 generated declarations `bake` writes.
+**`registry.json` is generated — never edit it.** Its authored halves are:
+
+| | |
+|---|---|
+| `registry.config.mjs` | item metadata, the shadcn remap |
+| `registry/<item>/docs.md` | the `docs` field, as markdown rather than escaped JSON |
+| `registry/md3-base/md3.ts` | the seed |
+
+252 of `registry.json`'s lines are the palette computed from that seed, which is why
+none of it is hand-maintained. `lgtm` fails if the output has drifted from its sources.
 
 No check here parses TSX or resolves a CSS variable, so a block using a token its
 dependencies don't supply fails silently. **Try it** above is the only check that

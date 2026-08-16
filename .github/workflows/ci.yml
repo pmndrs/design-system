@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lgtm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      # `registry.json` is generated but committed, because GitHub-based
+      # resolution reads it from the repo. Nothing else would notice it drifting
+      # from `registry.config.mjs`, the docs markdown, or the seed.
+      - run: npm run lgtm

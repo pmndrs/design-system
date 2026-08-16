@@ -6,4 +6,4 @@ Release tooling. The package is never published to npm — the git tag is the in
 
 `react` and `react-dom` are now explicit devDependencies. `material-theme-builder` declares them as required peers, and npm resolved that differently locally than on the runner, so `npm ci` was reproducible in one place and not the other.
 
-The version is no longer written down in nine places. `registry.config.mjs` derives it from `package.json`, so the cross-item ref `md3` pins on `md3-base` follows a release instead of freezing at whatever it was when someone typed it — and `npm run build` rewrites the install addresses quoted in the READMEs. `npm run version` runs the build, and `check-build` fails the release if it somehow didn't.
+The version is no longer written down in nine places. `scripts/build.mjs` derives it from `package.json`, so the cross-item ref `md3` pins on `md3-base` follows a release instead of freezing at whatever it was when someone typed it — and `npm run build` rewrites the install addresses quoted in the READMEs. `npm run version` runs the build, and `check-build` fails the release if it somehow didn't.

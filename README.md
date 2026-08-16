@@ -141,7 +141,7 @@ npm run lgtm    # registry.json is current and valid, preset code round-trips
 
 | | |
 |---|---|
-| `registry.config.mjs` | item metadata, the shadcn remap |
+| `scripts/build.mjs` | item metadata, the shadcn remap, and the generator itself |
 | `registry/<item>/docs.md` | the `docs` field, as markdown rather than escaped JSON |
 | `registry/md3-base/md3.ts` | the seed |
 

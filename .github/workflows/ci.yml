@@ -23,7 +23,7 @@ jobs:
 
       # `registry.json` is generated but committed, because GitHub-based
       # resolution reads it from the repo. Nothing else would notice it drifting
-      # from `registry.config.mjs`, the docs markdown, or the seed.
+      # from `scripts/build.mjs`, the docs markdown, or the seed.
       - run: npm run lgtm
 
   # The package is never published to npm — the git tag *is* the install address

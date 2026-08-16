@@ -1,17 +1,18 @@
 /**
- * Generates `registry.json` from `registry.config.mjs`.
+ * Generates `registry.json`.
  *
  * `registry.json` is what GitHub-based resolution reads, so it has to be
  * committed — but 252 of its lines are a computed palette, and the rest is
- * config plus two long `docs` strings. Written by hand, all three were worse
- * for sharing a file: the config was buried, the docs were single-line escaped
- * JSON, and the palette could be edited out of sync with the seed it came from.
+ * item metadata plus two long `docs` strings. Written by hand, all three were
+ * worse for sharing a file: the metadata was buried, the docs were single-line
+ * escaped JSON, and the palette could be edited out of sync with the seed it
+ * came from.
  *
  * So each part lives in its natural form and this assembles them:
  *
- *   registry.config.mjs        item metadata, the shadcn remap
- *   registry/<name>/docs.md    the `docs` field, as markdown
- *   registry/md3-base/md3.ts   the seed the palette is computed from
+ *   the authored half below     item metadata, the shadcn remap
+ *   registry/<name>/docs.md     the `docs` field, as markdown
+ *   registry/md3-base/md3.ts    the seed the palette is computed from
  *
  * The palette itself is never stored anywhere but the output. Change the seed,
  * run this, and the 252 declarations follow.
@@ -22,8 +23,94 @@
  */
 import { readFileSync, writeFileSync } from 'node:fs'
 import { builder } from 'material-theme-builder'
-import { items, registry, version } from '../registry.config.mjs'
+import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
+
+/**
+ * Refs are not inherited, so a cross-item dependency carries its own — and it
+ * has to be *this* version, not a frozen one. Derived from package.json so the
+ * changesets bump reaches it; `npm run version` rebuilds, and `check-build`
+ * fails if it didn't.
+ */
+const version = `v${pkg.version}`
+
+const registry = {
+  $schema: 'https://ui.shadcn.com/schema/registry.json',
+  name: 'pmndrs',
+  homepage: 'https://github.com/pmndrs/design-system',
+}
+
+/**
+ * shadcn's colour variables, pointed at MD3 roles.
+ *
+ * The combined `:root, .dark` selector is deliberate: it re-declares these in
+ * the dark context so they re-substitute, instead of staying fixed at whatever
+ * the MD3 role resolved to under `:root`.
+ */
+const shadcnRemap = {
+  '--background': 'var(--md-sys-color-surface)',
+  '--foreground': 'var(--md-sys-color-on-surface)',
+  '--card': 'var(--md-sys-color-surface-container-low)',
+  '--card-foreground': 'var(--md-sys-color-on-surface)',
+  '--popover': 'var(--md-sys-color-surface-container-high)',
+  '--popover-foreground': 'var(--md-sys-color-on-surface)',
+  '--primary': 'var(--md-sys-color-primary)',
+  '--primary-foreground': 'var(--md-sys-color-on-primary)',
+  '--secondary': 'var(--md-sys-color-secondary-container)',
+  '--secondary-foreground': 'var(--md-sys-color-on-secondary-container)',
+  '--muted': 'var(--md-sys-color-surface-container-highest)',
+  '--muted-foreground': 'var(--md-sys-color-on-surface-variant)',
+  '--accent': 'var(--md-sys-color-secondary-container)',
+  '--accent-foreground': 'var(--md-sys-color-on-secondary-container)',
+  '--destructive': 'var(--md-sys-color-error)',
+  '--border': 'var(--md-sys-color-outline-variant)',
+  '--input': 'var(--md-sys-color-outline)',
+  '--ring': 'var(--md-sys-color-primary)',
+  '--chart-1': 'var(--md-sys-color-primary-fixed)',
+  '--chart-2': 'var(--md-sys-color-secondary-fixed)',
+  '--chart-3': 'var(--md-sys-color-tertiary-fixed)',
+  '--chart-4': 'var(--md-sys-color-primary-fixed-dim)',
+  '--chart-5': 'var(--md-sys-color-secondary-fixed-dim)',
+  '--sidebar': 'var(--md-sys-color-surface-container-low)',
+  '--sidebar-foreground': 'var(--md-sys-color-on-surface)',
+  '--sidebar-primary': 'var(--md-sys-color-primary)',
+  '--sidebar-primary-foreground': 'var(--md-sys-color-on-primary)',
+  '--sidebar-accent': 'var(--md-sys-color-secondary-container)',
+  '--sidebar-accent-foreground': 'var(--md-sys-color-on-secondary-container)',
+  '--sidebar-border': 'var(--md-sys-color-outline-variant)',
+  '--sidebar-ring': 'var(--md-sys-color-primary)',
+}
+
+/**
+ * `docs` comes from `registry/<name>/docs.md`, and `palette: true` means the
+ * build fills `css` with the baked `:root` / `.dark` blocks.
+ */
+const items = [
+  {
+    name: 'md3-base',
+    type: 'registry:lib',
+    title: 'MD3 plumbing',
+    description:
+      "The MD3 colour layer without any colours: the package's Tailwind @theme mapping, the shadcn remap, and the pmndrs seed. Install this only if you compute the palette yourself — otherwise install `md3`, which supplies one.",
+    author: 'pmndrs',
+    dependencies: ['material-theme-builder@^3.2.0'],
+    files: [{ path: 'registry/md3-base/md3.ts', type: 'registry:lib' }],
+    css: {
+      "@import 'material-theme-builder/tailwind.css'": {},
+      ':root, .dark': shadcnRemap,
+    },
+  },
+  {
+    name: 'md3',
+    type: 'registry:lib',
+    title: 'MD3 colours',
+    description:
+      'The pmndrs Material Design 3 colour layer. Additive to the stock shadcn tokens — blocks use `bg-primary` by default and reach for `bg-surface-dim` only where shadcn has no equivalent. Nothing to mount.',
+    author: 'pmndrs',
+    registryDependencies: [`pmndrs/design-system/md3-base#${version}`],
+    palette: true,
+  },
+]
 
 const registryUrl = new URL('../registry.json', import.meta.url)
 

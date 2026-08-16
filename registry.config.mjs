@@ -11,9 +11,15 @@
  * `registry/<item>/docs.md`, and the palette is computed at build time from
  * `registry/md3-base/md3.ts`.
  */
+import pkg from './package.json' with { type: 'json' }
 
-/** Refs are not inherited, so a cross-item dependency carries its own. */
-export const version = 'v0.3.0'
+/**
+ * Refs are not inherited, so a cross-item dependency carries its own — and it
+ * has to be *this* version, not a frozen one. Derived from package.json so the
+ * changesets bump reaches it; `npm run version` rebuilds, and `check-build`
+ * fails if it didn't.
+ */
+export const version = `v${pkg.version}`
 
 export const registry = {
   $schema: 'https://ui.shadcn.com/schema/registry.json',

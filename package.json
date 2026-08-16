@@ -11,13 +11,13 @@
   },
   "type": "module",
   "scripts": {
-    "build": "node scripts/build-registry.mjs",
-    "check-build": "node scripts/build-registry.mjs --check",
+    "build": "node scripts/build.mjs",
+    "check-build": "node scripts/build.mjs --check",
     "check-registry": "shadcn registry validate ./registry.json",
     "check-preset": "node scripts/check-preset.mjs",
     "lgtm": "npm run check-build && npm run check-registry && npm run check-preset",
     "changeset": "changeset",
-    "version": "changeset version && npm install --package-lock-only",
+    "version": "changeset version && npm install --package-lock-only && npm run build",
     "release": "changeset publish"
   },
   "devDependencies": {

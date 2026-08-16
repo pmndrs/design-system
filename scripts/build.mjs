@@ -21,11 +21,20 @@
  */
 import { readFileSync, writeFileSync } from 'node:fs'
 import { builder } from 'material-theme-builder'
-import { items, registry } from '../registry.config.mjs'
+import { items, registry, version } from '../registry.config.mjs'
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
 
 const check = process.argv.includes('--check')
 const registryUrl = new URL('../registry.json', import.meta.url)
+
+/**
+ * Prose that quotes an install address, which is a version — so it goes stale
+ * on every release unless something rewrites it. These are the files where a
+ * wrong ref would send someone to the wrong tag; the changeset markdown is
+ * history and stays as written.
+ */
+const docs = ['../README.md', '../.changeset/README.md']
+const installRef = /pmndrs\/design-system\/(md3|md3-base)#v\d+\.\d+\.\d+/g
 
 /**
  * `toCss()` emits one flat `:root` and one flat `.dark` block, so this reads it
@@ -105,17 +114,34 @@ const built = {
   })),
 }
 
-const next = JSON.stringify(built, null, 2) + '\n'
-const current = readFileSync(registryUrl, 'utf8')
-const counts = `${Object.keys(palette[':root']).length} light, ${Object.keys(palette['.dark']).length} dark`
+const root = new URL('../', import.meta.url)
 
-if (next === current) {
-  console.log(`✔ registry.json is current (${pmndrsMtb.source}, ${counts})`)
+/** @returns the paths whose content is not what this build would write. */
+function reconcile(outputs) {
+  const stale = []
+  for (const [url, next] of outputs) {
+    if (readFileSync(url, 'utf8') === next) continue
+    stale.push(url.pathname.replace(root.pathname, ''))
+    if (!check) writeFileSync(url, next)
+  }
+  return stale
+}
+
+const outputs = [[registryUrl, JSON.stringify(built, null, 2) + '\n']]
+for (const doc of docs) {
+  const url = new URL(doc, import.meta.url)
+  outputs.push([url, readFileSync(url, 'utf8').replace(installRef, `pmndrs/design-system/$1#${version}`)])
+}
+
+const counts = `${Object.keys(palette[':root']).length} light, ${Object.keys(palette['.dark']).length} dark`
+const stale = reconcile(outputs)
+
+if (!stale.length) {
+  console.log(`✔ ${version} is current everywhere (${pmndrsMtb.source}, ${counts})`)
 } else if (check) {
-  console.error('✖ registry.json is out of date with registry.config.mjs')
+  console.error(`✖ out of date with registry.config.mjs: ${stale.join(', ')}`)
   console.error('  Run `npm run build` and commit the result.')
   process.exit(1)
 } else {
-  writeFileSync(registryUrl, next)
-  console.log(`✔ built registry.json from ${pmndrsMtb.source} (${counts})`)
+  console.log(`✔ built ${stale.join(', ')} at ${version} (${pmndrsMtb.source}, ${counts})`)
 }

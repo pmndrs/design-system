@@ -6,6 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   lgtm:
     runs-on: ubuntu-latest
@@ -21,3 +25,31 @@ jobs:
       # resolution reads it from the repo. Nothing else would notice it drifting
       # from `registry.config.mjs`, the docs markdown, or the seed.
       - run: npm run lgtm
+
+  # The package is never published to npm — the git tag *is* the install address
+  # (`md3#v0.3.0`), so a version bump is the whole release. changesets opens the
+  # version PR; merging it tags and cuts the GitHub release.
+  release:
+    needs: lgtm
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      - uses: changesets/action@v1
+        with:
+          version: npm run version
+          publish: npm run release
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

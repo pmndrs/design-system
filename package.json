@@ -15,11 +15,18 @@
     "check-build": "node scripts/build-registry.mjs --check",
     "check-registry": "shadcn registry validate ./registry.json",
     "check-preset": "node scripts/check-preset.mjs",
-    "lgtm": "npm run check-build && npm run check-registry && npm run check-preset"
+    "lgtm": "npm run check-build && npm run check-registry && npm run check-preset",
+    "changeset": "changeset",
+    "version": "changeset version && npm install --package-lock-only",
+    "release": "changeset publish"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^1.0.0",
+    "@changesets/cli": "^3.0.0",
     "@types/node": "^26.2.0",
     "material-theme-builder": "^3.2.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "shadcn": "^4.18.0",
     "typescript": "^5.9.3"
   }

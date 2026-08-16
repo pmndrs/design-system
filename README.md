@@ -73,28 +73,27 @@ baked palette, since you are supplying one:
 npx shadcn@latest add pmndrs/design-system/md3-base#v0.3.0
 ```
 
-Then compute it **once, at build**, and let your bundler pick the result up:
+Then emit it from a React Server Component. `builder` is the root export and carries
+no `'use client'`, so no palette code reaches the browser:
 
-```js
-// scripts/build-md3-css.mjs
-import { writeFileSync } from 'node:fs'
+```tsx
 import { builder } from 'material-theme-builder'
-import { pmndrsMtb } from '../src/lib/md3.ts'
+import { pmndrsMtb } from '@/lib/md3'
 
 const { source, ...rest } = pmndrsMtb
-writeFileSync('src/app/md3.generated.css', builder(source, rest).toCss())
+const css = builder(source, rest).toCss()
+// <style dangerouslySetInnerHTML={{ __html: css }} /> in <head>
 ```
 
-```ts
-import './globals.css'
-import './md3.generated.css' // must come after
-```
+That repeats the palette in every document — ~32 kB raw, but ~2 kB brotli, since it is
+all hex declarations. Hoisting it into your stylesheet with a build step saves that,
+and costs a generated file plus an import-order rule that fails silently whenever your
+seed matches the baked default. Measure before you pay for it.
 
-`<Mtb>` from `material-theme-builder/react` does the same as a client component, and
-`builder` works from a React Server Component. Both render correctly and both cost
-more: the client one ships the palette code to every visitor, the RSC one inlines
-~32 kB into every document. With `next-themes`, nest `<ThemeProvider>` inside `<Mtb>`,
-not around it.
+`<Mtb>` from `material-theme-builder/react` does the same as a client component. Avoid
+it where you render on the server; it is the right tool where there is no build to hook
+— a Storybook preview decorator, say. With `next-themes`, nest `<ThemeProvider>` inside
+it, not around it.
 
 The seed comes from the environment, so a deployment can move the palette without
 touching code:
@@ -106,9 +105,10 @@ THEME_PRIMARY=#5de4c7 THEME_SCHEME=tonalSpot THEME_CONTRAST=0
 `THEME_CONTRAST` is the one to remember: it moves the *role* layer, not just the tonal
 hexes, so it is the one setting the baked palette cannot approximate for you.
 
-Whatever you emit has to land **after** `md3-base`'s CSS in the cascade — same `:root`
-/ `.dark` selectors, later in the stylesheet. That ordering is the whole mechanism, and
-it fails invisibly whenever your seed happens to match the pmndrs default.
+Because you installed `md3-base` rather than `md3`, nothing defines these variables but
+you — so there is no cascade to fight. Install both and you inherit one: yours has to
+land after the baked block, same `:root` / `.dark` selectors, later in the stylesheet,
+and getting it wrong fails invisibly whenever your seed matches the default.
 
 ## Colours M3 has no role for
 

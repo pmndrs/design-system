@@ -1,11 +1,7 @@
-# pmndrs/\* distributed design-system
+# Distributed Poimandres design-system
 
 [![](https://img.shields.io/badge/figma_light-171c23.svg?logo=figma)](figma/Light.tokens.json)
 [![](https://img.shields.io/badge/figma_dark-171c23.svg?logo=figma)](figma/Dark.tokens.json)
-
-DTCG variables, two modes of one collection — same seed and same build as the
-CSS. Figma has no native importer: use a plugin that reads DTCG, from the tag
-the site installs.
 
 ## Try it
 

@@ -5,7 +5,7 @@ Blocks are Tier 2 and live in the repo that owns them.
 
 | | what it carries |
 |---|---|
-| **`md3`** — registry item | Material Design 3 colours, seeded on poimandres mint |
+| **`md3`** — registry item | Material Design 3 colours, seeded on poimandres slate |
 | **`poimandres`** — shadcn preset | radius and typography |
 
 Independent: the preset ships no colours, the item ships no radius.
@@ -49,7 +49,7 @@ printf '%s' 'export default function Home() {
 npx next dev
 ```
 
-Mint surfaces and both MD3 roles rendering, with nothing mounted. Add `dark` to `<html>`
+Slate surfaces and both MD3 roles rendering, with nothing mounted. Add `dark` to `<html>`
 for the dark scheme.
 
 ## Tokens
@@ -88,7 +88,7 @@ The seed comes from the environment, so a deployment moves the palette without t
 code:
 
 ```sh
-THEME_PRIMARY=#5de4c7 THEME_SCHEME=tonalSpot THEME_CONTRAST=0
+THEME_PRIMARY=#323e48 THEME_SCHEME=tonalSpot THEME_CONTRAST=0
 ```
 
 `THEME_CONTRAST` moves the M3 *role* assignments, not just the tonal hexes — the one

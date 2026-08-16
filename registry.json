@@ -7,7 +7,7 @@
       "name": "md3",
       "type": "registry:lib",
       "title": "MD3 colours",
-      "description": "The pmndrs Material Design 3 colour layer: the seed config, the Tailwind @theme mapping for our custom colours, and the shadcn remap. Additive to the stock shadcn tokens — blocks use `bg-primary` by default and reach for `bg-surface-dim` only where shadcn has no equivalent.",
+      "description": "The pmndrs Material Design 3 colour layer: the seed config, the package's Tailwind @theme mapping, and the shadcn remap. Additive to the stock shadcn tokens — blocks use `bg-primary` by default and reach for `bg-surface-dim` only where shadcn has no equivalent.",
       "author": "pmndrs",
       "dependencies": ["material-theme-builder@^3.2.0"],
       "files": [
@@ -16,30 +16,6 @@
           "type": "registry:lib"
         }
       ],
-      "cssVars": {
-        "theme": {
-          "--color-note": "var(--md-sys-color-note)",
-          "--color-on-note": "var(--md-sys-color-on-note)",
-          "--color-note-container": "var(--md-sys-color-note-container)",
-          "--color-on-note-container": "var(--md-sys-color-on-note-container)",
-          "--color-tip": "var(--md-sys-color-tip)",
-          "--color-on-tip": "var(--md-sys-color-on-tip)",
-          "--color-tip-container": "var(--md-sys-color-tip-container)",
-          "--color-on-tip-container": "var(--md-sys-color-on-tip-container)",
-          "--color-important": "var(--md-sys-color-important)",
-          "--color-on-important": "var(--md-sys-color-on-important)",
-          "--color-important-container": "var(--md-sys-color-important-container)",
-          "--color-on-important-container": "var(--md-sys-color-on-important-container)",
-          "--color-warning": "var(--md-sys-color-warning)",
-          "--color-on-warning": "var(--md-sys-color-on-warning)",
-          "--color-warning-container": "var(--md-sys-color-warning-container)",
-          "--color-on-warning-container": "var(--md-sys-color-on-warning-container)",
-          "--color-caution": "var(--md-sys-color-caution)",
-          "--color-on-caution": "var(--md-sys-color-on-caution)",
-          "--color-caution-container": "var(--md-sys-color-caution-container)",
-          "--color-on-caution-container": "var(--md-sys-color-on-caution-container)"
-        }
-      },
       "css": {
         "@import 'material-theme-builder/tailwind.css'": {},
         ":root, .dark": {
@@ -76,7 +52,7 @@
           "--sidebar-ring": "var(--md-sys-color-primary)"
         }
       },
-      "docs": "The CLI cannot touch your root layout, so mount the theme yourself — nothing renders until you do.\n\nClient (simplest):\n\n```tsx\nimport { Mtb } from 'material-theme-builder/react'\nimport { pmndrsMtb } from '@/lib/md3'\n\nexport default function RootLayout({ children }: { children: React.ReactNode }) {\n  return (\n    <html lang=\"en\" suppressHydrationWarning>\n      <body>\n        <Mtb {...pmndrsMtb}>{children}</Mtb>\n      </body>\n    </html>\n  )\n}\n```\n\nServer (no client JS): `<Mtb>` is the only thing carrying `'use client'`, so from an RSC you can call `builder` and emit the CSS yourself.\n\n```tsx\nimport { builder } from 'material-theme-builder'\nimport { pmndrsMtb } from '@/lib/md3'\n\nconst { source, ...rest } = pmndrsMtb\nconst css = builder(source, rest).toCss()\n// <style dangerouslySetInnerHTML={{ __html: css }} /> in <head>\n```\n\nWith `next-themes`, nest `<ThemeProvider>` inside the theme, not around it.\n\nTwo things to know:\n\n- The `:root, .dark` block this item writes must stay **after** the stock `:root {}` / `.dark {}` blocks — that combined selector is what delegates light/dark to MD3 re-emitting its variables rather than to the `.dark` class. If you run `shadcn apply <preset>` later, re-check that ordering survived.\n- Reseed per deployment with `THEME_PRIMARY`, `THEME_SCHEME`, `THEME_CONTRAST` (and `THEME_NOTE` / `THEME_TIP` / `THEME_IMPORTANT` / `THEME_WARNING` / `THEME_CAUTION`). The seed moves the colours; the preset does not."
+      "docs": "The CLI cannot touch your root layout, so mount the theme yourself — nothing renders until you do.\n\nClient (simplest):\n\n```tsx\nimport { Mtb } from 'material-theme-builder/react'\nimport { pmndrsMtb } from '@/lib/md3'\n\nexport default function RootLayout({ children }: { children: React.ReactNode }) {\n  return (\n    <html lang=\"en\" suppressHydrationWarning>\n      <body>\n        <Mtb {...pmndrsMtb}>{children}</Mtb>\n      </body>\n    </html>\n  )\n}\n```\n\nServer (no client JS): `<Mtb>` is the only thing carrying `'use client'`, so from an RSC you can call `builder` and emit the CSS yourself.\n\n```tsx\nimport { builder } from 'material-theme-builder'\nimport { pmndrsMtb } from '@/lib/md3'\n\nconst { source, ...rest } = pmndrsMtb\nconst css = builder(source, rest).toCss()\n// <style dangerouslySetInnerHTML={{ __html: css }} /> in <head>\n```\n\nWith `next-themes`, nest `<ThemeProvider>` inside the theme, not around it.\n\nTwo things to know:\n\n- The `:root, .dark` block this item writes must stay **after** the stock `:root {}` / `.dark {}` blocks — that combined selector is what delegates light/dark to MD3 re-emitting its variables rather than to the `.dark` class. If you run `shadcn apply <preset>` later, re-check that ordering survived.\n- Reseed per deployment with `THEME_PRIMARY`, `THEME_SCHEME` and `THEME_CONTRAST`. The seed moves the colours; the preset does not.\n- Need a colour M3 has no role for? Spread `pmndrsMtb` into your own config and add `customColors` there, rather than editing the installed file. `blend: true` harmonizes them against the pmndrs seed. Then write the four `@theme` lines each one needs yourself — `--color-x`, `--color-on-x`, `--color-x-container`, `--color-on-x-container`. The package's mapping covers standard M3 roles only, and a missing line means Tailwind emits no rule for `bg-x-container` at all, with no error."
     }
   ]
 }

@@ -20,8 +20,8 @@ npx shadcn@latest add pmndrs/design-system/md3#v0.1.0
 ```
 
 Installs `material-theme-builder`, drops `lib/md3.ts` (the pmndrs seed), and writes
-into your CSS: the `@theme` mapping for our five custom colours, and a
-`:root, .dark` block remapping shadcn's colour variables onto MD3 roles.
+into your CSS: the package's Tailwind `@theme` mapping, and a `:root, .dark` block
+remapping shadcn's colour variables onto MD3 roles.
 
 That block has to stay **after** the stock `:root {}` / `.dark {}` ones. The combined
 selector is deliberate — light/dark is delegated to MD3 re-emitting its variables,
@@ -79,8 +79,29 @@ yourself. With `next-themes`, nest `<ThemeProvider>` inside, not around.
 THEME_PRIMARY=#5de4c7 THEME_SCHEME=tonalSpot THEME_CONTRAST=0
 ```
 
-Plus `THEME_NOTE`, `THEME_TIP`, `THEME_IMPORTANT`, `THEME_WARNING`, `THEME_CAUTION` for
-the alert colours. The seed is what moves the rendered palette — the preset is not.
+The seed is what moves the rendered palette — the preset is not.
+
+## Colours M3 has no role for
+
+Alert levels, a status palette, anything the M3 roles don't name: those belong to the
+site or block that needs them, not here. Spread the seed into your own config rather
+than editing the installed file, so the next update of the item stays a clean overwrite:
+
+```ts
+export const myMtb = {
+  ...pmndrsMtb,
+  customColors: [{ name: 'note', hex: '#1f6feb', blend: true }],
+} satisfies MtbConfig
+```
+
+`blend: true` harmonizes them against the pmndrs seed, so they stay yours and still
+belong to the palette.
+
+Then write the `@theme` lines yourself — four per colour: `--color-note`,
+`--color-on-note`, `--color-note-container`, `--color-on-note-container`. The package's
+mapping covers standard M3 roles only. Miss a line and Tailwind emits no rule at all for
+`bg-note-container`, with no error, which is why the config and its mapping should sit
+next to each other wherever they end up.
 
 ## Using the tokens
 

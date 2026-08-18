@@ -1,4 +1,4 @@
-**This item ships no colours.** It is the plumbing: the package's Tailwind `@theme` mapping, the `:root, .dark` block remapping shadcn's variables onto MD3 roles, and `lib/md3.ts`, the pmndrs seed.
+**This item ships no colours.** It is the plumbing: two lines of CSS pointing at the package — its Tailwind plugin, and the stylesheet remapping shadcn's variables onto MD3 roles — plus `lib/md3.ts`, the pmndrs seed.
 
 Install it alone only if you compute the palette yourself. If you just want pmndrs colours, install `md3` instead — it adds a baked palette on top of this and needs nothing mounted.
 
@@ -19,7 +19,12 @@ That repeats the palette in every document — around 32 kB raw, but 2 kB brotli
 
 `<Mtb>` from `material-theme-builder/react` does the same as a client component. Avoid it in an app that renders on the server, but it is the right tool where there is no build to hook — a Storybook preview decorator, for instance. With `next-themes`, nest `<ThemeProvider>` inside it, not around it.
 
-Two more:
+Need a colour M3 has no role for? Spread `pmndrsMtb` into your own config and add `customColors` there, rather than editing the installed file — `blend: true` harmonizes them against the pmndrs seed. Then name them in the `@plugin` line this item added to your CSS, which is installed in statement form (`@plugin '...';`) and takes a body:
 
-- The `:root, .dark` remap has to stay **after** the stock `:root {}` / `.dark {}` blocks. That combined selector is what re-substitutes the shadcn variables in dark mode instead of leaving them fixed at their light value. If you run `shadcn apply <preset>` later, re-check that ordering survived.
-- Need a colour M3 has no role for? Spread `pmndrsMtb` into your own config and add `customColors` there, rather than editing the installed file. `blend: true` harmonizes them against the pmndrs seed. Then write the four `@theme` lines each one needs yourself — `--color-x`, `--color-on-x`, `--color-x-container`, `--color-on-x-container`. The package's mapping covers standard M3 roles only, and a missing line means Tailwind emits no rule for `bg-x-container` at all, with no error.
+```css
+@plugin "material-theme-builder/tailwind" {
+  custom-colors: note, alert;
+}
+```
+
+Four roles and eleven shades follow per colour — `bg-note`, `text-on-note`, `bg-note-container`, `text-on-note-container`, `bg-note-50` … `bg-note-950`. Nothing else to write.

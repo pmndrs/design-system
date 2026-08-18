@@ -10,7 +10,7 @@
  *
  * So each part lives in its natural form and this assembles them:
  *
- *   the authored half below     item metadata, the shadcn remap
+ *   the authored half below     item metadata
  *   registry/<name>/docs.md     the `docs` field, as markdown
  *   registry/md3-base/md3.ts    the seed the palette is computed from
  *
@@ -45,47 +45,6 @@ const registry = {
 }
 
 /**
- * shadcn's colour variables, pointed at MD3 roles.
- *
- * The combined `:root, .dark` selector is deliberate: it re-declares these in
- * the dark context so they re-substitute, instead of staying fixed at whatever
- * the MD3 role resolved to under `:root`.
- */
-const shadcnRemap = {
-  '--background': 'var(--md-sys-color-surface)',
-  '--foreground': 'var(--md-sys-color-on-surface)',
-  '--card': 'var(--md-sys-color-surface-container-low)',
-  '--card-foreground': 'var(--md-sys-color-on-surface)',
-  '--popover': 'var(--md-sys-color-surface-container-high)',
-  '--popover-foreground': 'var(--md-sys-color-on-surface)',
-  '--primary': 'var(--md-sys-color-primary)',
-  '--primary-foreground': 'var(--md-sys-color-on-primary)',
-  '--secondary': 'var(--md-sys-color-secondary-container)',
-  '--secondary-foreground': 'var(--md-sys-color-on-secondary-container)',
-  '--muted': 'var(--md-sys-color-surface-container-highest)',
-  '--muted-foreground': 'var(--md-sys-color-on-surface-variant)',
-  '--accent': 'var(--md-sys-color-secondary-container)',
-  '--accent-foreground': 'var(--md-sys-color-on-secondary-container)',
-  '--destructive': 'var(--md-sys-color-error)',
-  '--border': 'var(--md-sys-color-outline-variant)',
-  '--input': 'var(--md-sys-color-outline)',
-  '--ring': 'var(--md-sys-color-primary)',
-  '--chart-1': 'var(--md-sys-color-primary-fixed)',
-  '--chart-2': 'var(--md-sys-color-secondary-fixed)',
-  '--chart-3': 'var(--md-sys-color-tertiary-fixed)',
-  '--chart-4': 'var(--md-sys-color-primary-fixed-dim)',
-  '--chart-5': 'var(--md-sys-color-secondary-fixed-dim)',
-  '--sidebar': 'var(--md-sys-color-surface-container-low)',
-  '--sidebar-foreground': 'var(--md-sys-color-on-surface)',
-  '--sidebar-primary': 'var(--md-sys-color-primary)',
-  '--sidebar-primary-foreground': 'var(--md-sys-color-on-primary)',
-  '--sidebar-accent': 'var(--md-sys-color-secondary-container)',
-  '--sidebar-accent-foreground': 'var(--md-sys-color-on-secondary-container)',
-  '--sidebar-border': 'var(--md-sys-color-outline-variant)',
-  '--sidebar-ring': 'var(--md-sys-color-primary)',
-}
-
-/**
  * `docs` comes from `registry/<name>/docs.md`, and `palette: true` means the
  * build fills `css` with the baked `:root` / `.dark` blocks.
  */
@@ -95,13 +54,33 @@ const items = [
     type: 'registry:lib',
     title: 'MD3 plumbing',
     description:
-      "The MD3 colour layer without any colours: the package's Tailwind @theme mapping, the shadcn remap, and the pmndrs seed. Install this only if you compute the palette yourself — otherwise install `md3`, which supplies one.",
+      "The MD3 colour layer without any colours: the package's Tailwind plugin, its shadcn remap, and the pmndrs seed. Install this only if you compute the palette yourself — otherwise install `md3`, which supplies one.",
     author: 'pmndrs',
-    dependencies: ['material-theme-builder@^3.2.0'],
+    dependencies: ['material-theme-builder@^5.0.0'],
     files: [{ path: 'registry/md3-base/md3.ts', type: 'registry:lib' }],
+    /**
+     * Two lines the package answers for, rather than copies of what it ships.
+     *
+     * `shadcn.css` is the remap onto MD3 roles. Since v4 its selectors are
+     * doubled (`:root:root`), so it outranks shadcn's own blocks wherever the
+     * installer lands the `@import` — which is what lets it be an import here
+     * rather than 31 declarations kept in step by hand.
+     *
+     * The Tailwind mapping is the `@plugin`, not the stylesheet of the same
+     * name. Both emit the same `--color-*` map, but a plugin contributes
+     * *defaults*, so shadcn's own `@theme inline` keeps the three names they
+     * collide on (`background`, `primary`, `secondary`) whatever the order.
+     * The stylesheet wins those instead when it lands after shadcn's block, and
+     * `bg-secondary` silently stops being the container colour — measured on a
+     * scratch app, `#d3e5f5` becomes `#50606e`. Same trade as `:root:root`
+     * above: order stops being load-bearing.
+     *
+     * It is also where a consumer names custom colours, which is why the docs
+     * point at this line — see `registry/md3-base/md3.ts`.
+     */
     css: {
-      "@import 'material-theme-builder/tailwind.css'": {},
-      ':root, .dark': shadcnRemap,
+      "@plugin 'material-theme-builder/tailwind'": {},
+      "@import 'material-theme-builder/shadcn.css'": {},
     },
   },
   {
@@ -131,10 +110,10 @@ const installRef = /pmndrs\/design-system\/(md3|md3-base)#v\d+\.\d+\.\d+/g
  * `toCss()` emits one flat `:root` and one flat `.dark` block, so this reads it
  * back rather than using the structured `toJson()`.
  *
- * That is deliberate, and worth not undoing: the two do not agree. `toJson()`
- * returns 90 tonal entries where the CSS has 168, omits the error palette
- * entirely, and 44 of the 90 it shares differ — `primary-40` is `#006b5a` there
- * against `#086b5a` here, and the gap widens up the ramp. `toCss()` is what
+ * That is deliberate, and worth not undoing: the two do not agree. Re-measured
+ * on 5.0.0 — `toJson()` returns 90 tonal entries where the CSS has 217, omits the
+ * error palette entirely, and 74 of the 90 it shares differ, not subtly:
+ * `primary-40` is `#54606B` there against `#266389` here. `toCss()` is what
  * `<Mtb>` injects at runtime, and the bake has to stay interchangeable with it:
  * a site that reseeds overrides these declarations with that output, so the two
  * must be computed the same way.

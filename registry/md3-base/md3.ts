@@ -25,11 +25,19 @@ import type { MtbConfig } from 'material-theme-builder'
  * ```
  *
  * `blend: true` harmonizes them against the seed above, so they stay yours and
- * still belong to the pmndrs palette. One catch, and it fails silently: the
- * package's Tailwind mapping covers standard M3 roles only. Every custom colour
- * needs four `@theme` lines of your own — `--color-note`, `--color-on-note`,
- * `--color-note-container`, `--color-on-note-container` — or Tailwind emits no
- * rule at all for `bg-note-container`, with no error.
+ * still belong to the pmndrs palette. The stylesheet this item imports carries
+ * the standard M3 roles only — a custom colour is a name no shipped file can
+ * know — so name yours in the plugin, next to that import:
+ *
+ * ```css
+ * @plugin "material-theme-builder/tailwind" {
+ *   custom-colors: note;
+ * }
+ * ```
+ *
+ * That one line is what makes `bg-note`, `text-on-note`, `bg-note-container` and
+ * the eleven `bg-note-300` shades exist. Leave it out and Tailwind emits no rule
+ * for any of them — and no error either.
  */
 export const pmndrsMtb = {
   /** poimandres slate. */

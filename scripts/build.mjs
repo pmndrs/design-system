@@ -45,45 +45,42 @@ const registry = {
 }
 
 /**
- * shadcn's colour variables, pointed at MD3 roles.
+ * The pmndrs default, so no `THEME_*` is read: those are a consumer's to set,
+ * and baking one deployment's environment into the published item would be a
+ * good way to ship a surprise.
  *
- * The combined `:root, .dark` selector is deliberate: it re-declares these in
- * the dark context so they re-substitute, instead of staying fixed at whatever
- * the MD3 role resolved to under `:root`.
+ * One theme for every output — CSS, Figma, and the shadcn remap below. They are
+ * the same palette and the same mapping, and have no business being computed
+ * twice.
  */
-const shadcnRemap = {
-  '--background': 'var(--md-sys-color-surface)',
-  '--foreground': 'var(--md-sys-color-on-surface)',
-  '--card': 'var(--md-sys-color-surface-container-low)',
-  '--card-foreground': 'var(--md-sys-color-on-surface)',
-  '--popover': 'var(--md-sys-color-surface-container-high)',
-  '--popover-foreground': 'var(--md-sys-color-on-surface)',
-  '--primary': 'var(--md-sys-color-primary)',
-  '--primary-foreground': 'var(--md-sys-color-on-primary)',
-  '--secondary': 'var(--md-sys-color-secondary-container)',
-  '--secondary-foreground': 'var(--md-sys-color-on-secondary-container)',
-  '--muted': 'var(--md-sys-color-surface-container-highest)',
-  '--muted-foreground': 'var(--md-sys-color-on-surface-variant)',
-  '--accent': 'var(--md-sys-color-secondary-container)',
-  '--accent-foreground': 'var(--md-sys-color-on-secondary-container)',
-  '--destructive': 'var(--md-sys-color-error)',
-  '--border': 'var(--md-sys-color-outline-variant)',
-  '--input': 'var(--md-sys-color-outline)',
-  '--ring': 'var(--md-sys-color-primary)',
-  '--chart-1': 'var(--md-sys-color-primary-fixed)',
-  '--chart-2': 'var(--md-sys-color-secondary-fixed)',
-  '--chart-3': 'var(--md-sys-color-tertiary-fixed)',
-  '--chart-4': 'var(--md-sys-color-primary-fixed-dim)',
-  '--chart-5': 'var(--md-sys-color-secondary-fixed-dim)',
-  '--sidebar': 'var(--md-sys-color-surface-container-low)',
-  '--sidebar-foreground': 'var(--md-sys-color-on-surface)',
-  '--sidebar-primary': 'var(--md-sys-color-primary)',
-  '--sidebar-primary-foreground': 'var(--md-sys-color-on-primary)',
-  '--sidebar-accent': 'var(--md-sys-color-secondary-container)',
-  '--sidebar-accent-foreground': 'var(--md-sys-color-on-secondary-container)',
-  '--sidebar-border': 'var(--md-sys-color-outline-variant)',
-  '--sidebar-ring': 'var(--md-sys-color-primary)',
+const { source, ...options } = pmndrsMtb
+const theme = builder(source, options)
+
+/**
+ * shadcn's colour variables, pointed at MD3 roles — the package's mapping, not
+ * a copy of it kept in step by hand. `toShadcnRegistryItem()` returns the same
+ * 31 pairs this file used to spell out, so a role the package remaps differently
+ * arrives with the version bump instead of waiting for someone to notice.
+ *
+ * It hands them back in shadcn's `cssVars` shape, one set per mode and keyed
+ * without the `--`. Taken as a single `css` block under a combined `:root, .dark`
+ * selector instead, which is deliberate: it re-declares these in the dark context
+ * so they re-substitute, instead of staying fixed at whatever the MD3 role
+ * resolved to under `:root`. That collapse is only sound while the two modes
+ * agree — they do by construction, since the values are `var()` references and
+ * the mode is the palette's business, not the mapping's — so it is asserted
+ * rather than assumed.
+ *
+ * No `{ fallback: true }`: that bakes this theme's own colours in behind each
+ * `var()`, and here `md3` already declares every property they would cover. It
+ * is the option for an item shipping the mapping *without* a palette to resolve
+ * against — which is `md3-base`, and `md3-base` is colourless on purpose.
+ */
+const { light, dark } = theme.toShadcnRegistryItem().cssVars
+for (const [name, value] of Object.entries(light)) {
+  if (dark[name] !== value) throw new Error(`toShadcnRegistryItem() disagrees across modes on --${name}`)
 }
+const shadcnRemap = Object.fromEntries(Object.entries(light).map(([name, value]) => [`--${name}`, value]))
 
 /**
  * `docs` comes from `registry/<name>/docs.md`, and `palette: true` means the
@@ -97,7 +94,11 @@ const items = [
     description:
       "The MD3 colour layer without any colours: the package's Tailwind @theme mapping, the shadcn remap, and the pmndrs seed. Install this only if you compute the palette yourself — otherwise install `md3`, which supplies one.",
     author: 'pmndrs',
-    dependencies: ['material-theme-builder@^3.2.0'],
+    // The range this build resolved against, not a range chosen for consumers:
+    // the remap and the `@theme` names below both come out of that install, so
+    // an item that let them resolve lower would be an item whose CSS and whose
+    // package can disagree.
+    dependencies: [`material-theme-builder@${pkg.devDependencies['material-theme-builder']}`],
     files: [{ path: 'registry/md3-base/md3.ts', type: 'registry:lib' }],
     css: {
       "@import 'material-theme-builder/tailwind.css'": {},
@@ -170,17 +171,6 @@ function parseBlocks(css) {
     })
   )
 }
-
-/**
- * The pmndrs default, so no `THEME_*` is read: those are a consumer's to set,
- * and baking one deployment's environment into the published item would be a
- * good way to ship a surprise.
- *
- * One theme for both outputs, CSS and Figma — they are the same palette and have
- * no business being computed twice.
- */
-const { source, ...options } = pmndrsMtb
-const theme = builder(source, options)
 
 function bakePalette() {
   const { ':root': light, '.dark': dark } = parseBlocks(theme.toCss())

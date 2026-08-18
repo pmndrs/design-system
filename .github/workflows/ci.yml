@@ -27,8 +27,8 @@ jobs:
       - run: npm run lgtm
 
   # The package is never published to npm — the git tag *is* the install address
-  # (`md3#v0.3.0`), so a version bump is the whole release. changesets opens the
-  # version PR; merging it tags and cuts the GitHub release.
+  # (`md3#v1.2.3`), so a version bump is the whole release. changesets opens the
+  # version PR; merging it tags.
   release:
     needs: lgtm
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -50,6 +50,15 @@ jobs:
         with:
           version: npm run version
           publish: npm run release
-          createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # `changeset publish` creates the tag, but changesets/action pushes tags
+      # only when it sees packages published to npm. This one is private and
+      # publishes nothing, so the tag died with the runner every time and all
+      # four so far were pushed by hand — while the install address a consumer
+      # pins (`md3#v0.4.0`) is exactly that tag. Push it here.
+      #
+      # `createGithubReleases` came off with it: it is gated on the same signal,
+      # so it never fired either. CHANGELOG.md is the release notes.
+      - run: git push origin --tags

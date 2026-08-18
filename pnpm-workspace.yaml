@@ -1,0 +1,6 @@
+# The example consumer is a workspace package so it gets its own `node_modules`.
+# That isolation is the point: under pnpm nothing it imports can resolve out of
+# the registry's own dependencies, so installing there proves as much as
+# installing in a separate repo would.
+packages:
+  - examples/app

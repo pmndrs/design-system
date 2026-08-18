@@ -98,12 +98,17 @@ const items = [
 const registryUrl = new URL('../registry.json', import.meta.url)
 
 /**
- * Prose that quotes an install address, which is a version — so it goes stale
- * on every release unless something rewrites it. These are the files where a
- * wrong ref would send someone to the wrong tag; the changeset markdown is
- * history and stays as written.
+ * Files that quote an install address, which is a version — so they go stale on
+ * every release unless something rewrites them. These are the ones where a wrong
+ * ref would send someone to the wrong tag; the changeset markdown is history and
+ * stays as written.
+ *
+ * `examples/block` is not prose but a fixture, and is here for the same reason
+ * inverted: it stands in for a block published by another repo, so it has to
+ * keep quoting the address such a repo would quote. Its consumer redirects that
+ * address at the working tree, which only works while it is one we recognise.
  */
-const docs = ['../README.md', '../.changeset/README.md']
+const pinned = ['../README.md', '../.changeset/README.md', '../examples/block/registry.json']
 const installRef = /pmndrs\/design-system\/(md3|md3-base)#v\d+\.\d+\.\d+/g
 
 /**
@@ -198,8 +203,8 @@ const root = new URL('../', import.meta.url)
  * implementation of the comparison to keep in step.
  */
 export const outputs = [[registryUrl, JSON.stringify(built, null, 2) + '\n']]
-for (const doc of docs) {
-  const url = new URL(doc, import.meta.url)
+for (const file of pinned) {
+  const url = new URL(file, import.meta.url)
   outputs.push([url, readFileSync(url, 'utf8').replace(installRef, `pmndrs/design-system/$1#${version}`)])
 }
 

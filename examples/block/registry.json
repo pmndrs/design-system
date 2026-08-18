@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "example-block",
+  "homepage": "https://github.com/pmndrs/design-system",
+  "items": [
+    {
+      "name": "panel",
+      "type": "registry:block",
+      "title": "Panel",
+      "description": "Stand-in for a block published by another pmndrs repo — pmndrs/docs' `Keypoints`, say. It exists to be installed, not to be used: it renders one of every kind of token this registry has to get right.",
+      "author": "pmndrs",
+      "registryDependencies": ["button", "pmndrs/design-system/md3#v0.4.0"],
+      "files": [
+        {
+          "path": "registry/panel/panel.tsx",
+          "type": "registry:block"
+        }
+      ]
+    }
+  ]
+}

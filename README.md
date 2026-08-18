@@ -78,7 +78,17 @@ Never hardcode a font family (`font-sans` / `font-mono`). Icons come from
 ## dev
 
 ```sh
-npm install
-npm run build   # regenerate registry.json + figma/*.tokens.json
-npm run lgtm    # outputs are current and valid, preset code round-trips
+pnpm install
+pnpm build   # regenerate registry.json + figma/*.tokens.json
+pnpm lgtm    # outputs are current and valid, and the registry still installs
+```
+
+That last one ends in `examples/`, which installs this registry the way a
+consumer does — `examples/block` stands in for a repo publishing a block,
+`examples/app` for the site that adds it — except that every pmndrs address is
+redirected at the working tree. A token that resolves to nothing is silent
+everywhere else, so the app reads its colours back out of a real browser.
+
+```sh
+pnpm --filter example-app dev
 ```

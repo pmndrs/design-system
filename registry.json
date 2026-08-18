@@ -7,10 +7,10 @@
       "name": "md3-base",
       "type": "registry:lib",
       "title": "MD3 plumbing",
-      "description": "The MD3 colour layer without any colours: the package's Tailwind @theme mapping, the shadcn remap, and the pmndrs seed. Install this only if you compute the palette yourself — otherwise install `md3`, which supplies one.",
+      "description": "The MD3 colour layer without any colours: the package's Tailwind plugin, its shadcn remap, and the pmndrs seed. Install this only if you compute the palette yourself — otherwise install `md3`, which supplies one.",
       "author": "pmndrs",
       "dependencies": [
-        "material-theme-builder@^3.2.0"
+        "material-theme-builder@^5.0.0"
       ],
       "files": [
         {
@@ -19,42 +19,10 @@
         }
       ],
       "css": {
-        "@import 'material-theme-builder/tailwind.css'": {},
-        ":root, .dark": {
-          "--background": "var(--md-sys-color-surface)",
-          "--foreground": "var(--md-sys-color-on-surface)",
-          "--card": "var(--md-sys-color-surface-container-low)",
-          "--card-foreground": "var(--md-sys-color-on-surface)",
-          "--popover": "var(--md-sys-color-surface-container-high)",
-          "--popover-foreground": "var(--md-sys-color-on-surface)",
-          "--primary": "var(--md-sys-color-primary)",
-          "--primary-foreground": "var(--md-sys-color-on-primary)",
-          "--secondary": "var(--md-sys-color-secondary-container)",
-          "--secondary-foreground": "var(--md-sys-color-on-secondary-container)",
-          "--muted": "var(--md-sys-color-surface-container-highest)",
-          "--muted-foreground": "var(--md-sys-color-on-surface-variant)",
-          "--accent": "var(--md-sys-color-secondary-container)",
-          "--accent-foreground": "var(--md-sys-color-on-secondary-container)",
-          "--destructive": "var(--md-sys-color-error)",
-          "--border": "var(--md-sys-color-outline-variant)",
-          "--input": "var(--md-sys-color-outline)",
-          "--ring": "var(--md-sys-color-primary)",
-          "--chart-1": "var(--md-sys-color-primary-fixed)",
-          "--chart-2": "var(--md-sys-color-secondary-fixed)",
-          "--chart-3": "var(--md-sys-color-tertiary-fixed)",
-          "--chart-4": "var(--md-sys-color-primary-fixed-dim)",
-          "--chart-5": "var(--md-sys-color-secondary-fixed-dim)",
-          "--sidebar": "var(--md-sys-color-surface-container-low)",
-          "--sidebar-foreground": "var(--md-sys-color-on-surface)",
-          "--sidebar-primary": "var(--md-sys-color-primary)",
-          "--sidebar-primary-foreground": "var(--md-sys-color-on-primary)",
-          "--sidebar-accent": "var(--md-sys-color-secondary-container)",
-          "--sidebar-accent-foreground": "var(--md-sys-color-on-secondary-container)",
-          "--sidebar-border": "var(--md-sys-color-outline-variant)",
-          "--sidebar-ring": "var(--md-sys-color-primary)"
-        }
+        "@plugin 'material-theme-builder/tailwind'": {},
+        "@import 'material-theme-builder/shadcn.css'": {}
       },
-      "docs": "**This item ships no colours.** It is the plumbing: the package's Tailwind `@theme` mapping, the `:root, .dark` block remapping shadcn's variables onto MD3 roles, and `lib/md3.ts`, the pmndrs seed.\n\nInstall it alone only if you compute the palette yourself. If you just want pmndrs colours, install `md3` instead — it adds a baked palette on top of this and needs nothing mounted.\n\nNothing renders until something defines `--md-sys-color-*`, and it does not fail gracefully: the remap here overrides the *stock* shadcn variables, so an undefined palette takes `--background`, `--primary` and `--border` down with it, silently — no error from Tailwind, none from the browser.\n\nEmit it from a React Server Component. `builder` is the root export and carries no `'use client'`, so no palette code reaches the browser:\n\n```tsx\nimport { builder } from 'material-theme-builder'\nimport { pmndrsMtb } from '@/lib/md3'\n\nconst { source, ...rest } = pmndrsMtb\nconst css = builder(source, rest).toCss()\n// <style dangerouslySetInnerHTML={{ __html: css }} /> in <head>\n```\n\nThat repeats the palette in every document — around 32 kB raw, but 2 kB brotli, since it is all hex declarations. Only worth hoisting into your stylesheet with a build step if you have measured that it matters; the build step costs a generated file and an import-order rule that fails silently whenever your seed matches the baked default.\n\n`<Mtb>` from `material-theme-builder/react` does the same as a client component. Avoid it in an app that renders on the server, but it is the right tool where there is no build to hook — a Storybook preview decorator, for instance. With `next-themes`, nest `<ThemeProvider>` inside it, not around it.\n\nTwo more:\n\n- The `:root, .dark` remap has to stay **after** the stock `:root {}` / `.dark {}` blocks. That combined selector is what re-substitutes the shadcn variables in dark mode instead of leaving them fixed at their light value. If you run `shadcn apply <preset>` later, re-check that ordering survived.\n- Need a colour M3 has no role for? Spread `pmndrsMtb` into your own config and add `customColors` there, rather than editing the installed file. `blend: true` harmonizes them against the pmndrs seed. Then write the four `@theme` lines each one needs yourself — `--color-x`, `--color-on-x`, `--color-x-container`, `--color-on-x-container`. The package's mapping covers standard M3 roles only, and a missing line means Tailwind emits no rule for `bg-x-container` at all, with no error."
+      "docs": "**This item ships no colours.** It is the plumbing: two lines of CSS pointing at the package — its Tailwind plugin, and the stylesheet remapping shadcn's variables onto MD3 roles — plus `lib/md3.ts`, the pmndrs seed.\n\nInstall it alone only if you compute the palette yourself. If you just want pmndrs colours, install `md3` instead — it adds a baked palette on top of this and needs nothing mounted.\n\nNothing renders until something defines `--md-sys-color-*`, and it does not fail gracefully: the remap here overrides the *stock* shadcn variables, so an undefined palette takes `--background`, `--primary` and `--border` down with it, silently — no error from Tailwind, none from the browser.\n\nEmit it from a React Server Component. `builder` is the root export and carries no `'use client'`, so no palette code reaches the browser:\n\n```tsx\nimport { builder } from 'material-theme-builder'\nimport { pmndrsMtb } from '@/lib/md3'\n\nconst { source, ...rest } = pmndrsMtb\nconst css = builder(source, rest).toCss()\n// <style dangerouslySetInnerHTML={{ __html: css }} /> in <head>\n```\n\nThat repeats the palette in every document — around 32 kB raw, but 2 kB brotli, since it is all hex declarations. Only worth hoisting into your stylesheet with a build step if you have measured that it matters; the build step costs a generated file and an import-order rule that fails silently whenever your seed matches the baked default.\n\n`<Mtb>` from `material-theme-builder/react` does the same as a client component. Avoid it in an app that renders on the server, but it is the right tool where there is no build to hook — a Storybook preview decorator, for instance. With `next-themes`, nest `<ThemeProvider>` inside it, not around it.\n\nNeed a colour M3 has no role for? Spread `pmndrsMtb` into your own config and add `customColors` there, rather than editing the installed file — `blend: true` harmonizes them against the pmndrs seed. Then name them in the `@plugin` line this item added to your CSS, which is installed in statement form (`@plugin '...';`) and takes a body:\n\n```css\n@plugin \"material-theme-builder/tailwind\" {\n  custom-colors: note, alert;\n}\n```\n\nFour roles and eleven shades follow per colour — `bg-note`, `text-on-note`, `bg-note-container`, `text-on-note-container`, `bg-note-50` … `bg-note-950`. Nothing else to write."
     },
     {
       "name": "md3",

@@ -41,7 +41,7 @@ For a palette other than the pmndrs one: install `md3-base` — same plumbing, n
 baked palette — and follow its docs.
 
 ```sh
-npx shadcn@latest add pmndrs/design-system/md3-base#v0.3.0
+npx shadcn@latest add pmndrs/design-system/md3-base#v0.4.0
 ```
 
 Nothing renders until something emits `--md-sys-color-*`: regenerate the values
@@ -63,7 +63,7 @@ say.
 
 ## Authoring a block
 
-Always pin a ref — `pmndrs/design-system/md3#v0.3.0`. Refs are **not
+Always pin a ref — `pmndrs/design-system/md3#v0.4.0`. Refs are **not
 inherited**: every entry in `registryDependencies` carries its own.
 
 - a shadcn primitive → `registryDependencies: ["button"]`

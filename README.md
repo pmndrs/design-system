@@ -90,5 +90,5 @@ redirected at the working tree. A token that resolves to nothing is silent
 everywhere else, so the app reads its colours back out of a real browser.
 
 ```sh
-pnpm --filter example-app dev
+pnpm dev   # the example, from anywhere in the repo
 ```

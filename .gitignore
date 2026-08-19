@@ -1,3 +1,14 @@
 node_modules
 public/r
+examples/block/public/r
 .DS_Store
+
+# The example consumer commits what `shadcn add` writes to it — reviewing that
+# diff is half of what it is for. Ignored is only what nobody reads: the
+# redirected registry it installs through, and what its own tools leave behind.
+examples/app/.registry
+examples/app/.next
+examples/app/next-env.d.ts
+examples/app/tsconfig.tsbuildinfo
+examples/app/.vitest-attachments
+examples/app/src/app/__screenshots__

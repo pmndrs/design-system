@@ -10,13 +10,15 @@
     "url": "git+https://github.com/pmndrs/design-system.git"
   },
   "type": "module",
+  "packageManager": "pnpm@10.33.4",
   "scripts": {
     "build": "node scripts/build.mjs",
+    "dev": "pnpm --filter example-app dev",
     "check-registry": "shadcn registry validate ./registry.json",
     "test": "node --test",
-    "lgtm": "npm run check-registry && npm test",
+    "lgtm": "pnpm check-registry && pnpm test && pnpm --filter example-app lgtm",
     "changeset": "changeset",
-    "version": "changeset version && npm install --package-lock-only && npm run build",
+    "version": "changeset version && pnpm install --lockfile-only && pnpm build",
     "release": "changeset publish"
   },
   "devDependencies": {

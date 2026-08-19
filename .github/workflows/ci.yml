@@ -15,16 +15,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-      - run: npm ci
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # The one step with no local counterpart: `examples/app` reads the palette
+      # back out of a real browser, and the runner has none.
+      - run: pnpm --filter example-app exec playwright install --with-deps chromium
 
       # `registry.json` is generated but committed, because GitHub-based
       # resolution reads it from the repo. Nothing else would notice it drifting
       # from `scripts/build.mjs`, the docs markdown, or the seed.
-      - run: npm run lgtm
+      #
+      # The same command as locally, and it ends by installing the registry into
+      # `examples/app` — the only check that exercises `shadcn add` at all.
+      - run: pnpm lgtm
 
   # The package is never published to npm — the git tag *is* the install address
   # (`md3#v1.2.3`), so a version bump is the whole release. changesets opens the
@@ -40,16 +48,17 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-      - run: npm ci
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
 
       - uses: changesets/action@v1
         with:
-          version: npm run version
-          publish: npm run release
+          version: pnpm run version
+          publish: pnpm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

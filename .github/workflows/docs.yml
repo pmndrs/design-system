@@ -130,14 +130,17 @@ jobs:
       # needs none: `main` is the site URL. The slug is the switcher's `{branch}`: lowercase, every
       # run of characters other than `[a-z0-9]` one `-`, none at either end.
       #
-      # Not fatal: a branch name too long for a 63-character hostname label cannot get its alias,
-      # and that is no reason to fail the pull request.
+      # Fatal, unlike in pmndrs/docs: the alias is what the switcher needs, and a preview nobody
+      # can reach from it is not a preview. (A branch name too long for a 63-character hostname
+      # label is the one way this fails on its own: rename the branch.)
+      #
+      # No `--scope`: the team comes from `VERCEL_ORG_ID`, the way the deploy above links. A
+      # `--scope` makes the CLI look the user up to resolve it, and a project-scoped token has
+      # no user to show -- `User not found (404)`.
       - name: Alias the preview to its branch URL
         if: env.VERCEL == 'true' && env.PRODUCTION != 'true'
-        continue-on-error: true
         run: |
           slug=$(printf '%s' "$GIT_BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')
           npx -y vercel alias set "${{ steps.vercel-deploy.outputs.url }}" \
             "design-system-git-$slug-pmndrs.vercel.app" \
-            --token="$VERCEL_TOKEN" \
-            --scope=pmndrs
+            --token="$VERCEL_TOKEN"

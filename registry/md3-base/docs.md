@@ -19,12 +19,14 @@ That repeats the palette in every document — around 32 kB raw, but 2 kB brotli
 
 `<Mtb>` from `material-theme-builder/react` does the same as a client component. Avoid it in an app that renders on the server, but it is the right tool where there is no build to hook — a Storybook preview decorator, for instance. With `next-themes`, nest `<ThemeProvider>` inside it, not around it.
 
-Need a colour M3 has no role for? Spread `pmndrsMtb` into your own config and add `customColors` there, rather than editing the installed file — `blend: true` harmonizes them against the pmndrs seed. Then name them in the `@plugin` line this item added to your CSS, which is installed in statement form (`@plugin '...';`) and takes a body:
+The seed ships two custom colours, `brand` and `status` — placeholders showing the mechanism, and `md3` bakes their roles. Their utilities are not automatic: the `@plugin` line this item added to your CSS is installed in statement form (`@plugin '...';`), and the registry cannot give it a body, so give it one yourself:
 
 ```css
 @plugin "material-theme-builder/tailwind" {
-  custom-colors: note, alert;
+  custom-colors: brand, status;
 }
 ```
+
+Need a colour M3 has no role for? Spread `pmndrsMtb` into your own config and add `customColors` there, rather than editing the installed file — `blend: true` harmonizes them against the pmndrs seed, and `...pmndrsMtb.customColors` keeps the two above. Then add yours to the same body, `custom-colors: brand, status, note;`.
 
 Four roles and eleven shades follow per colour — `bg-note`, `text-on-note`, `bg-note-container`, `text-on-note-container`, `bg-note-50` … `bg-note-950`. Nothing else to write.

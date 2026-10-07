@@ -146,9 +146,30 @@ Colours Material has no role for — a brand palette, status levels — are decl
 seeds, as `customColors`. Each one becomes four roles, `<name>`, `on-<name>`,
 `<name>-container` and `on-<name>-container`, computed for light and dark like the others, plus
 eleven shades, `<name>-50` … `<name>-950`. `blend` harmonizes it toward the `source` seed;
-without it the colour stays true to its hex.
+without it the colour stays true to its hex. For custom colours of your *own*, do not edit the
+installed `md3.ts`: spread `pmndrsMtb` into your config, add yours there, and name them in the
+`@plugin` body — `md3-base`'s docs walk through it.
 
-_None yet._
+| Name | Seed | Blend | Utilities |
+| --- | --- | --- | --- |
+| `brand` | <Color color="#ff2d95" /> `#ff2d95` | yes | `bg-brand`, `text-on-brand`, `bg-brand-container`, `text-on-brand-container` |
+| `status` | <Color color="#17b26a" /> `#17b26a` | no | `bg-status`, `text-on-status`, `bg-status-container`, `text-on-status-container` |
+
+<ColorGroup orientation="vertical">
+  {['brand', 'status'].map((name) => (
+    <ColorGroup key={name}>
+      <Color role={name} variant="cell" />
+      <Color role={`on-${name}`} variant="cell" />
+      <Color role={`${name}-container`} variant="cell" />
+      <Color role={`on-${name}-container`} variant="cell" />
+    </ColorGroup>
+  ))}
+</ColorGroup>
+
+These two are placeholders showing the mechanism; to change them, edit `customColors` in
+[`md3.ts`](https://github.com/pmndrs/design-system/blob/main/registry/md3-base/md3.ts), run
+`npm run build`, and update this table and the `theme_custom_colors` line of the docs workflow,
+which is what makes the swatches above follow the scheme and contrast of this site.
 
 ## Reseeding
 

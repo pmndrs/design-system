@@ -25,7 +25,9 @@ import type { MtbConfig } from 'material-theme-builder'
  * ```
  *
  * `blend: true` harmonizes them against the seed above, so they stay yours and
- * still belong to the pmndrs palette. Then name them in the `@plugin` line this
+ * still belong to the pmndrs palette. That `customColors` replaces the two
+ * shipped below; spread `...pmndrsMtb.customColors` into it to keep them.
+ * Then name them in the `@plugin` line this
  * item added to your CSS. It is installed in statement form
  * (`@plugin '...';`); give it a body — that is all the wiring there is:
  *
@@ -44,4 +46,16 @@ export const pmndrsMtb = {
   source: process.env.THEME_PRIMARY || '#323e48',
   scheme: (process.env.THEME_SCHEME || 'tonalSpot') as MtbConfig['scheme'],
   contrast: Number(process.env.THEME_CONTRAST) || 0,
+  /**
+   * Two placeholders, there to show the mechanism end to end rather than to be
+   * used: one blended toward the seed, one kept true to its hex. The bake
+   * computes their four roles into the registry, and the docs' custom-colours
+   * table lists them. Replace them with real ones — editing *this* file is the
+   * pmndrs maintainers' move; a consumer still spreads `pmndrsMtb` and adds
+   * their own, as above.
+   */
+  customColors: [
+    { name: 'brand', hex: '#ff2d95', blend: true },
+    { name: 'status', hex: '#17b26a', blend: false },
+  ],
 } satisfies MtbConfig

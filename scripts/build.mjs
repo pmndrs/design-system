@@ -77,6 +77,13 @@ const items = [
      *
      * It is also where a consumer names custom colours, which is why the docs
      * point at this line — see `registry/md3-base/md3.ts`.
+     *
+     * The seed's own `customColors` cannot be named here, though. shadcn's
+     * `update-css` has a dedicated `@plugin` branch that reads the key and
+     * never the value (checked on 4.18: it writes `@plugin "…";` whatever
+     * object sits under it), so a `{ 'custom-colors': 'brand, status' }` body
+     * would be silently dropped. The roles still land in `md3`'s bake; the body
+     * that turns them into utilities is in `docs.md`, for the consumer to add.
      */
     css: {
       "@plugin 'material-theme-builder/tailwind'": {},

@@ -31,6 +31,9 @@ jobs:
       theme_primary: '#323e48'
       theme_scheme: 'tonalSpot'
       theme_contrast: '0'
+      # The custom colours of the seed, so `<Color role="brand">` is a role of
+      # the site's theme too: same values as `customColors` in md3.ts.
+      theme_custom_colors: 'brand:#ff2d95:blend,status:#17b26a'
 
   deploy:
     needs: build

@@ -84,7 +84,8 @@ npm run lgtm    # outputs are current and valid, preset code round-trips
 ```
 
 Docs live in `docs/` ([pmndrs/docs](https://github.com/pmndrs/docs)), deployed to
-GitHub Pages on push to `main`. Preview them on http://localhost:3000:
+GitHub Pages on push to `main`, and to Vercel as well (a preview per pull request,
+which the sidebar's version switcher links to). Preview them on http://localhost:3000:
 
 ```sh
 curl -sL https://raw.githubusercontent.com/pmndrs/docs/refs/heads/main/preview.sh | MDX=docs NEXT_PUBLIC_LIBNAME=design-system sh

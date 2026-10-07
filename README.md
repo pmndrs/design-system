@@ -79,6 +79,13 @@ Never hardcode a font family (`font-sans` / `font-mono`). Icons come from
 
 ```sh
 npm install
-npm run build   # regenerate registry.json + figma/*.tokens.json
+npm run build   # regenerate registry.json, figma/*.tokens.json, the docs palette
 npm run lgtm    # outputs are current and valid, preset code round-trips
+```
+
+Docs live in `docs/` ([pmndrs/docs](https://github.com/pmndrs/docs)), deployed to
+GitHub Pages on push to `main`. Preview them on http://localhost:3000:
+
+```sh
+curl -sL https://raw.githubusercontent.com/pmndrs/docs/refs/heads/main/preview.sh | MDX=docs NEXT_PUBLIC_LIBNAME=design-system sh
 ```

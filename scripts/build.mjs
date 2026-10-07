@@ -103,7 +103,12 @@ const registryUrl = new URL('../registry.json', import.meta.url)
  * wrong ref would send someone to the wrong tag; the changeset markdown is
  * history and stays as written.
  */
-const docs = ['../README.md', '../.changeset/README.md']
+const docs = [
+  '../README.md',
+  '../.changeset/README.md',
+  '../docs/getting-started/introduction.mdx',
+  '../docs/color-system/introduction.mdx',
+]
 const installRef = /pmndrs\/design-system\/(md3|md3-base)#v\d+\.\d+\.\d+/g
 
 /**
@@ -198,9 +203,150 @@ const root = new URL('../', import.meta.url)
  * implementation of the comparison to keep in step.
  */
 export const outputs = [[registryUrl, JSON.stringify(built, null, 2) + '\n']]
+
+/**
+ * The colour-system docs page shows the palette this registry ships, not the
+ * docs site's own theme. The site's `<Color>` swatches read `--md-sys-color-*`
+ * from the nearest ancestor, so the page scopes the baked roles to its posters
+ * (`.ds-palette`) and the site's `THEME_*` inputs stop mattering — they could
+ * not carry a `neutral` seed or a custom colour anyway.
+ *
+ * The seeds and the custom colours are read off the same config as the
+ * palette, so a reseed — a new `source`, a `customColors` entry — reaches the
+ * page with `npm run build` and nothing written by hand; `build.test.mjs` fails
+ * until it has run. Each `{/* build:<name> *\/}` … `{/* /build:<name> *\/}`
+ * region of a doc is replaced whole, prose around it is left alone.
+ */
+const regions = {
+  seeds: mdxSeeds,
+  'custom-colors': mdxCustomColors,
+  palette: mdxPalette,
+}
+
+function fillRegions(source) {
+  return Object.entries(regions).reduce((text, [name, render]) => {
+    const region = new RegExp(`(\\{/\\* build:${name} \\*/\\})[\\s\\S]*?(\\{/\\* /build:${name} \\*/\\})`)
+    return text.replace(region, (_, open, close) => `${open}\n${render()}\n${close}`)
+  }, source)
+}
+
+const isHex = (value) => typeof value === 'string' && /^#[0-9a-f]{3,8}$/i.test(value)
+
+/**
+ * Every option of the seed but `customColors`, one row each: a disc for a
+ * colour, the value as code for the rest (`scheme`, `contrast`, `colorMatch`…).
+ */
+function mdxSeeds() {
+  const rows = Object.entries(pmndrsMtb)
+    .filter(([name]) => name !== 'customColors')
+    .map(([name, value]) => {
+      const swatch = isHex(value) ? `<Color color="${value}" /> ` : ''
+      return `| \`${name}\` | ${swatch}\`${typeof value === 'string' ? value : JSON.stringify(value)}\` |`
+    })
+
+  return ['| Option | Value |', '| --- | --- |', ...rows].join('\n')
+}
+
+/**
+ * The custom colours: their seeds in a table, and the four roles of each as a
+ * row of Material's poster. The `on-` roles are cells rather than strips, as on
+ * material-theme-builder's own poster of custom colours.
+ *
+ * The poster is wrapped in the same Light / Dark tabs as the hand-written ones
+ * of the page, so the three switch together (`syncKey`).
+ */
+function mdxCustomColors() {
+  const colors = pmndrsMtb.customColors ?? []
+  if (!colors.length) return '_None yet._'
+
+  const table = [
+    '| Name | Seed | Blend |',
+    '| --- | --- | --- |',
+    ...colors.map(
+      ({ name, hex, blend }) => `| \`${name}\` | <Color color="${hex}" /> \`${hex}\` | ${blend ? 'yes' : 'no'} |`
+    ),
+  ]
+
+  const rows = colors.map(({ name }) =>
+    [
+      '          <ColorGroup>',
+      `            <Color role="${name}" variant="cell" />`,
+      `            <Color role="on-${name}" variant="cell" />`,
+      `            <Color role="${name}-container" variant="cell" />`,
+      `            <Color role="on-${name}-container" variant="cell" />`,
+      '          </ColorGroup>',
+    ].join('\n')
+  )
+
+  return [
+    ...table,
+    '',
+    '<Tabs defaultValue="light" syncKey="scheme">',
+    '  <TabsList>',
+    '    <TabsTrigger value="light">Light</TabsTrigger>',
+    '    <TabsTrigger value="dark">Dark</TabsTrigger>',
+    '  </TabsList>',
+    "  {['light', 'dark'].map((scheme) => (",
+    '    <TabsContent key={scheme} value={scheme}>',
+    '      <div className="ds-palette my-8 rounded-lg bg-[var(--md-sys-color-surface)] p-4" data-scheme={scheme}>',
+    '        <ColorGroup orientation="vertical">',
+    ...rows,
+    '        </ColorGroup>',
+    '      </div>',
+    '    </TabsContent>',
+    '  ))}',
+    '</Tabs>',
+  ].join('\n')
+}
+
+/**
+ * The `--md-sys-color-*` roles of the bake, light and dark, scoped to the
+ * page's posters. Only the sys roles, and as hex: the bake aliases each onto a
+ * tonal shade (`var(--md-ref-palette-primary-40)`), and left as such it would
+ * resolve against the docs site's own shades, the one palette this page must
+ * not show. The shades are scheme-independent, so `.dark` resolves against the
+ * same `:root` ones.
+ *
+ * One block per scheme, keyed on the poster's `data-scheme` rather than the
+ * site's `.dark` class: each poster is shown in both, side by side in tabs,
+ * whatever scheme the site is in. The two posters are siblings, not nested, so
+ * the dark block restates every role, not only what `.dark` carries over
+ * `:root` in the bake.
+ *
+ * Wrapped in a `<div>` on purpose: the docs site makes every direct child of a
+ * page `display: block`, which on a bare `<style>` would print the CSS as text.
+ */
+function mdxPalette() {
+  const shades = palette[':root']
+  const resolve = (value) => {
+    const alias = value.match(/^var\((--md-ref-palette-[\w-]+)\)$/)
+    if (!alias) return value
+    if (!shades[alias[1]]) throw new Error(`${value} points at no shade of the bake`)
+    return resolve(shades[alias[1]])
+  }
+
+  const declarations = (block) =>
+    Object.entries(block)
+      .filter(([name]) => name.startsWith('--md-sys-color-'))
+      .map(([name, value]) => `  ${name}: ${resolve(value)};`)
+      .join('\n')
+
+  const css = [
+    '.ds-palette[data-scheme="light"] {',
+    declarations(palette[':root']),
+    '}',
+    '.ds-palette[data-scheme="dark"] {',
+    declarations({ ...palette[':root'], ...palette['.dark'] }),
+    '}',
+  ].join('\n')
+
+  return ['<div>', '  <style>{`', css, '`}</style>', '</div>'].join('\n')
+}
+
 for (const doc of docs) {
   const url = new URL(doc, import.meta.url)
-  outputs.push([url, readFileSync(url, 'utf8').replace(installRef, `pmndrs/design-system/$1#${version}`)])
+  const current = readFileSync(url, 'utf8').replace(installRef, `pmndrs/design-system/$1#${version}`)
+  outputs.push([url, fillRegions(current)])
 }
 
 /**

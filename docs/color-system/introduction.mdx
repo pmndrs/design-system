@@ -1,0 +1,310 @@
+---
+title: Color system
+description: A few seeds, the Material Design 3 roles computed from them, and shadcn's tokens pointed at those roles.
+sourcecode: registry/md3-base/md3.ts
+nav: 1
+---
+
+{/*
+  The swatches on this page show the palette the registry ships, not this site's
+  own theme: every `build:*` region below is written by `scripts/build.mjs` from
+  `registry/md3-base/md3.ts`. To change a colour, change the seed there and run
+  `npm run build` — never edit a region by hand, `npm test` fails until it is
+  regenerated. The prose outside the regions is yours.
+*/}
+
+<Intro>
+  No colour is picked by hand. A few seeds go in, and
+  [Material Design 3](https://m3.material.io/styles/color/system/overview) computes every role
+  from them, for light and dark alike. shadcn's tokens are then pointed at those roles.
+</Intro>
+
+Every poster below comes in both schemes: its Light / Dark tabs switch them all together,
+whatever the scheme of this site.
+
+## Seeds
+
+Everything on this page derives from these, in
+[`md3.ts`](https://github.com/pmndrs/design-system/blob/main/registry/md3-base/md3.ts):
+
+{/* build:seeds */}
+| Option | Value |
+| --- | --- |
+| `source` | <Color color="#323e48" /> `#323e48` |
+| `scheme` | `tonalSpot` |
+| `contrast` | `0` |
+{/* /build:seeds */}
+
+## Poster
+
+Material's [scheme poster](https://m3.material.io/styles/color/roles) of the palette: each
+role, and on it the role meant to go on it. Every one is a Tailwind colour, `bg-<role>` /
+`text-<role>`.
+
+<Tabs defaultValue="light" syncKey="scheme">
+  <TabsList>
+    <TabsTrigger value="light">Light</TabsTrigger>
+    <TabsTrigger value="dark">Dark</TabsTrigger>
+  </TabsList>
+  {['light', 'dark'].map((scheme) => (
+    <TabsContent key={scheme} value={scheme}>
+      <div className="ds-palette my-8 rounded-lg bg-[var(--md-sys-color-surface)] p-4" data-scheme={scheme}>
+        <div className="grid! grid-cols-[3fr_1fr] gap-2">
+          <ColorGroup>
+            {['primary', 'secondary', 'tertiary'].map((role) => (
+              <ColorGroup key={role} orientation="vertical">
+                <Color role={role} variant="cell" />
+                <Color role={`on-${role}`} variant="on" />
+                <Color role={`${role}-container`} variant="cell" />
+                <Color role={`on-${role}-container`} variant="on" />
+              </ColorGroup>
+            ))}
+          </ColorGroup>
+          <ColorGroup orientation="vertical">
+            <Color role="error" variant="cell" />
+            <Color role="on-error" variant="on" />
+            <Color role="error-container" variant="cell" />
+            <Color role="on-error-container" variant="on" />
+          </ColorGroup>
+          <ColorGroup>
+            {['primary', 'secondary', 'tertiary'].map((role) => (
+              <ColorGroup key={role} orientation="vertical">
+                <ColorGroup>
+                  <Color role={`${role}-fixed`} variant="cell" />
+                  <Color role={`${role}-fixed-dim`} variant="cell" />
+                </ColorGroup>
+                <Color role={`on-${role}-fixed`} variant="on" />
+                <Color role={`on-${role}-fixed-variant`} variant="on" />
+              </ColorGroup>
+            ))}
+          </ColorGroup>
+          <div />
+          <ColorGroup orientation="vertical">
+            <ColorGroup>
+              <Color role="surface-dim" variant="cell" />
+              <Color role="surface" variant="cell" />
+              <Color role="surface-bright" variant="cell" />
+            </ColorGroup>
+            <ColorGroup>
+              <Color role="surface-container-lowest" variant="cell" />
+              <Color role="surface-container-low" variant="cell" />
+              <Color role="surface-container" variant="cell" />
+              <Color role="surface-container-high" variant="cell" />
+              <Color role="surface-container-highest" variant="cell" />
+            </ColorGroup>
+            <ColorGroup>
+              <Color role="on-surface" variant="on" />
+              <Color role="on-surface-variant" variant="on" />
+              <Color role="outline" variant="on" />
+              <Color role="outline-variant" variant="on" />
+            </ColorGroup>
+          </ColorGroup>
+          <ColorGroup orientation="vertical">
+            <Color role="inverse-surface" variant="cell" />
+            <Color role="inverse-on-surface" variant="on" />
+            <Color role="inverse-primary" variant="on" />
+            <ColorGroup>
+              <Color role="scrim" variant="on" />
+              <Color role="shadow" variant="on" />
+            </ColorGroup>
+          </ColorGroup>
+        </div>
+      </div>
+    </TabsContent>
+  ))}
+</Tabs>
+
+## shadcn tokens
+
+shadcn's tokens keep their names: `bg-background`, `text-primary`, `border-border`… all work as
+usual. Each one is pointed at an MD3 role, the same poster with shadcn's names on it:
+
+<Tabs defaultValue="light" syncKey="scheme">
+  <TabsList>
+    <TabsTrigger value="light">Light</TabsTrigger>
+    <TabsTrigger value="dark">Dark</TabsTrigger>
+  </TabsList>
+  {['light', 'dark'].map((scheme) => (
+    <TabsContent key={scheme} value={scheme}>
+      <div className="ds-palette my-8 rounded-lg bg-[var(--md-sys-color-surface)] p-4" data-scheme={scheme}>
+        <div className="grid! grid-cols-[3fr_1fr] gap-2">
+          <ColorGroup>
+            <ColorGroup orientation="vertical">
+              <Color role="primary" variant="cell">primary · ring</Color>
+              <Color role="on-primary" variant="on">primary-foreground</Color>
+            </ColorGroup>
+            <ColorGroup orientation="vertical">
+              <Color role="secondary-container" variant="cell">secondary · accent</Color>
+              <Color role="on-secondary-container" variant="on">secondary-foreground · accent-foreground</Color>
+            </ColorGroup>
+          </ColorGroup>
+          <ColorGroup orientation="vertical">
+            <Color role="error" variant="cell">destructive</Color>
+          </ColorGroup>
+          <ColorGroup orientation="vertical">
+            <ColorGroup>
+              <Color role="surface" variant="cell">background</Color>
+              <Color role="surface-container-low" variant="cell">card · sidebar</Color>
+              <Color role="surface-container-high" variant="cell">popover</Color>
+              <Color role="surface-container-highest" variant="cell">muted</Color>
+            </ColorGroup>
+            <ColorGroup>
+              <Color role="on-surface" variant="on">foreground</Color>
+              <Color role="on-surface-variant" variant="on">muted-foreground</Color>
+              <Color role="outline" variant="on">input</Color>
+              <Color role="outline-variant" variant="on">border</Color>
+            </ColorGroup>
+          </ColorGroup>
+          <div />
+          <ColorGroup>
+            <Color role="primary-fixed" variant="cell">chart-1</Color>
+            <Color role="secondary-fixed" variant="cell">chart-2</Color>
+            <Color role="tertiary-fixed" variant="cell">chart-3</Color>
+            <Color role="primary-fixed-dim" variant="cell">chart-4</Color>
+            <Color role="secondary-fixed-dim" variant="cell">chart-5</Color>
+          </ColorGroup>
+        </div>
+      </div>
+    </TabsContent>
+  ))}
+</Tabs>
+
+The `sidebar-*` tokens follow their counterparts: `sidebar-primary` is `primary`,
+`sidebar-accent` is `accent`, `sidebar-border` is `border`, `sidebar-ring` is `ring`.
+
+Everything shadcn has no name for is there too, under its MD3 name: `bg-surface-dim`,
+`bg-tertiary-container`, `text-on-surface-variant`…
+
+## Custom colours
+
+Colours Material has no role for — a brand palette, status levels — are declared next to the
+seeds, as `customColors`. Each one becomes four roles, `<name>`, `on-<name>`,
+`<name>-container` and `on-<name>-container`, computed for light and dark like the others, plus
+eleven shades, `<name>-50` … `<name>-950`. `blend` harmonizes it toward the `source` seed;
+without it the colour stays true to its hex.
+
+{/* build:custom-colors */}
+_None yet._
+{/* /build:custom-colors */}
+
+## Reseeding
+
+The palette is computed, never written by hand: change the seeds in
+[`md3.ts`](https://github.com/pmndrs/design-system/blob/main/registry/md3-base/md3.ts), run
+`npm run build`, and every swatch on this page follows, with the baked CSS of the registry and
+the [Figma tokens](https://github.com/pmndrs/design-system/tree/main/figma).
+
+For a palette of your own, install `md3-base` instead of `md3` and emit the roles from your seeds:
+
+```sh
+npx shadcn@latest add pmndrs/design-system/md3-base#v0.4.0
+```
+
+{/* build:palette */}
+<div>
+  <style>{`
+.ds-palette[data-scheme="light"] {
+  --md-sys-color-background: #f7f9ff;
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-inverse-on-surface: #eef1f6;
+  --md-sys-color-inverse-primary: #95cdf7;
+  --md-sys-color-inverse-surface: #2d3135;
+  --md-sys-color-on-background: #181c20;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-on-error-container: #93000a;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-on-primary-container: #004b6f;
+  --md-sys-color-on-primary-fixed: #001e2f;
+  --md-sys-color-on-primary-fixed-variant: #004b6f;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-on-secondary-container: #384956;
+  --md-sys-color-on-secondary-fixed: #0c1d29;
+  --md-sys-color-on-secondary-fixed-variant: #384956;
+  --md-sys-color-on-surface: #181c20;
+  --md-sys-color-on-surface-variant: #41474d;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-on-tertiary-container: #4c4162;
+  --md-sys-color-on-tertiary-fixed: #201634;
+  --md-sys-color-on-tertiary-fixed-variant: #4c4162;
+  --md-sys-color-outline: #72787e;
+  --md-sys-color-outline-variant: #c1c7ce;
+  --md-sys-color-primary: #266389;
+  --md-sys-color-primary-container: #c9e6ff;
+  --md-sys-color-primary-fixed: #c9e6ff;
+  --md-sys-color-primary-fixed-dim: #95cdf7;
+  --md-sys-color-scrim: #000000;
+  --md-sys-color-secondary: #50606e;
+  --md-sys-color-secondary-container: #d3e5f5;
+  --md-sys-color-secondary-fixed: #d3e5f5;
+  --md-sys-color-secondary-fixed-dim: #b7c9d9;
+  --md-sys-color-shadow: #000000;
+  --md-sys-color-surface: #f7f9ff;
+  --md-sys-color-surface-bright: #f7f9ff;
+  --md-sys-color-surface-container: #ebeef3;
+  --md-sys-color-surface-container-high: #e5e8ed;
+  --md-sys-color-surface-container-highest: #e0e3e8;
+  --md-sys-color-surface-container-low: #f1f4f9;
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-dim: #d7dadf;
+  --md-sys-color-surface-tint: #266389;
+  --md-sys-color-surface-variant: #dde3ea;
+  --md-sys-color-tertiary: #64597b;
+  --md-sys-color-tertiary-container: #eaddff;
+  --md-sys-color-tertiary-fixed: #eaddff;
+  --md-sys-color-tertiary-fixed-dim: #cfc0e8;
+}
+.ds-palette[data-scheme="dark"] {
+  --md-sys-color-background: #101417;
+  --md-sys-color-error: #ffb4ab;
+  --md-sys-color-error-container: #93000a;
+  --md-sys-color-inverse-on-surface: #2d3135;
+  --md-sys-color-inverse-primary: #266389;
+  --md-sys-color-inverse-surface: #e0e3e8;
+  --md-sys-color-on-background: #e0e3e8;
+  --md-sys-color-on-error: #690005;
+  --md-sys-color-on-error-container: #ffdad6;
+  --md-sys-color-on-primary: #00344e;
+  --md-sys-color-on-primary-container: #c9e6ff;
+  --md-sys-color-on-primary-fixed: #001e2f;
+  --md-sys-color-on-primary-fixed-variant: #004b6f;
+  --md-sys-color-on-secondary: #22323f;
+  --md-sys-color-on-secondary-container: #d3e5f5;
+  --md-sys-color-on-secondary-fixed: #0c1d29;
+  --md-sys-color-on-secondary-fixed-variant: #384956;
+  --md-sys-color-on-surface: #e0e3e8;
+  --md-sys-color-on-surface-variant: #c1c7ce;
+  --md-sys-color-on-tertiary: #352b4b;
+  --md-sys-color-on-tertiary-container: #eaddff;
+  --md-sys-color-on-tertiary-fixed: #201634;
+  --md-sys-color-on-tertiary-fixed-variant: #4c4162;
+  --md-sys-color-outline: #8b9198;
+  --md-sys-color-outline-variant: #41474d;
+  --md-sys-color-primary: #95cdf7;
+  --md-sys-color-primary-container: #004b6f;
+  --md-sys-color-primary-fixed: #c9e6ff;
+  --md-sys-color-primary-fixed-dim: #95cdf7;
+  --md-sys-color-scrim: #000000;
+  --md-sys-color-secondary: #b7c9d9;
+  --md-sys-color-secondary-container: #384956;
+  --md-sys-color-secondary-fixed: #d3e5f5;
+  --md-sys-color-secondary-fixed-dim: #b7c9d9;
+  --md-sys-color-shadow: #000000;
+  --md-sys-color-surface: #101417;
+  --md-sys-color-surface-bright: #363a3e;
+  --md-sys-color-surface-container: #1c2024;
+  --md-sys-color-surface-container-high: #262a2e;
+  --md-sys-color-surface-container-highest: #313539;
+  --md-sys-color-surface-container-low: #181c20;
+  --md-sys-color-surface-container-lowest: #0b0f12;
+  --md-sys-color-surface-dim: #101417;
+  --md-sys-color-surface-tint: #95cdf7;
+  --md-sys-color-surface-variant: #41474d;
+  --md-sys-color-tertiary: #cfc0e8;
+  --md-sys-color-tertiary-container: #4c4162;
+  --md-sys-color-tertiary-fixed: #eaddff;
+  --md-sys-color-tertiary-fixed-dim: #cfc0e8;
+}
+`}</style>
+</div>
+{/* /build:palette */}

@@ -1,0 +1,95 @@
+---
+title: design-system
+description: The Poimandres design-system — the shared pmndrs colour layer (Material Design 3) and the poimandres shadcn preset.
+sourcecode: docs/getting-started/introduction.mdx
+nav: 0
+---
+
+<Badge href="https://github.com/pmndrs/design-system/blob/main/figma/Light.tokens.json" label="figma">light</Badge>
+<Badge href="https://github.com/pmndrs/design-system/blob/main/figma/Dark.tokens.json" label="figma">dark</Badge>
+
+<Intro>
+  A distributed design-system: nothing to install from npm. It ships as a
+  [shadcn](https://ui.shadcn.com) preset and a shadcn registry, so every pmndrs
+  app — and yours — gets the same colours, fonts and radii by copying code in,
+  not by depending on a package.
+</Intro>
+
+<Keypoints title="What you get">
+  <KeypointsItem>shadcn's tokens as the base, Material Design 3 colour roles on top</KeypointsItem>
+  <KeypointsItem>The pmndrs palette baked into the CSS: no provider, no client JavaScript</KeypointsItem>
+  <KeypointsItem>Light and dark schemes, also exported as Figma tokens</KeypointsItem>
+  <KeypointsItem>A git tag as the install address, so every app pins the version it was built against</KeypointsItem>
+</Keypoints>
+
+## Quick start
+
+Any app shadcn can init works. With a fresh Next.js one:
+
+<Steps>
+  <Step>Create the app</Step>
+
+  ```sh
+  npx create-next-app@latest my-app --ts --tailwind --app --src-dir --yes
+  cd my-app
+  ```
+
+  <Step>Init shadcn with the poimandres preset</Step>
+
+  ```sh
+  npx shadcn@latest init --preset b5cR4Y50S
+  ```
+
+  <Step>Add a pmndrs block</Step>
+
+  Blocks depend on the colour layer, so adding one pulls it in with it:
+
+  ```sh
+  npx shadcn@latest add pmndrs/docs/keypoints#ds
+  ```
+
+  <Step>Use it</Step>
+
+  ```tsx title="src/app/page.tsx"
+  import { Keypoints, KeypointsItem } from "@/components/keypoints"
+
+  export default function Home() {
+    return (
+      <main className="bg-background text-foreground min-h-screen p-10">
+        <Keypoints title="Hello">
+          <KeypointsItem>The panel sits on bg-surface-dim, an MD3 role shadcn has none for</KeypointsItem>
+        </Keypoints>
+      </main>
+    )
+  }
+  ```
+</Steps>
+
+Add the `dark` class to `<html>` for the dark scheme.
+
+> [!TIP]
+> No block in mind? Add the colour layer on its own:
+>
+> ```sh
+> npx shadcn@latest add pmndrs/design-system/md3#v0.4.0
+> ```
+
+## Tokens
+
+[shadcn's tokens](https://ui.shadcn.com/docs/theming) are the base — `bg-background`,
+`text-primary`, `border-border`… keep working as usual.
+
+Material Design 3's [colour roles](https://m3.material.io/styles/color/roles) are
+additive: every `--md-sys-color-*` role becomes a Tailwind colour, for what shadcn
+has no name for (`bg-surface-dim`, `text-on-surface-variant`,
+`bg-tertiary-container`…).
+
+## Registry items
+
+| item                                | what it is                                                                |
+| ----------------------------------- | ------------------------------------------------------------------------- |
+| `pmndrs/design-system/md3`          | The colour layer with the pmndrs palette baked in. **Depend on this one.** |
+| `pmndrs/design-system/md3-base`     | Same plumbing, no palette — to reseed with your own colour.               |
+
+Always pin a ref (`#v0.4.0`): an unpinned address follows `main` and changes under
+you.

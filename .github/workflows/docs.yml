@@ -14,6 +14,9 @@ concurrency:
 
 jobs:
   build:
+    # Not for a pull request from a fork (head in another repository): its token is read-only
+    # and it sees no secrets, so Pages cannot be turned on and nothing could be deployed anyway.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     # `configure-pages` runs with `enablement: true`, which turns Pages on at the
     # first run — that needs `pages: write` on the build job too.
     permissions:

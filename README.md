@@ -79,7 +79,7 @@ Never hardcode a font family (`font-sans` / `font-mono`). Icons come from
 
 ```sh
 npm install
-npm run build   # regenerate registry.json, figma/*.tokens.json, the docs palette
+npm run build   # regenerate registry.json + figma/*.tokens.json
 npm run lgtm    # outputs are current and valid, preset code round-trips
 ```
 

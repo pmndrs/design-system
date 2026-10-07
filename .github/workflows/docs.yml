@@ -26,6 +26,11 @@ jobs:
       icon: '🧱'
       tag_match: 'v*.*.*'
       github: 'https://github.com/pmndrs/design-system'
+      # The swatches of docs/color-system are the site's own theme: keep these
+      # on the seed of registry/md3-base/md3.ts.
+      theme_primary: '#323e48'
+      theme_scheme: 'tonalSpot'
+      theme_contrast: '0'
 
   deploy:
     needs: build

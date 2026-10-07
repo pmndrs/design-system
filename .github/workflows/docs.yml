@@ -114,12 +114,20 @@ jobs:
           # Vercel serves the static root at `/`.
           mkdir -p ".vercel/output/static$BASE_PATH"
           tar -xf artifact.tar -C ".vercel/output/static$BASE_PATH"
-          # `cleanUrls`: the website exports flat `<name>.html` pages and links to them without
-          # the extension, which Pages resolves on its own. The route sends the bare deployment
-          # URL -- the one Vercel prints, and the one anyone trims to -- to the home page, which
-          # sits under the base path rather than at `/`.
-          printf '{"version":3,"cleanUrls":true,"routes":[{"src":"/","status":308,"headers":{"Location":"%s"}}]}' \
-            "$BASE_PATH" > .vercel/output/config.json
+          # The website exports flat `<name>.html` pages and links to them without the extension,
+          # which Pages resolves on its own. Vercel does not, even with `cleanUrls`: each page has
+          # a sibling `<name>/` folder (its RSC payloads), and in the filesystem phase that folder
+          # wins the lookup, with no index to serve. So, once the filesystem has had its turn (real
+          # files -- assets, `.txt`, `.md` -- are served as they are), an extensionless path under
+          # the base path is rewritten to its `.html`, and `check` sends it back through the
+          # filesystem. `cleanUrls` stays for the other direction: `<name>.html` redirects to
+          # `<name>`. The first route sends the bare deployment URL -- the one Vercel prints, and
+          # the one anyone trims to -- to the home page, which sits under the base path.
+          # https://vercel.com/docs/build-output-api/configuration#routes
+          #
+          # shellcheck disable=SC2016 # `$1` is the route's capture, not the shell's
+          printf '{"version":3,"cleanUrls":true,"routes":[{"src":"^/$","status":308,"headers":{"Location":"%s"}},{"handle":"filesystem"},{"src":"^%s/(.+?)/?$","dest":"%s/$1.html","check":true}]}' \
+            "$BASE_PATH" "$BASE_PATH" "$BASE_PATH" > .vercel/output/config.json
           # `--archive`: one tarball, not one upload per file
           url=$(npx -y vercel deploy --prebuilt --archive=tgz --token="$VERCEL_TOKEN" \
             --target="$([ "$PRODUCTION" = 'true' ] && echo production || echo preview)")

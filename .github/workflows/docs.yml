@@ -109,8 +109,11 @@ jobs:
       - id: vercel-deploy
         if: env.VERCEL == 'true'
         run: |
-          mkdir -p .vercel/output/static
-          tar -xf artifact.tar -C .vercel/output/static
+          # Under the base path, not at the static root: that is where the site was built to
+          # live, and where Pages serves it from (a project site is mapped to its repo name);
+          # Vercel serves the static root at `/`.
+          mkdir -p ".vercel/output/static$BASE_PATH"
+          tar -xf artifact.tar -C ".vercel/output/static$BASE_PATH"
           # `cleanUrls`: the website exports flat `<name>.html` pages and links to them without
           # the extension, which Pages resolves on its own. The route sends the bare deployment
           # URL -- the one Vercel prints, and the one anyone trims to -- to the home page, which

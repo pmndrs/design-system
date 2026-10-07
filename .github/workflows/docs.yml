@@ -134,13 +134,19 @@ jobs:
       # can reach from it is not a preview. (A branch name too long for a 63-character hostname
       # label is the one way this fails on its own: rename the branch.)
       #
-      # No `--scope`: the team comes from `VERCEL_ORG_ID`, the way the deploy above links. A
-      # `--scope` makes the CLI look the user up to resolve it, and a project-scoped token has
-      # no user to show -- `User not found (404)`.
+      # The REST API rather than `vercel alias set`, which pmndrs/docs uses: the CLI starts
+      # that command by looking the user up (with or without `--scope`), and `VERCEL_TOKEN` is
+      # scoped to the project, with no user to show -- `User not found (404)`. The API takes the
+      # token as it is, the deployment by its URL, and the team from `teamId`.
+      # https://vercel.com/docs/rest-api/reference/endpoints/aliases/assign-an-alias
       - name: Alias the preview to its branch URL
         if: env.VERCEL == 'true' && env.PRODUCTION != 'true'
         run: |
           slug=$(printf '%s' "$GIT_BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')
-          npx -y vercel alias set "${{ steps.vercel-deploy.outputs.url }}" \
-            "design-system-git-$slug-pmndrs.vercel.app" \
-            --token="$VERCEL_TOKEN"
+          curl --fail-with-body --silent --show-error -X POST \
+            "https://api.vercel.com/v2/deployments/${DEPLOYMENT#https://}/aliases?teamId=$VERCEL_ORG_ID" \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"alias\":\"design-system-git-$slug-pmndrs.vercel.app\"}"
+        env:
+          DEPLOYMENT: ${{ steps.vercel-deploy.outputs.url }}

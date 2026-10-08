@@ -38,7 +38,7 @@ Add `dark` to `<html>` for the dark scheme.
 ## Registry items
 
 Every item, this repo's and the other pmndrs repos', with its install command:
-[the registry catalog](https://pmndrs.github.io/design-system/getting-started/registry).
+[the registry catalog](https://pmndrs.github.io/design-system/getting-started/introduction#registry-items).
 
 ## Reseeding (optional)
 

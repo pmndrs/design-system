@@ -21,8 +21,8 @@
  * is generated here for the same reason: one seed, or designers and engineers
  * drift.
  *
- * `docs/getting-started/registry.mdx` lists these items next to the other pmndrs
- * repos' — generated here so its install refs follow the version too; how the
+ * The getting-started page lists these items next to the other pmndrs repos' —
+ * a catalog generated here so its install refs follow the version too; how the
  * other repos' get in is `catalog.mjs`'s story.
  *
  * Asserting the committed files are current is `build.test.mjs`'s job — it reads
@@ -33,7 +33,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { builder } from 'material-theme-builder'
 import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
-import { externalUrl, pageUrl, renderCatalog, spliceCatalog } from './catalog.mjs'
+import { externalUrl, outsideCatalog, pageUrl, writeCatalog } from './catalog.mjs'
 
 /**
  * Refs are not inherited, so a cross-item dependency carries its own — and it
@@ -115,16 +115,16 @@ const registryUrl = new URL('../registry.json', import.meta.url)
  * wrong ref would send someone to the wrong tag: the READMEs, and every page of
  * the docs site. The changeset markdown is history and stays as written.
  *
- * The registry catalog page is the exception: it is generated whole below, and
- * the refs it quotes from other repos' items are theirs to bump, not this
- * build's.
+ * The registry catalog on the getting-started page is the exception: it is
+ * generated below, and the refs it quotes from other repos' items are theirs to
+ * bump, not this build's — so the rewrite skips it, and the prose around it is
+ * rewritten like any other page's.
  */
 const docsDir = new URL('../docs/', import.meta.url)
 const docPages = readdirSync(docsDir, { recursive: true })
   .filter((path) => path.endsWith('.mdx'))
   .sort()
   .map((path) => new URL(path, docsDir))
-  .filter((url) => url.href !== pageUrl.href)
 const docs = [new URL('../README.md', import.meta.url), new URL('../.changeset/README.md', import.meta.url), ...docPages]
 
 /**
@@ -227,9 +227,6 @@ const root = new URL('../', import.meta.url)
  * implementation of the comparison to keep in step.
  */
 export const outputs = [[registryUrl, JSON.stringify(built, null, 2) + '\n']]
-for (const url of docs) {
-  outputs.push([url, readFileSync(url, 'utf8').replace(installRef, `pmndrs/design-system/$1#${version}`)])
-}
 
 /**
  * The catalog of every pmndrs registry item, this repo's first — see
@@ -238,8 +235,18 @@ for (const url of docs) {
  * snapshot, so the build never touches the network.
  */
 const external = JSON.parse(readFileSync(externalUrl, 'utf8'))
-const catalog = renderCatalog([{ repo: 'pmndrs/design-system', ref: version, items: built.items }, ...external])
-outputs.push([pageUrl, spliceCatalog(readFileSync(pageUrl, 'utf8'), catalog)])
+const registries = [{ repo: 'pmndrs/design-system', ref: version, items: built.items }, ...external]
+
+const bumpInstallRefs = (text) => text.replace(installRef, `pmndrs/design-system/$1#${version}`)
+
+// Two independent writes to the catalog page — the refs outside its markers,
+// the catalog inside — so their order does not matter, and a second build
+// finds both current.
+for (const url of docs) {
+  let page = outsideCatalog(readFileSync(url, 'utf8'), bumpInstallRefs)
+  if (url.href === pageUrl.href) page = writeCatalog(page, registries)
+  outputs.push([url, page])
+}
 
 /**
  * The palette as DTCG tokens: `Light` and `Dark` become two modes of one Figma

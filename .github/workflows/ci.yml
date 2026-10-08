@@ -64,10 +64,29 @@ jobs:
 
       # `changeset publish` creates the tag, but changesets/action pushes tags
       # only when it sees packages published to npm. This one is private and
-      # publishes nothing, so the tag died with the runner every time and all
-      # four so far were pushed by hand — while the install address a consumer
+      # publishes nothing, so the tag died with the runner every time and the
+      # first ones were pushed by hand — while the install address a consumer
       # pins (`md3#v0.4.0`) is exactly that tag. Push it here.
-      #
-      # `createGithubReleases` came off with it: it is gated on the same signal,
-      # so it never fired either. CHANGELOG.md is the release notes.
       - run: git push origin --tags
+
+      # `createGithubReleases` is gated on the same signal, so changesets/action
+      # never creates a release either. Create it here, with the version's
+      # CHANGELOG.md section as its notes — changesets already wrote them.
+      #
+      # Every push to main runs this, and only the version-PR merge brings a new
+      # tag: any other run finds the current version already released, or not
+      # tagged yet, and does nothing.
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          tag="v$version"
+          if ! git rev-parse --quiet --verify "refs/tags/$tag" > /dev/null; then
+            echo "$tag is not tagged, nothing to release"
+          elif gh release view "$tag" > /dev/null 2>&1; then
+            echo "$tag is already released"
+          else
+            node scripts/release-notes.mjs "$version" > "$RUNNER_TEMP/release-notes.md"
+            gh release create "$tag" --verify-tag --title "$tag" --notes-file "$RUNNER_TEMP/release-notes.md"
+          fi

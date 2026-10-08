@@ -2,7 +2,7 @@
  * Generates `registry.json`.
  *
  * `registry.json` is what GitHub-based resolution reads, so it has to be
- * committed — but 252 of its lines are a computed palette, and the rest is
+ * committed — but most of its lines are a computed palette, and the rest is
  * item metadata plus two long `docs` strings. Written by hand, all three were
  * worse for sharing a file: the metadata was buried, the docs were single-line
  * escaped JSON, and the palette could be edited out of sync with the seed it
@@ -15,25 +15,30 @@
  *   registry/md3-base/md3.ts    the seed the palette is computed from
  *
  * The palette itself is never stored anywhere but the output. Change the seed,
- * run this, and the 252 declarations follow.
+ * run this, and every declaration follows.
  *
  * `figma/*.tokens.json` is the same palette for the other half of the team, and
  * is generated here for the same reason: one seed, or designers and engineers
  * drift.
  *
+ * The getting-started page lists these items next to the other pmndrs repos' —
+ * a catalog generated here so its install refs follow the version too; how the
+ * other repos' get in is `catalog.mjs`'s story.
+ *
  * Asserting the committed files are current is `build.test.mjs`'s job — it reads
  * the `outputs` exported here, so a seed change that skipped the rebuild fails
  * rather than shipping, and the check cannot drift from what this writes.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { builder } from 'material-theme-builder'
 import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
+import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
 
 /**
  * Refs are not inherited, so a cross-item dependency carries its own — and it
  * has to be *this* version, not a frozen one. Derived from package.json so the
- * changesets bump reaches it; `npm run version` rebuilds, and `check-build`
+ * changesets bump reaches it; `pnpm run version` rebuilds, and `check-build`
  * fails if it didn't.
  */
 const version = `v${pkg.version}`
@@ -56,7 +61,7 @@ const items = [
     description:
       "The MD3 colour layer without any colours: the package's Tailwind plugin, its shadcn remap, and the pmndrs seed. Install this only if you compute the palette yourself — otherwise install `md3`, which supplies one.",
     author: 'pmndrs',
-    dependencies: ['material-theme-builder@^5.0.0'],
+    dependencies: ['material-theme-builder@^5.2.0'],
     files: [{ path: 'registry/md3-base/md3.ts', type: 'registry:lib' }],
     /**
      * Two lines the package answers for, rather than copies of what it ships.
@@ -77,6 +82,13 @@ const items = [
      *
      * It is also where a consumer names custom colours, which is why the docs
      * point at this line — see `registry/md3-base/md3.ts`.
+     *
+     * The seed's own `customColors` cannot be named here, though. shadcn's
+     * `update-css` has a dedicated `@plugin` branch that reads the key and
+     * never the value (checked on 4.18: it writes `@plugin "…";` whatever
+     * object sits under it), so a `{ 'custom-colors': 'lime, teal, …' }` body
+     * would be silently dropped. The roles still land in `md3`'s bake; the body
+     * that turns them into utilities is in `docs.md`, for the consumer to add.
      */
     css: {
       "@plugin 'material-theme-builder/tailwind'": {},
@@ -100,28 +112,39 @@ const registryUrl = new URL('../registry.json', import.meta.url)
 /**
  * Files that quote an install address, which is a version — so they go stale on
  * every release unless something rewrites them. These are the ones where a wrong
- * ref would send someone to the wrong tag; the changeset markdown is history and
- * stays as written.
+ * ref would send someone to the wrong tag: the READMEs, and every page of the
+ * docs site. The changeset markdown is history and stays as written.
  *
  * `examples/block` is not prose but a fixture, and is here for the same reason
  * inverted: it stands in for a block published by another repo, so it has to
  * keep quoting the address such a repo would quote. Its consumer redirects that
  * address at the working tree, which only works while it is one we recognise.
  */
-const pinned = ['../README.md', '../.changeset/README.md', '../examples/block/registry.json']
-const installRef = /pmndrs\/design-system\/(md3|md3-base)#v\d+\.\d+\.\d+/g
+const docsDir = new URL('../docs/', import.meta.url)
+const docPages = readdirSync(docsDir, { recursive: true })
+  .filter((path) => path.endsWith('.mdx'))
+  .sort()
+  .map((path) => new URL(path, docsDir))
+const pinned = [
+  new URL('../README.md', import.meta.url),
+  new URL('../.changeset/README.md', import.meta.url),
+  ...docPages,
+  new URL('../examples/block/registry.json', import.meta.url),
+]
+
+/**
+ * `pmndrs/design-system/<item>#v<semver>`, for this repo's items only — an
+ * address into another repo (`pmndrs/docs/…#ds`) is never touched.
+ */
+const installRef = new RegExp(`pmndrs/design-system/(${items.map(({ name }) => name).join('|')})#v\\d+\\.\\d+\\.\\d+`, 'g')
 
 /**
  * `toCss()` emits one flat `:root` and one flat `.dark` block, so this reads it
  * back rather than using the structured `toJson()`.
  *
- * That is deliberate, and worth not undoing: the two do not agree. Re-measured
- * on 5.0.0 — `toJson()` returns 90 tonal entries where the CSS has 217, omits the
- * error palette entirely, and 74 of the 90 it shares differ, not subtly:
- * `primary-40` is `#54606B` there against `#266389` here. `toCss()` is what
- * `<Mtb>` injects at runtime, and the bake has to stay interchangeable with it:
- * a site that reseeds overrides these declarations with that output, so the two
- * must be computed the same way.
+ * Since 5.2.0 their colours agree, but `toJson()` has neither the custom
+ * colours' roles nor the `var()` aliases, and `toCss()` is what `<Mtb>` injects
+ * at runtime: the bake has to stay interchangeable with it.
  *
  * The assertions below are the guard the regex needs — if the package ever
  * changes its emitted shape, this fails loudly instead of baking a partial
@@ -162,15 +185,21 @@ function parseBlocks(css) {
  *
  * One theme for both outputs, CSS and Figma — they are the same palette and have
  * no business being computed twice.
+ *
+ * And nothing on top of it: what ships is `builder(pmndrsMtb)` as it comes, so a
+ * site that computes the palette at runtime with the same seed gets the same
+ * colours. `registry.test.mjs` holds the bake to that.
  */
 const { source, ...options } = pmndrsMtb
 const theme = builder(source, options)
 
 function bakePalette() {
-  const { ':root': light, '.dark': dark } = parseBlocks(theme.toCss())
-  if (!light || !dark) throw new Error('toCss() no longer emits `:root` and `.dark`')
+  const blocks = parseBlocks(theme.toCss())
+  if (!blocks[':root'] || !blocks['.dark']) throw new Error('toCss() no longer emits `:root` and `.dark`')
+  const light = blocks[':root']
+  const dark = blocks['.dark']
 
-  // The 168 `--md-ref-palette-*` tonal shades are scheme-independent, so `.dark`
+  // The `--md-ref-palette-*` tonal shades are scheme-independent, so `.dark`
   // re-emits them unchanged. `.dark` and `:root` both match `<html>`, so
   // anything not restated there keeps its `:root` value — carry only what differs.
   return {
@@ -180,9 +209,9 @@ function bakePalette() {
 }
 
 // Into `css`, and never `cssVars`: shadcn derives an `@theme inline` entry from
-// every cssVar it is handed, so these would also land as 252 junk Tailwind theme
-// names — and it builds their references by prefixing `--`, which on an
-// already-prefixed name yields `var(----md-ref-palette-primary-40)`.
+// every cssVar it is handed, so these would also land as hundreds of junk
+// Tailwind theme names — and it builds their references by prefixing `--`,
+// which on an already-prefixed name yields `var(----md-ref-palette-primary-40)`.
 const palette = bakePalette()
 
 const built = {
@@ -203,9 +232,22 @@ const root = new URL('../', import.meta.url)
  * implementation of the comparison to keep in step.
  */
 export const outputs = [[registryUrl, JSON.stringify(built, null, 2) + '\n']]
-for (const file of pinned) {
-  const url = new URL(file, import.meta.url)
-  outputs.push([url, readFileSync(url, 'utf8').replace(installRef, `pmndrs/design-system/$1#${version}`)])
+
+/**
+ * The catalog of every pmndrs registry item, this repo's first — see
+ * `catalog.mjs`. This repo's are read off `built`, so they carry this version
+ * and whatever the items above say; the other repos' come from the committed
+ * snapshot, so the build never touches the network.
+ */
+const external = JSON.parse(readFileSync(externalUrl, 'utf8'))
+const registries = [{ repo: 'pmndrs/design-system', ref: version, items: built.items }, ...external]
+
+const bumpInstallRefs = (text) => text.replace(installRef, `pmndrs/design-system/$1#${version}`)
+
+for (const url of pinned) {
+  let page = bumpInstallRefs(readFileSync(url, 'utf8'))
+  if (url.href === pageUrl.href) page = writeCatalog(page, registries)
+  outputs.push([url, page])
 }
 
 /**
@@ -219,8 +261,7 @@ for (const file of pinned) {
  * These come off the same `theme` as the bake above — same `allPalettes`, same
  * merged colours — so what a designer picks in Figma is the hex the site
  * renders, not a close one. That is a property of `toFigmaTokens()` and
- * `toCss()` sharing a context, so it holds by construction; the `toJson()`
- * divergence documented above is the reminder of what it would cost to lose it.
+ * `toCss()` sharing a context, so it holds by construction.
  */
 for (const [name, tokens] of Object.entries(theme.toFigmaTokens())) {
   outputs.push([new URL(`../figma/${name}`, import.meta.url), JSON.stringify(tokens, null, 2) + '\n'])

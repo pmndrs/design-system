@@ -2,6 +2,7 @@ node_modules
 public/r
 examples/block/public/r
 .DS_Store
+docs/out
 
 # The example consumer commits what `shadcn add` writes to it — reviewing that
 # diff is half of what it is for. Ignored is only what nobody reads: the

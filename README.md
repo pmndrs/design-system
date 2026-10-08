@@ -35,13 +35,18 @@ Add `dark` to `<html>` for the dark scheme.
 [shadcn](https://ui.shadcn.com/docs/theming)'s are the base; MD3's `--md-*`
 [roles](https://m3.material.io/styles/color/roles) are additive
 
+## Registry items
+
+Every item, this repo's and the other pmndrs repos', linked to its source:
+[the registry catalog](https://pmndrs.github.io/design-system/getting-started/introduction#registry-items).
+
 ## Reseeding (optional)
 
 For a palette other than the pmndrs one: install `md3-base` — same plumbing, no
 baked palette — and follow its docs.
 
 ```sh
-npx shadcn@latest add pmndrs/design-system/md3-base#v0.4.0
+npx shadcn@latest add pmndrs/design-system/md3-base#v0.5.0
 ```
 
 Nothing renders until something emits `--md-sys-color-*`: regenerate the values
@@ -63,7 +68,7 @@ say.
 
 ## Authoring a block
 
-Always pin a ref — `pmndrs/design-system/md3#v0.4.0`. Refs are **not
+Always pin a ref — `pmndrs/design-system/md3#v0.5.0`. Refs are **not
 inherited**: every entry in `registryDependencies` carries its own.
 
 - a shadcn primitive → `registryDependencies: ["button"]`
@@ -79,11 +84,12 @@ Never hardcode a font family (`font-sans` / `font-mono`). Icons come from
 
 ```sh
 pnpm install
-pnpm build   # regenerate registry.json + figma/*.tokens.json
-pnpm lgtm    # outputs are current and valid, and the registry still installs
+pnpm build            # regenerate registry.json, figma/*.tokens.json, the docs catalog
+pnpm lgtm             # outputs are current and valid, and the registry still installs
+pnpm refresh-catalog  # re-fetch the other repos' items listed in the docs catalog
 ```
 
-That last one ends in `examples/`, which installs this registry the way a
+`pnpm lgtm` ends in `examples/`, which installs this registry the way a
 consumer does — `examples/block` stands in for a repo publishing a block,
 `examples/app` for the site that adds it — except that every pmndrs address is
 redirected at the working tree. A token that resolves to nothing is silent
@@ -91,4 +97,12 @@ everywhere else, so the app reads its colours back out of a real browser.
 
 ```sh
 pnpm dev   # the example, from anywhere in the repo
+```
+
+Docs live in `docs/` ([pmndrs/docs](https://github.com/pmndrs/docs)), deployed to
+GitHub Pages on push to `main`, and to Vercel as well (a preview per pull request,
+which the sidebar's version switcher links to). Preview them on http://localhost:3000:
+
+```sh
+curl -sL https://raw.githubusercontent.com/pmndrs/docs/refs/heads/main/preview.sh | MDX=docs NEXT_PUBLIC_LIBNAME=design-system sh
 ```

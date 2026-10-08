@@ -1,0 +1,169 @@
+name: Build documentation and deploy to GitHub Pages and Vercel
+on:
+  push:
+    # `ds` as well as `main`: the branch the sidebar's version switcher lists below, so that its
+    # Vercel preview follows it on every push, pull request or not.
+    branches: ['main', 'ds']
+  pull_request:
+  workflow_dispatch:
+
+# Cancel previous run (see: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    # `configure-pages` runs with `enablement: true`, which turns Pages on at the
+    # first run — that needs `pages: write` on the build job too.
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: pmndrs/docs/.github/workflows/build.yml@v4
+    with:
+      mdx: 'docs'
+      libname: 'design-system'
+      libname_short: 'ds'
+      home_redirect: '/getting-started/introduction'
+      icon: '🧱'
+      tag_match: 'v*.*.*'
+      github: 'https://github.com/pmndrs/design-system'
+      # The swatches of docs/color-system are the site's own theme: these
+      # mirror the seed of registry/md3-base/md3.ts, so the MD3 posters of the
+      # page are the palette `md3` ships.
+      theme_primary: '#CAF543'
+      theme_scheme: 'tonalSpot'
+      theme_contrast: '0'
+      theme_color_match: 'true'
+      theme_neutral: '#c1b793'
+      theme_neutral_variant: '#495720'
+      theme_error: '#FF4980'
+      # The custom colours of the seed, so `<Color role="lime">` is a role of
+      # the site's theme too: same values as `customColors` in md3.ts, and no
+      # `:blend`, as they are `blend: false` there.
+      theme_custom_colors: 'lime:#CAF543,teal:#00F7A3,cyan:#2BDCF6,purple:#D855F9,red:#FF4980,orange:#FFC043,yellow:#EBFF0F'
+      # The version switcher in the sidebar footer. Each branch leads to the same page on its
+      # Vercel preview, at the URL the `vercel` job below aliases it to — `{branch}` is the slug
+      # that job computes, not Vercel's own (`{branch:vercel}`), which only its Git integration
+      # would create. The site lives under the Pages base path there too, hence the suffix.
+      # `main` needs no URL: it is the production branch, served at the site URL itself.
+      version_url_template: 'https://design-system-git-{branch}-pmndrs.vercel.app/design-system'
+      # The branches offered, besides `main` and the one being built: `ds`, the one pmndrs/docs
+      # takes its colour layer from (pmndrs/docs#571). Not the remote's branches, the default:
+      # most of them have no deployment behind their URL.
+      version_branches_list: 'ds'
+
+  deploy:
+    needs: build
+    # Pages is `main` only: the previews are the `vercel` job's
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
+
+  #
+  # Whatever Pages got, we deploy to Vercel too (preview for branches, production for `main`),
+  # the way pmndrs/docs deploys its own site — except that this site is static, built once above
+  # by the reusable workflow: so rather than having Vercel build it, the Pages artifact is handed
+  # to it as is, in the Build Output API layout (`.vercel/output`).
+  #
+  vercel:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      # No token, no deployment: that is a fork's pull request, which cannot read the repo
+      # secrets, or a checkout of this repo that never set them.
+      VERCEL: ${{ secrets.VERCEL_TOKEN != '' }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      # The same base path as the Pages build, which the artifact was built for: the site lives
+      # one level down there too, and its pages link to each other by absolute path.
+      BASE_PATH: /${{ github.event.repository.name }}
+      # Through env rather than inline: it comes from a branch name, which a PR author picks
+      GIT_BRANCH: ${{ github.head_ref || github.ref_name }}
+      PRODUCTION: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+
+    # Update the Production/Preview environment with the Vercel deployed URL
+    environment:
+      name: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && 'Production' || 'Preview' }}
+      url: ${{ steps.vercel-deploy.outputs.deployment_url }}
+
+    steps:
+      - if: env.VERCEL == 'true'
+        uses: actions/download-artifact@v8
+        with:
+          name: github-pages
+      - if: env.VERCEL == 'true'
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - id: vercel-deploy
+        if: env.VERCEL == 'true'
+        run: |
+          # Under the base path, not at the static root: that is where the site was built to
+          # live, and where Pages serves it from (a project site is mapped to its repo name);
+          # Vercel serves the static root at `/`.
+          mkdir -p ".vercel/output/static$BASE_PATH"
+          tar -xf artifact.tar -C ".vercel/output/static$BASE_PATH"
+          # The website exports flat `<name>.html` pages and links to them without the extension,
+          # which Pages resolves on its own. Vercel does not, even with `cleanUrls`: each page has
+          # a sibling `<name>/` folder (its RSC payloads), and in the filesystem phase that folder
+          # wins the lookup, with no index to serve. So, once the filesystem has had its turn (real
+          # files -- assets, `.txt`, `.md` -- are served as they are), an extensionless path under
+          # the base path is rewritten to its `.html`, and `check` sends it back through the
+          # filesystem. `cleanUrls` stays for the other direction: `<name>.html` redirects to
+          # `<name>`. The first route sends the bare deployment URL -- the one Vercel prints, and
+          # the one anyone trims to -- to the home page, which sits under the base path.
+          # https://vercel.com/docs/build-output-api/configuration#routes
+          #
+          # shellcheck disable=SC2016 # `$1` is the route's capture, not the shell's
+          printf '{"version":3,"cleanUrls":true,"routes":[{"src":"^/$","status":308,"headers":{"Location":"%s"}},{"handle":"filesystem"},{"src":"^%s/(.+?)/?$","dest":"%s/$1.html","check":true}]}' \
+            "$BASE_PATH" "$BASE_PATH" "$BASE_PATH" > .vercel/output/config.json
+          # `--archive`: one tarball, not one upload per file
+          url=$(npx -y vercel deploy --prebuilt --archive=tgz --token="$VERCEL_TOKEN" \
+            --target="$([ "$PRODUCTION" = 'true' ] && echo production || echo preview)")
+
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "deployment_url=$url$BASE_PATH" >> "$GITHUB_OUTPUT"
+
+      # Vercel generates branch URLs (`<project>-git-<branch>-<scope>.vercel.app`) only for
+      # deployments made by its Git integration, not for these CLI ones. So give each preview the
+      # URL `version_url_template` links its branch to, and re-point it on every push. Production
+      # needs none: `main` is the site URL. The slug is the switcher's `{branch}`: lowercase, every
+      # run of characters other than `[a-z0-9]` one `-`, none at either end.
+      #
+      # Fatal, unlike in pmndrs/docs: the alias is what the switcher needs, and a preview nobody
+      # can reach from it is not a preview. (A branch name too long for a 63-character hostname
+      # label is the one way this fails on its own: rename the branch.)
+      #
+      # The REST API rather than `vercel alias set`, which pmndrs/docs uses: the CLI starts
+      # that command by looking the user up (with or without `--scope`), and `VERCEL_TOKEN` is
+      # scoped to the project, with no user to show -- `User not found (404)`. The API takes the
+      # token as it is, the deployment by its URL, and the team from `teamId`.
+      # https://vercel.com/docs/rest-api/reference/endpoints/aliases/assign-an-alias
+      - name: Alias the preview to its branch URL
+        if: env.VERCEL == 'true' && env.PRODUCTION != 'true'
+        run: |
+          slug=$(printf '%s' "$GIT_BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')
+          curl --fail-with-body --silent --show-error -X POST \
+            "https://api.vercel.com/v2/deployments/${DEPLOYMENT#https://}/aliases?teamId=$VERCEL_ORG_ID" \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"alias\":\"design-system-git-$slug-pmndrs.vercel.app\"}"
+        env:
+          DEPLOYMENT: ${{ steps.vercel-deploy.outputs.url }}

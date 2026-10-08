@@ -1,0 +1,71 @@
+---
+title: Assets
+description: The pmndrs logo — complete, idle, animated and loading — to preview and download.
+nav: 2
+---
+
+<Intro>
+  The pmndrs logo, in four states. Nothing to install: preview each one here and download the
+  file you need.
+</Intro>
+
+> [!WARNING]
+> Credit and licence for these files are not confirmed yet: read
+> [Attribution](#attribution) before using them.
+
+Every file is 600×600 and paints its own black square background: there is no transparent
+variant yet.
+
+## Complete
+
+The full mark.
+
+<img src="logo_complete.svg" width="160" alt="The pmndrs logo" />
+
+<Badge href="https://github.com/pmndrs/design-system/raw/main/docs/assets/logo_complete.svg" label="download">SVG</Badge>
+<Badge href="https://github.com/pmndrs/design-system/raw/main/docs/assets/logo_complete.png" label="download">PNG</Badge>
+
+## Idle
+
+The resting state: four concentric rings.
+
+<img src="logo_idle.svg" width="160" alt="The pmndrs logo at rest, four concentric rings" />
+
+<Badge href="https://github.com/pmndrs/design-system/raw/main/docs/assets/logo_idle.svg" label="download">SVG</Badge>
+<Badge href="https://github.com/pmndrs/design-system/raw/main/docs/assets/logo_idle.png" label="download">PNG</Badge>
+
+## Animated
+
+Idle → complete, once, in 0.73 s. Under reduced motion, the complete mark shows without
+moving.
+
+<img src="logo_animated.svg" width="160" alt="The pmndrs logo, springing from idle to complete" />
+
+<Badge href="https://github.com/pmndrs/design-system/raw/main/docs/assets/logo_animated.svg" label="download">SVG</Badge>
+
+## Loading
+
+Loops idle → each corner → idle, every 5.3 s. Under reduced motion, the shapes stay put and the
+mark only fades gently, so it still reads as busy.
+
+<img src="logo_loading.svg" width="160" alt="The pmndrs logo, looping as a loader" />
+
+<Badge href="https://github.com/pmndrs/design-system/raw/main/docs/assets/logo_loading.svg" label="download">SVG</Badge>
+
+## Usage
+
+Drop the file in your app's `public/` and use it as an image. Both animations are CSS inside the SVG, so a plain `<img>` plays them,
+and so does `next/image` with `unoptimized`:
+
+```tsx
+<img src="/logo_loading.svg" width={48} height={48} alt="Loading" />
+```
+
+## Attribution
+
+{/* TODO: confirm with Mike Douges — credit wording, link, and licence terms. */}
+
+Logo by Mike Douges. _Placeholder — wording, link and licence still to be confirmed with Mike._
+
+The repository's MIT licence covers the code; it is not yet confirmed that it extends to these
+files.

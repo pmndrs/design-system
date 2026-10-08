@@ -188,7 +188,7 @@ over Tailwind's stock palettes of the same names.
 
 To change them, edit `customColors` in
 [`md3.ts`](https://github.com/pmndrs/design-system/blob/main/registry/md3-base/md3.ts), run
-`npm run build`, and update this table and the `theme_custom_colors` line of the docs workflow,
+`pnpm build`, and update this table and the `theme_custom_colors` line of the docs workflow,
 which is what makes the swatches above follow the scheme and contrast of this site.
 
 ## Tonal palettes
@@ -235,7 +235,7 @@ one fits: a role follows the scheme, a tone does not.
 
 The palette is computed, never written by hand: change the seeds in
 [`md3.ts`](https://github.com/pmndrs/design-system/blob/main/registry/md3-base/md3.ts) and run
-`npm run build`; the baked CSS of the registry and the
+`pnpm build`; the baked CSS of the registry and the
 [Figma tokens](https://github.com/pmndrs/design-system/tree/main/figma) follow.
 
 For a palette of your own, install `md3-base` instead of `md3` and emit the roles from your seeds:

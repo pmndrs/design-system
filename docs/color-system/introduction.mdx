@@ -20,9 +20,20 @@ Everything on this page derives from these, in
 
 | Option | Value |
 | --- | --- |
-| `source` | <Color color="#323e48" /> `#323e48` |
-| `scheme` | `tonalSpot` |
+| `source` | <Color color="#CAF543" /> `#CAF543` |
+| `colorMatch` | `true` |
 | `contrast` | `0` |
+| `neutral` | <Color color="#c1b793" /> `#c1b793` |
+| `neutralVariant` | <Color color="#495720" /> `#495720` |
+| `error` | <Color color="#FF4980" /> `#FF4980` |
+
+`colorMatch` is Material Theme Builder's "stay true to my color inputs": each seed keeps its
+chroma, and lands in its container role. It takes the place of a `scheme`. The two neutral seeds
+look nothing like the grey ramps they produce, by design: under `colorMatch` a neutral ramp takes
+an eighth of its seed's chroma, so a seed carries eight times what comes back.
+
+The posters below follow the same seed: this site's theme is built from it, `colorMatch`, the
+neutrals and `error` included, so what they render is the palette `md3.ts` ships.
 
 ## Poster
 
@@ -150,13 +161,22 @@ without it the colour stays true to its hex. For custom colours of your *own*, d
 installed `md3.ts`: spread `pmndrsMtb` into your config, add yours there, and name them in the
 `@plugin` body — `md3-base`'s docs walk through it.
 
+The seven brand colours are declared this way, none of them blended: each stays its exact hex.
+Lime is also the `source` seed, and red also drives the `error` role. Their shade utilities take
+over Tailwind's stock palettes of the same names.
+
 | Name | Seed | Blend | Utilities |
 | --- | --- | --- | --- |
-| `brand` | <Color color="#ff2d95" /> `#ff2d95` | yes | `bg-brand`, `text-on-brand`, `bg-brand-container`, `text-on-brand-container` |
-| `status` | <Color color="#17b26a" /> `#17b26a` | no | `bg-status`, `text-on-status`, `bg-status-container`, `text-on-status-container` |
+| `lime` | <Color color="#CAF543" /> `#CAF543` | no | `bg-lime`, `text-on-lime`, `bg-lime-container`, `text-on-lime-container` |
+| `teal` | <Color color="#00F7A3" /> `#00F7A3` | no | `bg-teal`, `text-on-teal`, `bg-teal-container`, `text-on-teal-container` |
+| `cyan` | <Color color="#2BDCF6" /> `#2BDCF6` | no | `bg-cyan`, `text-on-cyan`, `bg-cyan-container`, `text-on-cyan-container` |
+| `purple` | <Color color="#D855F9" /> `#D855F9` | no | `bg-purple`, `text-on-purple`, `bg-purple-container`, `text-on-purple-container` |
+| `red` | <Color color="#FF4980" /> `#FF4980` | no | `bg-red`, `text-on-red`, `bg-red-container`, `text-on-red-container` |
+| `orange` | <Color color="#FFC043" /> `#FFC043` | no | `bg-orange`, `text-on-orange`, `bg-orange-container`, `text-on-orange-container` |
+| `yellow` | <Color color="#EBFF0F" /> `#EBFF0F` | no | `bg-yellow`, `text-on-yellow`, `bg-yellow-container`, `text-on-yellow-container` |
 
 <ColorGroup orientation="vertical">
-  {['brand', 'status'].map((name) => (
+  {['lime', 'teal', 'cyan', 'purple', 'red', 'orange', 'yellow'].map((name) => (
     <ColorGroup key={name}>
       <Color role={name} variant="cell" />
       <Color role={`on-${name}`} variant="cell" />
@@ -166,10 +186,50 @@ installed `md3.ts`: spread `pmndrsMtb` into your config, add yours there, and na
   ))}
 </ColorGroup>
 
-These two are placeholders showing the mechanism; to change them, edit `customColors` in
+To change them, edit `customColors` in
 [`md3.ts`](https://github.com/pmndrs/design-system/blob/main/registry/md3-base/md3.ts), run
 `npm run build`, and update this table and the `theme_custom_colors` line of the docs workflow,
 which is what makes the swatches above follow the scheme and contrast of this site.
+
+## Tonal palettes
+
+Under the roles sit Material's tonal palettes: one ramp per seed — `primary`, `secondary`,
+`tertiary`, `neutral`, `neutral-variant`, `error` — and one per custom colour, each taken at the
+same 28 tones, from 100, white, down to 0, black. A role is an alias onto one of these tones:
+`surface` is `neutral-98` in light and `neutral-6` in dark, `lime` is `lime-40` and `lime-100`.
+The one exception is a container under `colorMatch`, in light: it is its seed's own hex, which
+no tone of the ramp matches exactly.
+
+The tones themselves have no scheme: the swatches below are the same in light and dark. Each one
+is a CSS variable, `--md-ref-palette-<palette>-<tone>`, with no Tailwind utility of its own —
+reach one with an arbitrary value, `bg-(--md-ref-palette-neutral-variant-60)`. Prefer a role where
+one fits: a role follows the scheme, a tone does not.
+
+<div className="grid! grid-cols-1 items-center gap-x-3 gap-y-1 sm:grid-cols-[auto_1fr]">
+  <div className="hidden sm:block" />
+  <div className="grid! auto-cols-fr grid-flow-col gap-px font-mono text-[10px] leading-none text-on-surface-variant">
+    {[100, 99, 98, 96, 95, 94, 92, 90, 87, 80, 70, 60, 50, 40, 35, 30, 25, 24, 22, 20, 17, 15, 12, 10, 6, 5, 4, 0].map((tone) => (
+      <span key={tone} className="rotate-180 text-center [writing-mode:vertical-rl]">{tone}</span>
+    ))}
+  </div>
+  {['primary', 'secondary', 'tertiary', 'neutral', 'neutral-variant', 'error', 'lime', 'teal', 'cyan', 'purple', 'red', 'orange', 'yellow'].map((palette) => (
+    <div key={palette} className="contents">
+      <code className="text-sm">{palette}</code>
+      <ColorGroup>
+        {[100, 99, 98, 96, 95, 94, 92, 90, 87, 80, 70, 60, 50, 40, 35, 30, 25, 24, 22, 20, 17, 15, 12, 10, 6, 5, 4, 0].map((tone) => (
+          <Color
+            key={tone}
+            color={`var(--md-ref-palette-${palette}-${tone})`}
+            variant="cell"
+            size="sm"
+            className="h-8 p-0"
+            title={`${palette}-${tone}`}
+          />
+        ))}
+      </ColorGroup>
+    </div>
+  ))}
+</div>
 
 ## Reseeding
 

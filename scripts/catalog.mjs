@@ -62,28 +62,6 @@ function escapeMdx(text) {
 }
 
 /**
- * A table cell holds one line, and a bare `|` ends it — so both go, on top of
- * the MDX escaping every description gets. `\|` is GFM's escape, honoured
- * inside inline code too.
- */
-function escapeCell(text) {
-  return escapeMdx(text).replace(/\s*\n\s*/g, ' ').replace(/\|/g, '\\|')
-}
-
-/**
- * The first sentence of a description, for the summary table — the full text
- * is in the item's own section below it. A sentence ends at `.`, `!` or `?`
- * followed by whitespace or the end; a description without one is kept whole.
- *
- * @param {string} description
- * @returns {string}
- */
-export function firstSentence(description) {
-  const match = description.match(/^[\s\S]*?[.!?](?=\s|$)/)
-  return match ? match[0] : description
-}
-
-/**
  * `registry:block` reads `block`: in a table where every type has the prefix,
  * it is noise.
  *
@@ -121,10 +99,20 @@ function createSlugger() {
 }
 
 /**
- * The catalog as MDX: a table of every item across registries, each linked to
- * its section, then the `search` command that browses every registry at
- * once, then one section per registry, one entry per item, each with the
- * pinned command that installs it.
+ * Where a registry's items are defined: its `registry.json` on GitHub, at the
+ * ref the install commands are pinned to.
+ */
+function registrySourceUrl(repo, ref) {
+  return `https://github.com/${repo}/blob/${ref}/registry.json`
+}
+
+/**
+ * The catalog as MDX: a table of every item across registries, then the
+ * `search` command that browses every registry at once, then one section per
+ * registry, one entry per item, each with the pinned command that installs it.
+ *
+ * The table holds links only — each name to its section, each registry to its
+ * `registry.json` — so no description or dependency is written twice.
  *
  * @param {{ repo: string, ref: string, items: object[] }[]} registries
  *   `repo` is the GitHub `owner/name` the CLI resolves, `ref` the tag or branch
@@ -135,25 +123,19 @@ export function renderCatalog(registries) {
   // Headings get their anchors in page order, so the slugger walks the items
   // in the order their `###` sections are written below.
   const slug = createSlugger()
-  const rows = registries.flatMap(({ repo, items }) =>
-    items.map(summarize).map(({ name, type, description, registryDependencies }) => {
-      const dependencies = registryDependencies.length
-        ? registryDependencies.map((dependency) => `\`${dependency}\``).join(', ')
-        : '—'
-
+  const rows = registries.flatMap(({ repo, ref, items }) =>
+    items.map(({ name, type }) => {
       const cells = [
         `[${name}](#${slug(name)})`,
-        repo,
         humanizeType(type),
-        escapeCell(firstSentence(description)),
-        dependencies,
+        `[${repo}](${registrySourceUrl(repo, ref)})`,
       ]
       return `| ${cells.join(' | ')} |`
     })
   )
   const table = [
     '## All items',
-    ['| Item | Registry | Type | Summary | Depends on |', '| --- | --- | --- | --- | --- |', ...rows].join('\n'),
+    ['| Item | Type | Registry |', '| --- | --- | --- |', ...rows].join('\n'),
   ].join('\n\n')
 
   const sections = registries.map(({ repo, ref, items }) => {
@@ -170,7 +152,7 @@ export function renderCatalog(registries) {
       ].join('\n\n')
     })
 
-    const source = `[\`registry.json\`](https://github.com/${repo}/blob/${ref}/registry.json)`
+    const source = `[\`registry.json\`](${registrySourceUrl(repo, ref)})`
     return [`## ${repo}`, `${items.length} items, from ${source} at \`${ref}\`.`, ...entries].join('\n\n')
   })
 

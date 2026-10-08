@@ -19,7 +19,12 @@ export default defineConfig({
   test: {
     browser: {
       enabled: true,
-      headless: true,
+      // No `headless`: Vitest's default is headless on CI and headed elsewhere,
+      // so a local run puts a window on screen — a browser test you can't see
+      // running looks exactly like one that hangs. Playwright's Chromium is
+      // Chrome for Testing, launched with a throwaway profile under `$TMPDIR`
+      // and with `--use-mock-keychain --password-store=basic` already, so it
+      // never asks the macOS keychain for anything.
       provider: playwright(),
       instances: [{ browser: 'chromium' }],
     },

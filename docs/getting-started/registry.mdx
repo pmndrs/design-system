@@ -30,21 +30,21 @@ they are listed below with theirs.
 The CLI lists the same items, read live from each repo at the same refs:
 
 ```sh
-npx shadcn@latest search pmndrs/design-system#v0.4.0 pmndrs/docs#ds
+npx shadcn@latest search pmndrs/design-system#v0.5.0 pmndrs/docs#ds
 ```
 
 and `npx shadcn@latest view <address>` prints an item, files and all, before you add it.
 
 ## pmndrs/design-system
 
-2 items, from [`registry.json`](https://github.com/pmndrs/design-system/blob/v0.4.0/registry.json) at `v0.4.0`.
+2 items, from [`registry.json`](https://github.com/pmndrs/design-system/blob/v0.5.0/registry.json) at `v0.5.0`.
 
 ### md3-base
 
 The MD3 colour layer without any colours: the package's Tailwind plugin, its shadcn remap, and the pmndrs seed. Install this only if you compute the palette yourself — otherwise install `md3`, which supplies one.
 
 ```sh
-npx shadcn@latest add pmndrs/design-system/md3-base#v0.4.0
+npx shadcn@latest add pmndrs/design-system/md3-base#v0.5.0
 ```
 
 Type `registry:lib` · registry dependencies: none
@@ -54,10 +54,10 @@ Type `registry:lib` · registry dependencies: none
 The pmndrs Material Design 3 colour layer. Additive to the stock shadcn tokens — blocks use `bg-primary` by default and reach for `bg-surface-dim` only where shadcn has no equivalent. Nothing to mount.
 
 ```sh
-npx shadcn@latest add pmndrs/design-system/md3#v0.4.0
+npx shadcn@latest add pmndrs/design-system/md3#v0.5.0
 ```
 
-Type `registry:lib` · registry dependencies: `pmndrs/design-system/md3-base#v0.4.0`
+Type `registry:lib` · registry dependencies: `pmndrs/design-system/md3-base#v0.5.0`
 
 ## pmndrs/docs
 

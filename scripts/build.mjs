@@ -29,7 +29,7 @@
  * the `outputs` exported here, so a seed change that skipped the rebuild fails
  * rather than shipping, and the check cannot drift from what this writes.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { builder } from 'material-theme-builder'
 import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
@@ -112,11 +112,26 @@ const registryUrl = new URL('../registry.json', import.meta.url)
 /**
  * Prose that quotes an install address, which is a version — so it goes stale
  * on every release unless something rewrites it. These are the files where a
- * wrong ref would send someone to the wrong tag; the changeset markdown is
- * history and stays as written.
+ * wrong ref would send someone to the wrong tag: the READMEs, and every page of
+ * the docs site. The changeset markdown is history and stays as written.
+ *
+ * The registry catalog page is the exception: it is generated whole below, and
+ * the refs it quotes from other repos' items are theirs to bump, not this
+ * build's.
  */
-const docs = ['../README.md', '../.changeset/README.md']
-const installRef = /pmndrs\/design-system\/(md3|md3-base)#v\d+\.\d+\.\d+/g
+const docsDir = new URL('../docs/', import.meta.url)
+const docPages = readdirSync(docsDir, { recursive: true })
+  .filter((path) => path.endsWith('.mdx'))
+  .sort()
+  .map((path) => new URL(path, docsDir))
+  .filter((url) => url.href !== pageUrl.href)
+const docs = [new URL('../README.md', import.meta.url), new URL('../.changeset/README.md', import.meta.url), ...docPages]
+
+/**
+ * `pmndrs/design-system/<item>#v<semver>`, for this repo's items only — an
+ * address into another repo (`pmndrs/docs/…#ds`) is never touched.
+ */
+const installRef = new RegExp(`pmndrs/design-system/(${items.map(({ name }) => name).join('|')})#v\\d+\\.\\d+\\.\\d+`, 'g')
 
 /**
  * `toCss()` emits one flat `:root` and one flat `.dark` block, so this reads it
@@ -212,8 +227,7 @@ const root = new URL('../', import.meta.url)
  * implementation of the comparison to keep in step.
  */
 export const outputs = [[registryUrl, JSON.stringify(built, null, 2) + '\n']]
-for (const doc of docs) {
-  const url = new URL(doc, import.meta.url)
+for (const url of docs) {
   outputs.push([url, readFileSync(url, 'utf8').replace(installRef, `pmndrs/design-system/$1#${version}`)])
 }
 

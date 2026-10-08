@@ -33,7 +33,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { builder } from 'material-theme-builder'
 import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
-import { externalUrl, outsideCatalog, pageUrl, writeCatalog } from './catalog.mjs'
+import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
 
 /**
  * Refs are not inherited, so a cross-item dependency carries its own — and it
@@ -114,11 +114,6 @@ const registryUrl = new URL('../registry.json', import.meta.url)
  * on every release unless something rewrites it. These are the files where a
  * wrong ref would send someone to the wrong tag: the READMEs, and every page of
  * the docs site. The changeset markdown is history and stays as written.
- *
- * The registry catalog on the getting-started page is the exception: it is
- * generated below, and the refs it quotes from other repos' items are theirs to
- * bump, not this build's — so the rewrite skips it, and the prose around it is
- * rewritten like any other page's.
  */
 const docsDir = new URL('../docs/', import.meta.url)
 const docPages = readdirSync(docsDir, { recursive: true })
@@ -239,11 +234,8 @@ const registries = [{ repo: 'pmndrs/design-system', ref: version, items: built.i
 
 const bumpInstallRefs = (text) => text.replace(installRef, `pmndrs/design-system/$1#${version}`)
 
-// Two independent writes to the catalog page — the refs outside its markers,
-// the catalog inside — so their order does not matter, and a second build
-// finds both current.
 for (const url of docs) {
-  let page = outsideCatalog(readFileSync(url, 'utf8'), bumpInstallRefs)
+  let page = bumpInstallRefs(readFileSync(url, 'utf8'))
   if (url.href === pageUrl.href) page = writeCatalog(page, registries)
   outputs.push([url, page])
 }

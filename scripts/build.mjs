@@ -2,7 +2,7 @@
  * Generates `registry.json`.
  *
  * `registry.json` is what GitHub-based resolution reads, so it has to be
- * committed — but 252 of its lines are a computed palette, and the rest is
+ * committed — but most of its lines are a computed palette, and the rest is
  * item metadata plus two long `docs` strings. Written by hand, all three were
  * worse for sharing a file: the metadata was buried, the docs were single-line
  * escaped JSON, and the palette could be edited out of sync with the seed it
@@ -15,7 +15,7 @@
  *   registry/md3-base/md3.ts    the seed the palette is computed from
  *
  * The palette itself is never stored anywhere but the output. Change the seed,
- * run this, and the 252 declarations follow.
+ * run this, and every declaration follows.
  *
  * `figma/*.tokens.json` is the same palette for the other half of the team, and
  * is generated here for the same reason: one seed, or designers and engineers
@@ -174,7 +174,7 @@ function bakePalette() {
   const light = blocks[':root']
   const dark = blocks['.dark']
 
-  // The 168 `--md-ref-palette-*` tonal shades are scheme-independent, so `.dark`
+  // The `--md-ref-palette-*` tonal shades are scheme-independent, so `.dark`
   // re-emits them unchanged. `.dark` and `:root` both match `<html>`, so
   // anything not restated there keeps its `:root` value — carry only what differs.
   return {
@@ -184,9 +184,9 @@ function bakePalette() {
 }
 
 // Into `css`, and never `cssVars`: shadcn derives an `@theme inline` entry from
-// every cssVar it is handed, so these would also land as 252 junk Tailwind theme
-// names — and it builds their references by prefixing `--`, which on an
-// already-prefixed name yields `var(----md-ref-palette-primary-40)`.
+// every cssVar it is handed, so these would also land as hundreds of junk
+// Tailwind theme names — and it builds their references by prefixing `--`,
+// which on an already-prefixed name yields `var(----md-ref-palette-primary-40)`.
 const palette = bakePalette()
 
 const built = {

@@ -21,6 +21,10 @@
  * is generated here for the same reason: one seed, or designers and engineers
  * drift.
  *
+ * `docs/getting-started/registry.mdx` lists these items next to the other pmndrs
+ * repos' — generated here so its install refs follow the version too; how the
+ * other repos' get in is `catalog.mjs`'s story.
+ *
  * Asserting the committed files are current is `build.test.mjs`'s job — it reads
  * the `outputs` exported here, so a seed change that skipped the rebuild fails
  * rather than shipping, and the check cannot drift from what this writes.
@@ -29,6 +33,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { builder } from 'material-theme-builder'
 import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
+import { externalUrl, pageUrl, renderCatalog, spliceCatalog } from './catalog.mjs'
 
 /**
  * Refs are not inherited, so a cross-item dependency carries its own — and it
@@ -209,6 +214,16 @@ for (const doc of docs) {
   const url = new URL(doc, import.meta.url)
   outputs.push([url, readFileSync(url, 'utf8').replace(installRef, `pmndrs/design-system/$1#${version}`)])
 }
+
+/**
+ * The catalog of every pmndrs registry item, this repo's first — see
+ * `catalog.mjs`. This repo's are read off `built`, so they carry this version
+ * and whatever the items above say; the other repos' come from the committed
+ * snapshot, so the build never touches the network.
+ */
+const external = JSON.parse(readFileSync(externalUrl, 'utf8'))
+const catalog = renderCatalog([{ repo: 'pmndrs/design-system', ref: version, items: built.items }, ...external])
+outputs.push([pageUrl, spliceCatalog(readFileSync(pageUrl, 'utf8'), catalog)])
 
 /**
  * The palette as DTCG tokens: `Light` and `Dark` become two modes of one Figma

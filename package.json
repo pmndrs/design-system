@@ -12,6 +12,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
+    "refresh-catalog": "node scripts/catalog.mjs && npm run build",
     "check-registry": "shadcn registry validate ./registry.json",
     "test": "node --test",
     "lgtm": "npm run check-registry && npm test",

@@ -87,10 +87,6 @@ has no name for (`bg-surface-dim`, `text-on-surface-variant`,
 
 ## Registry items
 
-| item                                | what it is                                                                |
-| ----------------------------------- | ------------------------------------------------------------------------- |
-| `pmndrs/design-system/md3`          | The colour layer with the pmndrs palette baked in. **Depend on this one.** |
-| `pmndrs/design-system/md3-base`     | Same plumbing, no palette — to reseed with your own colour.               |
-
-Always pin a ref (`#v0.4.0`): an unpinned address follows `main` and changes under
-you.
+`md3` is the one to depend on; `md3-base` is the same plumbing without the palette, to reseed
+with your own colour. Every item — these two and the blocks other pmndrs repos build on them —
+is listed on [Registry](/getting-started/registry), with the pinned command that installs it.

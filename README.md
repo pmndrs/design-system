@@ -35,6 +35,11 @@ Add `dark` to `<html>` for the dark scheme.
 [shadcn](https://ui.shadcn.com/docs/theming)'s are the base; MD3's `--md-*`
 [roles](https://m3.material.io/styles/color/roles) are additive
 
+## Registry items
+
+Every item, this repo's and the other pmndrs repos', linked to its source:
+[the registry catalog](https://pmndrs.github.io/design-system/getting-started/introduction#registry-items).
+
 ## Reseeding (optional)
 
 For a palette other than the pmndrs one: install `md3-base` — same plumbing, no
@@ -79,8 +84,9 @@ Never hardcode a font family (`font-sans` / `font-mono`). Icons come from
 
 ```sh
 npm install
-npm run build   # regenerate registry.json + figma/*.tokens.json
+npm run build   # regenerate registry.json, figma/*.tokens.json, the docs catalog
 npm run lgtm    # outputs are current and valid, preset code round-trips
+npm run refresh-catalog  # re-fetch the other repos' items listed in the docs catalog
 ```
 
 Docs live in `docs/` ([pmndrs/docs](https://github.com/pmndrs/docs)), deployed to

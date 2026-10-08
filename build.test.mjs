@@ -1,6 +1,7 @@
 /**
  * `registry.json` is generated but committed, because GitHub-based resolution
- * reads it from the repo — and so are the install refs in the two READMEs. That
+ * reads it from the repo — and so are the install refs in the READMEs and the
+ * docs pages, and the registry catalog. That
  * makes them the one class of file that can be wrong while every input is right:
  * change the seed, the config or the version, skip the rebuild, and nothing else
  * in this repo notices.

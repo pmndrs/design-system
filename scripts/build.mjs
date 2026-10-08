@@ -21,14 +21,19 @@
  * is generated here for the same reason: one seed, or designers and engineers
  * drift.
  *
+ * The getting-started page lists these items next to the other pmndrs repos' —
+ * a catalog generated here so its install refs follow the version too; how the
+ * other repos' get in is `catalog.mjs`'s story.
+ *
  * Asserting the committed files are current is `build.test.mjs`'s job — it reads
  * the `outputs` exported here, so a seed change that skipped the rebuild fails
  * rather than shipping, and the check cannot drift from what this writes.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { builder } from 'material-theme-builder'
 import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
+import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
 
 /**
  * Refs are not inherited, so a cross-item dependency carries its own — and it
@@ -107,11 +112,21 @@ const registryUrl = new URL('../registry.json', import.meta.url)
 /**
  * Prose that quotes an install address, which is a version — so it goes stale
  * on every release unless something rewrites it. These are the files where a
- * wrong ref would send someone to the wrong tag; the changeset markdown is
- * history and stays as written.
+ * wrong ref would send someone to the wrong tag: the READMEs, and every page of
+ * the docs site. The changeset markdown is history and stays as written.
  */
-const docs = ['../README.md', '../.changeset/README.md']
-const installRef = /pmndrs\/design-system\/(md3|md3-base)#v\d+\.\d+\.\d+/g
+const docsDir = new URL('../docs/', import.meta.url)
+const docPages = readdirSync(docsDir, { recursive: true })
+  .filter((path) => path.endsWith('.mdx'))
+  .sort()
+  .map((path) => new URL(path, docsDir))
+const docs = [new URL('../README.md', import.meta.url), new URL('../.changeset/README.md', import.meta.url), ...docPages]
+
+/**
+ * `pmndrs/design-system/<item>#v<semver>`, for this repo's items only — an
+ * address into another repo (`pmndrs/docs/…#ds`) is never touched.
+ */
+const installRef = new RegExp(`pmndrs/design-system/(${items.map(({ name }) => name).join('|')})#v\\d+\\.\\d+\\.\\d+`, 'g')
 
 /**
  * `toCss()` emits one flat `:root` and one flat `.dark` block, so this reads it
@@ -207,9 +222,22 @@ const root = new URL('../', import.meta.url)
  * implementation of the comparison to keep in step.
  */
 export const outputs = [[registryUrl, JSON.stringify(built, null, 2) + '\n']]
-for (const doc of docs) {
-  const url = new URL(doc, import.meta.url)
-  outputs.push([url, readFileSync(url, 'utf8').replace(installRef, `pmndrs/design-system/$1#${version}`)])
+
+/**
+ * The catalog of every pmndrs registry item, this repo's first — see
+ * `catalog.mjs`. This repo's are read off `built`, so they carry this version
+ * and whatever the items above say; the other repos' come from the committed
+ * snapshot, so the build never touches the network.
+ */
+const external = JSON.parse(readFileSync(externalUrl, 'utf8'))
+const registries = [{ repo: 'pmndrs/design-system', ref: version, items: built.items }, ...external]
+
+const bumpInstallRefs = (text) => text.replace(installRef, `pmndrs/design-system/$1#${version}`)
+
+for (const url of docs) {
+  let page = bumpInstallRefs(readFileSync(url, 'utf8'))
+  if (url.href === pageUrl.href) page = writeCatalog(page, registries)
+  outputs.push([url, page])
 }
 
 /**

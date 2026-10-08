@@ -1,0 +1,16 @@
+[
+  {
+    "repo": "pmndrs/docs",
+    "ref": "ds",
+    "items": [
+      {
+        "name": "keypoints",
+        "type": "registry:block"
+      },
+      {
+        "name": "color",
+        "type": "registry:block"
+      }
+    ]
+  }
+]

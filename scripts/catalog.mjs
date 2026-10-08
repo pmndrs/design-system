@@ -62,7 +62,67 @@ function escapeMdx(text) {
 }
 
 /**
- * The catalog as MDX: the `search` command that browses every registry at
+ * A table cell holds one line, and a bare `|` ends it — so both go, on top of
+ * the MDX escaping every description gets. `\|` is GFM's escape, honoured
+ * inside inline code too.
+ */
+function escapeCell(text) {
+  return escapeMdx(text).replace(/\s*\n\s*/g, ' ').replace(/\|/g, '\\|')
+}
+
+/**
+ * The first sentence of a description, for the summary table — the full text
+ * is in the item's own section below it. A sentence ends at `.`, `!` or `?`
+ * followed by whitespace or the end; a description without one is kept whole.
+ *
+ * @param {string} description
+ * @returns {string}
+ */
+export function firstSentence(description) {
+  const match = description.match(/^[\s\S]*?[.!?](?=\s|$)/)
+  return match ? match[0] : description
+}
+
+/**
+ * `registry:block` reads `block`: in a table where every type has the prefix,
+ * it is noise.
+ *
+ * @param {string} type
+ * @returns {string}
+ */
+export function humanizeType(type) {
+  return type.replace(/^registry:/, '')
+}
+
+/**
+ * The anchor pmndrs/docs gives a heading — its `rehypeToc`, mirrored: lowercased,
+ * runs of whitespace or hyphens as one `-`, and a title seen before suffixed
+ * `-1`, `-2`… (github-slugger's algorithm), so two repos publishing the same
+ * item name still link to their own section.
+ *
+ * Only the items' headings go through it: the page's other headings — prose,
+ * repo names, `All items` — are not item names, so they never take one's id.
+ * A fresh slugger per render, since ids are unique per page.
+ */
+function createSlugger() {
+  const occurrences = new Map()
+
+  return (title) => {
+    const slug = title.toLowerCase().replace(/\s+|-+/g, '-')
+    let id = slug
+    while (occurrences.has(id)) {
+      const count = occurrences.get(slug) + 1
+      occurrences.set(slug, count)
+      id = `${slug}-${count}`
+    }
+    occurrences.set(id, 0)
+    return id
+  }
+}
+
+/**
+ * The catalog as MDX: a table of every item across registries, each linked to
+ * its section, then the `search` command that browses every registry at
  * once, then one section per registry, one entry per item, each with the
  * pinned command that installs it.
  *
@@ -72,6 +132,30 @@ function escapeMdx(text) {
  * @returns {string}
  */
 export function renderCatalog(registries) {
+  // Headings get their anchors in page order, so the slugger walks the items
+  // in the order their `###` sections are written below.
+  const slug = createSlugger()
+  const rows = registries.flatMap(({ repo, items }) =>
+    items.map(summarize).map(({ name, type, description, registryDependencies }) => {
+      const dependencies = registryDependencies.length
+        ? registryDependencies.map((dependency) => `\`${dependency}\``).join(', ')
+        : '—'
+
+      const cells = [
+        `[${name}](#${slug(name)})`,
+        repo,
+        humanizeType(type),
+        escapeCell(firstSentence(description)),
+        dependencies,
+      ]
+      return `| ${cells.join(' | ')} |`
+    })
+  )
+  const table = [
+    '## All items',
+    ['| Item | Registry | Type | Summary | Depends on |', '| --- | --- | --- | --- | --- |', ...rows].join('\n'),
+  ].join('\n\n')
+
   const sections = registries.map(({ repo, ref, items }) => {
     const entries = items.map(summarize).map(({ name, type, description, registryDependencies }) => {
       const dependencies = registryDependencies.length
@@ -100,7 +184,7 @@ export function renderCatalog(registries) {
     'and `npx shadcn@latest view <address>` prints an item, files and all, before you add it.',
   ].join('\n\n')
 
-  return [browse, ...sections].join('\n\n')
+  return [table, browse, ...sections].join('\n\n')
 }
 
 /**

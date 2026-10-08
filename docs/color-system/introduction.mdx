@@ -191,6 +191,46 @@ To change them, edit `customColors` in
 `npm run build`, and update this table and the `theme_custom_colors` line of the docs workflow,
 which is what makes the swatches above follow the scheme and contrast of this site.
 
+## Tonal palettes
+
+Under the roles sit Material's tonal palettes: one ramp per seed — `primary`, `secondary`,
+`tertiary`, `neutral`, `neutral-variant`, `error` — and one per custom colour, each taken at the
+same 28 tones, from 100, white, down to 0, black. A role is an alias onto one of these tones:
+`surface` is `neutral-98` in light and `neutral-6` in dark, `lime` is `lime-40` and `lime-100`.
+The one exception is a container under `colorMatch`, in light: it is its seed's own hex, which
+no tone of the ramp matches exactly.
+
+The tones themselves have no scheme: the swatches below are the same in light and dark. Each one
+is a CSS variable, `--md-ref-palette-<palette>-<tone>`, with no Tailwind utility of its own —
+reach one with an arbitrary value, `bg-(--md-ref-palette-neutral-variant-60)`. Prefer a role where
+one fits: a role follows the scheme, a tone does not.
+
+<div className="grid! grid-cols-1 items-center gap-x-3 gap-y-1 sm:grid-cols-[auto_1fr]">
+  <div className="hidden sm:block" />
+  <div className="grid! auto-cols-fr grid-flow-col gap-px font-mono text-[10px] leading-none text-on-surface-variant">
+    {[100, 99, 98, 96, 95, 94, 92, 90, 87, 80, 70, 60, 50, 40, 35, 30, 25, 24, 22, 20, 17, 15, 12, 10, 6, 5, 4, 0].map((tone) => (
+      <span key={tone} className="rotate-180 text-center [writing-mode:vertical-rl]">{tone}</span>
+    ))}
+  </div>
+  {['primary', 'secondary', 'tertiary', 'neutral', 'neutral-variant', 'error', 'lime', 'teal', 'cyan', 'purple', 'red', 'orange', 'yellow'].map((palette) => (
+    <div key={palette} className="contents">
+      <code className="text-sm">{palette}</code>
+      <ColorGroup>
+        {[100, 99, 98, 96, 95, 94, 92, 90, 87, 80, 70, 60, 50, 40, 35, 30, 25, 24, 22, 20, 17, 15, 12, 10, 6, 5, 4, 0].map((tone) => (
+          <Color
+            key={tone}
+            color={`var(--md-ref-palette-${palette}-${tone})`}
+            variant="cell"
+            size="sm"
+            className="h-8 p-0"
+            title={`${palette}-${tone}`}
+          />
+        ))}
+      </ColorGroup>
+    </div>
+  ))}
+</div>
+
 ## Reseeding
 
 The palette is computed, never written by hand: change the seeds in

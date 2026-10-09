@@ -287,9 +287,14 @@ const read = ({ path }) => readFileSync(new URL(path, import.meta.url), 'utf8')
  * `public/pmndrs/logo.svg` lands at `src/public/pmndrs/logo.svg`: installed,
  * and served by nothing. Nothing downstream would notice — the file exists,
  * just where no one serves it — so this is the one place that catches it.
+ *
+ * `v0` is the exception: v0 reads it, not the shadcn CLI, into a project whose
+ * layout is fixed, so it targets `app/globals.css` the way shadcn's own Open in
+ * v0 payload does. Its own test below holds that.
  */
 test('every registry:file has a target at the project root', () => {
   const offenders = shipped
+    .filter((file) => file.item !== 'v0')
     .filter((file) => !file.target?.startsWith('~/'))
     .map((file) => `${file.item}: ${file.path} targets ${file.target ?? 'nothing'}`)
 
@@ -408,4 +413,114 @@ test('Guidelines.md carries the text of the Guidelines page', () => {
       .trim()
 
   assert.equal(body(read(file)), body(guidelinesPage()))
+})
+
+/**
+ * Open in v0 drops `css`, `cssVars` and namespaces, and resolves no GitHub
+ * address (shadcn's Open in v0 docs; vercel/registry-starter and shadcn's own
+ * create flow both ship the theme as a file). So the item it opens carries the
+ * theme as one file, `app/globals.css` of v0's Next.js project, and depends on
+ * nothing but absolute URLs.
+ */
+const v0 = () => registry.items.find((item) => item.name === 'v0')
+
+test('the v0 item ships the theme as the globals.css of a v0 project, and nothing v0 drops', () => {
+  const item = v0()
+
+  assert.ok(item, 'no `v0` item')
+  assert.equal(item.type, 'registry:item')
+  assert.deepEqual(
+    item.files.map(({ type, target }) => ({ type, target })),
+    [{ type: 'registry:file', target: 'app/globals.css' }]
+  )
+  assert.equal(item.css, undefined)
+  assert.equal(item.cssVars, undefined)
+  const relative = (item.registryDependencies ?? []).filter((dependency) => !dependency.startsWith('https://'))
+  assert.deepEqual(relative, [])
+})
+
+/** The declarations of the top-level `selector { … }` block of a stylesheet. */
+function block(css, selector) {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const body = css.match(new RegExp(`^${escaped} \\{([^}]*)\\}`, 'm'))?.[1]
+  assert.ok(body, `no \`${selector}\` block`)
+  return Object.fromEntries(
+    body
+      .split(';')
+      .map((declaration) => declaration.trim())
+      .filter(Boolean)
+      .map((declaration) => [
+        declaration.slice(0, declaration.indexOf(':')).trim(),
+        declaration.slice(declaration.indexOf(':') + 1).trim(),
+      ])
+  )
+}
+
+const globalsCss = () => read(v0().files[0])
+
+/**
+ * Without the palette, the shadcn variables have to be literal colours, and
+ * the right ones: each the hex the remap's MD3 role has. Checked against the
+ * Figma tokens, which come off the palette by a different path than the CSS
+ * bake, and against the remap as the package ships it.
+ */
+test('the v0 globals.css gives every shadcn variable the hex of its MD3 role, light and dark', () => {
+  const remapCss = readFileSync(new URL(import.meta.resolve('material-theme-builder/shadcn.css')), 'utf8')
+  const remap = block(remapCss, ':root:root,\n.dark.dark')
+  const css = globalsCss()
+
+  const mismatches = []
+  for (const [mode, selector] of [
+    ['Light', ':root'],
+    ['Dark', '.dark'],
+  ]) {
+    const tokens = JSON.parse(readFileSync(new URL(`./figma/${mode}.tokens.json`, import.meta.url), 'utf8'))
+    const hexOf = {}
+    const walk = (node) => {
+      if (node?.$value && node.$extensions?.['css.variable']) {
+        let value = node.$value
+        while (typeof value === 'string') value = value.slice(1, -1).split('.').reduce((n, key) => n[key], tokens).$value
+        hexOf[node.$extensions['css.variable']] = value.hex.toLowerCase()
+      } else if (typeof node === 'object') Object.values(node).forEach(walk)
+    }
+    walk(tokens.sys)
+
+    const declared = block(css, selector)
+    for (const [name, value] of Object.entries(remap)) {
+      const role = value.match(/^var\((--[\w-]+)\)$/)[1]
+      if (declared[name]?.toLowerCase() !== hexOf[role]) {
+        mismatches.push(`${mode} ${name}: ${declared[name]}, ${role} is ${hexOf[role]}`)
+      }
+    }
+  }
+
+  assert.deepEqual(mismatches, [])
+})
+
+/**
+ * v0 reads no `registry:font`, so the fonts come with the file: imported from
+ * their Fontsource packages, which the item installs, under the family each
+ * one registers. The radius is the Radius page's.
+ */
+test('the v0 globals.css sets the radius and both fonts, and declares every variable it uses', () => {
+  const css = globalsCss()
+  const theme = block(css, '@theme inline')
+  const root = block(css, ':root')
+
+  assert.equal(root['--radius'], readFoundations().radius.base)
+  for (const [variable, dependency] of [
+    ['--font-sans', '@fontsource-variable/inter'],
+    ['--font-mono', '@fontsource-variable/inconsolata'],
+  ]) {
+    assert.ok(css.includes(`@import "${dependency}";`), `no import of ${dependency}`)
+    assert.ok(
+      v0().dependencies.some((name) => name.replace(/(.)@[^@/]*$/, '$1') === dependency),
+      `${dependency} not installed`
+    )
+    assert.ok(registeredFamilies(dependency).has(firstFamily(theme[variable] ?? '')), `${variable}: ${theme[variable]}`)
+  }
+
+  const declared = new Set([...css.matchAll(/(--[\w-]+)\s*:/g)].map(([, name]) => name))
+  const dangling = [...css.matchAll(/var\(\s*(--[\w-]+)/g)].map(([, name]) => name).filter((name) => !declared.has(name))
+  assert.deepEqual(dangling, [])
 })

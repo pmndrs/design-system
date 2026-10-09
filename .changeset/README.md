@@ -3,7 +3,7 @@
 This package is never published to npm — the **git tag is the install address**:
 
 ```sh
-npx shadcn@latest add pmndrs/design-system/theme#v0.9.0
+npx shadcn@latest add pmndrs/design-system/theme#v0.9.1
 ```
 
 So a version bump is a release, and `privatePackages.tag` in `config.json` is what makes

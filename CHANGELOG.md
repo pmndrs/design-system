@@ -1,5 +1,15 @@
 # @pmndrs/design-system
 
+## 0.8.0
+
+### Minor Changes
+
+- [#38](https://github.com/pmndrs/design-system/pull/38) [`6a4d097`](https://github.com/pmndrs/design-system/commit/6a4d0976bf4e8d0dae9445b9044b9919e85a37a9) Thanks [@abernier](https://github.com/abernier)! - Add five semantic alert roles to `md3-base`: `note`, `tip`, `important`, `warning` and `caution`.
+  
+  They are custom colours seeded with GitHub's alert hues, and blended toward the source seed. They come after the seven brand colours. Each one is overridable with `THEME_NOTE`, `THEME_TIP`, `THEME_IMPORTANT`, `THEME_WARNING` or `THEME_CAUTION`.
+  
+  `theme` bakes their four roles, light and dark, and their tonal palettes. The Figma tokens and the Claude Design artifact carry them too.
+
 ## 0.7.0
 
 ### Minor Changes

@@ -1,19 +1,24 @@
 /**
- * Generates `design/`, the design system as a design tool reads it.
+ * Generates the inputs of the Claude Design sync, into
+ * `.design-sync/.cache/design/` (gitignored). The sync runs in three steps:
  *
- * A design tool cannot install a registry item, and it does not read prose
- * written for people who can. What it can read is a page that renders a
- * foundation, and a short list of rules. So `design/` holds:
+ *   1. `npm run design-bundle`  this script
+ *   2. the `/design-sync` converter, which reads these files through
+ *      `.design-sync/config.json` and builds `ds-bundle/`
+ *   3. `/design-sync`, which uploads `ds-bundle/` to the claude.ai/design
+ *      project
  *
- *   design/<foundation>.html   one card per foundation page of the docs, and
- *                              one per logo variant: a standalone page, its
- *                              compiled CSS inlined, light and dark side by side
- *   design/guidelines.md       the rules, as instructions
+ * What it writes:
  *
- * Tool-neutral on purpose: any browser opens a card, and any AI tool or person
- * reads the guidelines. The one tool-specific line is each card's first, the
- * `<!-- @dsCard group="…" -->` marker by which Claude Design files the card
- * under a group of its Design System pane. A browser ignores it.
+ *   styles.css          the converter's `cssEntry`: the pmndrs theme, compiled
+ *                       for exactly the classes guidelines.md lists
+ *   guidelines.md       the converter's `readmeHeader`: the rules, as
+ *                       instructions, at the head of the README a design
+ *                       agent reads first
+ *   cards/<name>.html   one preview card per foundation page of the docs and
+ *                       per logo variant, light and dark side by side, each
+ *                       starting with the `<!-- @dsCard group="…" -->` line
+ *                       Claude Design files it by
  *
  * Nothing is typed twice. Every value comes from where it is decided:
  *
@@ -25,19 +30,17 @@
  *                                    steps, the logo variants — the tables the
  *                                    docs call their source of truth — and
  *                                    which sections are inherited
- *   preset.json                      the preset code and the icon library
+ *   preset.json                      the icon library
  *
- * So the cards render with the CSS a pmndrs app gets, compiled by Tailwind v4
- * from the same `@plugin`, remap and palette `theme` installs, plus what
- * `shadcn init --preset` writes on top: the `@theme inline` colour names and
- * the base-nova radius scale.
+ * So the cards and the stylesheet carry the CSS a pmndrs app gets, compiled by
+ * Tailwind v4 from the same `@plugin`, remap and palette `theme` installs, plus
+ * what `shadcn init --preset` writes on top: the `@theme inline` colour names
+ * and the base-nova radius scale.
  *
- * Committed, like `registry.json`: a reviewer sees in the diff what a design
- * tool will be handed, and `design-bundle.test.mjs` fails when the committed
- * copy is stale. Nothing in it names a version, so a release never makes it
- * stale — an install address reads `#<tag>`.
+ * Regenerated whole on every run and never committed. Nothing in it names a
+ * version, so a build from a release tag is that release's design system.
  */
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { compile } from 'tailwindcss'
@@ -46,7 +49,8 @@ import registry from '../registry.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
 
 const root = new URL('../', import.meta.url)
-export const designDir = new URL('../design/', import.meta.url)
+/** Where `npm run design-bundle` writes, and `.design-sync/config.json` reads. */
+export const designDir = new URL('../.design-sync/.cache/design/', import.meta.url)
 
 const item = (name) => registry.items.find((entry) => entry.name === name)
 const resolvePath = (id) => fileURLToPath(import.meta.resolve(id))
@@ -440,13 +444,14 @@ const entryCss = [
 ].join('\n\n')
 
 /**
- * The one stylesheet above, compiled for the utilities `html` uses. A fresh
- * compiler per card, because a Tailwind compiler keeps every candidate it was
- * ever handed: a shared one would give every card the Colors card's 364
- * tonal-palette utilities, and the bundle would weigh twice what it does.
+ * `css` compiled by Tailwind for exactly `candidates`, the classes a page or
+ * a design may use. A fresh compiler per call, because a Tailwind compiler
+ * keeps every candidate it was ever handed: a shared one would give every
+ * card the Colors card's 364 tonal-palette utilities, and the bundle would
+ * weigh twice what it does.
  */
-async function stylesheet(html) {
-  const compiler = await compile(entryCss, {
+async function compileCss(css, candidates) {
+  const compiler = await compile(css, {
     base: fileURLToPath(root),
     loadStylesheet: async (id) => {
       const path = resolvePath(id === 'tailwindcss' ? 'tailwindcss/index.css' : id)
@@ -457,9 +462,15 @@ async function stylesheet(html) {
       return { path, base: dirname(path), module: (await import(path)).default }
     },
   })
-  const candidates = new Set([...html.matchAll(/class="([^"]*)"/g)].flatMap(([, list]) => list.split(/\s+/)))
-  return compiler.build([...candidates].filter(Boolean)).trim()
+  return compiler.build([...new Set(candidates)].filter(Boolean)).trim()
 }
+
+/** The one stylesheet above, compiled for the utilities `html` uses. */
+const stylesheet = (html) =>
+  compileCss(
+    entryCss,
+    [...html.matchAll(/class="([^"]*)"/g)].flatMap(([, list]) => list.split(/\s+/))
+  )
 
 /**
  * Google Fonts, for the families the Typography page names: the one thing a
@@ -498,90 +509,335 @@ ${body}
 }
 
 /* ------------------------------------------------------------------------ */
+/* Design stylesheet                                                          */
+/* ------------------------------------------------------------------------ */
+
+/**
+ * The colours a design may name: the shadcn tokens, the MD3 roles shadcn has
+ * no name for, and the brand roles. A role whose name shadcn also uses
+ * (`secondary`) has no utility of its own: `bg-secondary` is shadcn's, so it
+ * is not offered as an MD3 one. Nor are the fixed roles (`on-primary-fixed`):
+ * they keep one tone in light and dark, where a design follows the scheme.
+ */
+const shadcnColors = remap.map(({ name }) => name)
+const brandRoles = brandColors.flatMap((name) => [name, `on-${name}`, `${name}-container`, `on-${name}-container`])
+const md3Colors = roles.filter(
+  (role) =>
+    !remap.some((entry) => entry.role === role) &&
+    !brandRoles.includes(role) &&
+    !shadcnNames.has(role) &&
+    !role.includes('-fixed')
+)
+/** `text-shadow` is Tailwind's text-shadow utility, so these two get `bg-` alone: they are backdrops anyway. */
+const backdropOnly = ['scrim', 'shadow']
+
+/**
+ * The shadcn tokens a tint or a hover takes: the one-word ones, the sidebar's
+ * own set aside. Each tint is a `color-mix()` rule, and tinting every token
+ * would double the stylesheet for classes shadcn's own components never use.
+ */
+const tintable = shadcnColors.filter((name) => !name.includes('-') && name !== 'sidebar')
+
+/**
+ * A class pattern, written once for both readers: `text` for the guidelines,
+ * in the shell's brace notation, and `classes`, its expansion, for the
+ * compiler. A part is a literal string, an array of alternatives
+ * (`{sm,md}`), or a `range` / `named` set shown short.
+ */
+const range = (values) => ({ shown: `{${values[0]}…${values.at(-1)}}`, values })
+const named = (shown, values) => ({ shown, values })
+const pattern = (...parts) => {
+  const values = (part) => (typeof part === 'string' ? [part] : Array.isArray(part) ? part : part.values)
+  const shown = (part) =>
+    typeof part === 'string' ? part : Array.isArray(part) ? (part.length === 1 ? part[0] : `{${part.join(',')}}`) : part.shown
+  return {
+    text: parts.map(shown).join(''),
+    classes: parts.reduce((prefixes, part) => prefixes.flatMap((prefix) => values(part).map((value) => `${prefix}${value}`)), ['']),
+  }
+}
+
+/** The colours a class may name; `scrim` and `shadow` are `bg-` only, below. */
+const colours = [...shadcnColors, ...md3Colors, ...brandRoles].filter((color) => !backdropOnly.includes(color))
+const spacingSteps = spacing.map(({ step }) => step)
+const steps = (prefix) => tailwindScale(prefix).map(({ step }) => step)
+
+/**
+ * The shadcn typography recipe, as the Typography page writes it: every class
+ * of its `tsx` snippets, so a heading or a quote styled by the recipe renders.
+ */
+const recipe = [...section(pages.typography, 'Elements').body.matchAll(/```tsx\n([\s\S]*?)```/g)].flatMap(([, snippet]) =>
+  [...snippet.matchAll(/className="([^"]*)"/g)].flatMap(([, list]) => list.split(/\s+/))
+)
+
+/**
+ * The classes a design may use, by family: the one list the design
+ * stylesheet is compiled for and the guidelines' table is written from. So a
+ * class the guidelines name always renders, and one they do not name does
+ * not exist, the stock palette (`bg-zinc-800`) included.
+ */
+const vocabulary = [
+  {
+    family: 'Colour',
+    patterns: [
+      pattern(['bg', 'text', 'border'], '-', named('<colour>', colours)),
+      pattern('bg-', backdropOnly),
+      pattern(['ring', 'fill', 'stroke'], '-', named('<token>', tintable)),
+    ],
+  },
+  { family: 'Tint', patterns: [pattern('bg-', named('<token>', tintable), '/', ['10', '20', '50', '80', '90'])] },
+  {
+    family: 'Text',
+    patterns: [
+      pattern('text-', range(steps('text'))),
+      pattern('font-', range(steps('font-weight'))),
+      pattern('leading-', range(['none', ...steps('leading')])),
+      pattern('tracking-', range(steps('tracking'))),
+      pattern(['text-center', 'uppercase', 'truncate', 'tabular-nums']),
+    ],
+  },
+  { family: 'Font', patterns: [pattern('font-', fonts.map(({ utility }) => utility.slice('font-'.length)))] },
+  {
+    family: 'Radius',
+    patterns: [pattern('rounded-', range(radii.map(({ utility }) => utility.slice('rounded-'.length)))), pattern('rounded-', ['none', 'full'])],
+  },
+  {
+    family: 'Border',
+    patterns: [
+      pattern('border'),
+      pattern('border-', ['2', 't', 'b', 'dashed']),
+      pattern('ring', ['', '-2']),
+      pattern('outline-none'),
+    ],
+  },
+  {
+    family: 'Elevation',
+    patterns: [
+      ...['shadow', 'drop-shadow'].map((prefix) => pattern(`${prefix}-`, range(steps(prefix)))),
+      pattern('shadow-none'),
+    ],
+  },
+  {
+    family: 'Space',
+    patterns: [
+      pattern(['p', 'm'], ['', 'x', 'y', 't', 'r', 'b', 'l'], '-', range(spacingSteps.slice(0, spacingSteps.indexOf('16') + 1))),
+      pattern('gap', ['', '-x', '-y'], '-', range(spacingSteps.slice(0, spacingSteps.indexOf('16') + 1))),
+      pattern(['mx', 'ml', 'mt'], '-auto'),
+    ],
+  },
+  {
+    family: 'Size',
+    patterns: [
+      pattern(['w', 'h', 'size'], '-', range(spacingSteps)),
+      pattern(['w', 'h', 'size'], '-', ['full', 'auto']),
+      pattern('min-h-screen'),
+      pattern('min-w-0'),
+      
+      pattern('max-w-', range(steps('container'))),
+      pattern('max-w-full'),
+    ],
+  },
+  {
+    family: 'Layout',
+    patterns: [
+      pattern(['block', 'flex', 'inline-flex', 'grid', 'hidden']),
+      pattern('flex-', ['col', 'wrap', '1']),
+      pattern('shrink-0'),
+      pattern('items-', ['start', 'center', 'end']),
+      pattern('justify-', ['center', 'end', 'between']),
+      pattern(['grid-cols', 'col-span'], '-', ['1', '2', '3', '4', '6', '12']),
+      pattern(['relative', 'absolute']),
+      pattern('inset-0'),
+      pattern('overflow-', ['hidden', 'auto']),
+      pattern('sr-only'),
+    ],
+  },
+  {
+    family: 'State',
+    patterns: [
+      pattern('hover:bg-', named('<token>', tintable), ['', '/80', '/90']),
+      pattern('hover:underline'),
+      pattern('focus-visible:', ['ring-2', 'ring-ring', 'outline-none']),
+      pattern('disabled:opacity-50'),
+    ],
+  },
+  {
+    family: 'Responsive',
+    patterns: [
+      pattern(['sm', 'md', 'lg'], ':', ['flex', 'hidden', 'flex-row']),
+      pattern(['sm', 'md', 'lg'], ':grid-cols-', ['2', '3', '4']),
+    ],
+  },
+  {
+    family: 'Type recipe',
+    note: "shadcn's, for `h1`…`h4`, `p`, lists, `code`: see the Type card",
+    patterns: [{ text: '', classes: recipe }],
+  },
+]
+
+const candidates = vocabulary.flatMap(({ patterns }) => patterns.flatMap(({ classes }) => classes))
+
+/**
+ * The idiomatic snippet the guidelines end on. Built here so its classes can
+ * be checked against the vocabulary: a snippet the stylesheet cannot render
+ * fails the build rather than misleading a design tool.
+ */
+const example = `<div className="flex flex-col gap-4 rounded-xl border bg-card p-6 shadow-sm">
+  <h3 className="text-lg font-semibold">Deploy</h3>
+  <p className="text-sm text-muted-foreground">Tokens only: it follows the dark class.</p>
+  <button className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">
+    <Rocket className="size-4" /> Deploy
+  </button>
+</div>`
+{
+  const known = new Set(candidates)
+  const unknown = [...example.matchAll(/className="([^"]*)"/g)]
+    .flatMap(([, list]) => list.split(/\s+/))
+    .filter((name) => !known.has(name))
+  if (unknown.length) throw new Error(`the guidelines example uses classes outside the vocabulary: ${unknown.join(' ')}`)
+}
+
+/**
+ * What a design is styled with: the stylesheet above, plus what `shadcn init`
+ * and `theme` add to a project's base layer — borders and focus rings on the
+ * tokens, the body on `background`, and the mono family on the elements the
+ * `font-mono` item names.
+ */
+const designCss = [
+  entryCss,
+  `@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  ${item('font-mono').font.selector} {
+    @apply font-mono;
+  }
+}`,
+].join('\n\n')
+
+/** `hover:bg-primary/90` as Tailwind writes its selector: `.hover\:bg-primary\/90`. */
+const selector = (name) => `.${name.replace(/[^\w-]/g, (char) => `\\${char}`)}`
+
+/** Whether `css` has a rule for the class `name`, and not only for a longer one it starts. */
+function renders(css, name) {
+  const wanted = selector(name)
+  for (let at = css.indexOf(wanted); at !== -1; at = css.indexOf(wanted, at + 1)) {
+    if (!/[\w\\-]/.test(css[at + wanted.length] ?? '')) return true
+  }
+  return false
+}
+
+/**
+ * The design stylesheet. Throws when a class of the vocabulary compiles to
+ * nothing: the guidelines would name a class that does nothing.
+ */
+async function designStylesheet() {
+  const css = await compileCss(designCss, candidates)
+  const dead = candidates.filter((name) => !renders(css, name))
+  if (dead.length) throw new Error(`the vocabulary names classes Tailwind does not generate: ${dead.join(' ')}`)
+  return `/* Generated by \`npm run design-bundle\`: the pmndrs theme and every class guidelines.md lists. Do not edit. */
+${css}
+`
+}
+
+/* ------------------------------------------------------------------------ */
 /* Guidelines                                                                 */
 /* ------------------------------------------------------------------------ */
 
 /**
- * The rules, as instructions for whoever designs with this: a person, or any
- * AI tool reading the file.
+ * The rules, as instructions: the head of the README a design agent reads
+ * first, through the converter's `readmeHeader`. Short on purpose, since it
+ * is read before every design: setup, the class vocabulary, where the truth
+ * lives, the brand rules and one snippet.
  *
- * Every list in it is derived — the token names, the roles shadcn has no name
- * for, the icon library, the families, the logo files, the decided/inherited
- * split. The sentences around them are the one copy of these rules written
- * as instructions; the README points here rather than repeating them.
+ * Every list in it is derived: the token names, the roles shadcn has no name
+ * for, the class table, the icon library, the families, the logo files, the
+ * decided/inherited split. The sentences around them are the one copy of
+ * these rules written as instructions; the README points here rather than
+ * repeating them.
  */
 function guidelines() {
-  const named = new Set(remap.map(({ role }) => role))
-  const brandRoles = new Set(brandColors.flatMap((name) => [name, `on-${name}`, `${name}-container`, `on-${name}-container`]))
-  // A role whose name shadcn also uses (`secondary`) has no utility of its own:
-  // `bg-secondary` is shadcn's, so it is not offered as an MD3 one.
-  const unnamed = roles.filter((role) => !named.has(role) && !brandRoles.has(role) && !shadcnNames.has(role))
-  const shadowed = roles.filter((role) => shadcnNames.has(role))
-  const list = (values) => values.map((value) => `\`${value}\``).join(', ')
+  const list = (values) => values.map((value) => `\`${value}\``).join(' ')
   const sans = fonts.find(({ variable }) => variable === '--font-sans')
   const mono = fonts.find(({ variable }) => variable === '--font-mono')
-  const icons = preset.values.iconLibrary
+  /** The shadcn tokens past `<token>`: its `-foreground` pairs, then the rest grouped. */
+  const foregrounds = tintable.filter((name) => shadcnNames.has(`${name}-foreground`))
+  const otherShadcn = shadcnColors.filter(
+    (name) => !tintable.includes(name) && !foregrounds.some((head) => name === `${head}-foreground`)
+  )
 
-  const foundations = Object.values(pages).map((page) => {
-    if (page.inherited) return `| ${page.title} | — | all of it, from ${page.inherited} |`
-    const inherited = page.sections.filter((entry) => entry.inherited)
-    const decided = inherited.length
-      ? page.sections.filter((entry) => !entry.inherited).map((entry) => entry.heading).join(', ')
-      : 'all of it'
-    const rest = inherited.map((entry) => `${entry.heading}, from ${entry.inherited}`).join('; ') || '—'
-    return `| ${page.title} | ${decided} | ${rest} |`
-  })
+  /** `card` and `card-foreground` as `card{,-foreground}`: names grouped on their first word. */
+  const grouped = (names) =>
+    [...Map.groupBy(names, (name) => name.split('-')[0])].map(([head, members]) =>
+      members.length === 1
+        ? members[0]
+        : members.includes(head)
+          ? `${head}{${members.map((name) => name.slice(head.length)).join(',')}}`
+          : `${head}-{${members.map((name) => name.slice(head.length + 1)).join(',')}}`
+    )
 
-  return `<!-- Generated by \`npm run design-bundle\` from the registry sources. Do not edit. -->
+  /** The #25 split, read off the docs' "Inherited from X" notes. */
+  const decided = []
+  const inherited = new Map()
+  for (const page of Object.values(pages)) {
+    const parts = page.inherited ? [{ heading: page.title, inherited: page.inherited }] : page.sections
+    if (!page.inherited && !page.sections.some((entry) => entry.inherited)) decided.push(page.title)
+    for (const { heading, inherited: from } of parts) {
+      if (!from) {
+        if (page.sections.some((entry) => entry.inherited)) decided.push(heading)
+        continue
+      }
+      inherited.set(from, [...(inherited.get(from) ?? []), heading])
+    }
+  }
 
-# pmndrs design system: guidelines
+  const logoFiles = logos.map(({ file }) => file.replace(/^public\//, '').replace(/^pmndrs\/logo_(.+)\.svg$/, '$1'))
 
-Rules for designing a pmndrs interface, for a person or for an AI design tool. The cards next to this file (\`*.html\`) render each foundation with the real CSS, in light and dark. Where a card and these rules disagree, the rules win.
+  return `<!-- Generated by \`npm run design-bundle\`. Do not edit. -->
 
-The interface is built with [shadcn](https://ui.shadcn.com) and Tailwind CSS v4, with the poimandres preset (\`${preset.code}\`) and the \`theme\` registry item installed. Write Tailwind utility classes, not CSS values.
+# pmndrs design system
+
+No components here: the JS bundle exports nothing, so skip any section below on loading or using components.
+
+## Setup
+
+\`styles.css\` is the whole system: the tokens in light and dark, ${sans.family}, ${mono.family}, and the classes below. Style plain elements, or your own components, with them. Dark mode is the \`dark\` class on \`<html>\`: colours follow it, never write \`dark:\`.
+
+## Classes
+
+Tailwind CSS v4, only these: any other class does nothing. \`{a,b}\` is either, \`{a…z}\` a scale in order (spacing: the Spacing card's), \`<token>\` one of ${list(tintable)}, \`<colour>\` one below.
+
+| Family | Classes |
+| --- | --- |
+${vocabulary.map(({ family, note, patterns }) => `| ${family} | ${note ?? list(patterns.map(({ text }) => text))} |`).join('\n')}
 
 ## Colour
 
-1. Use the shadcn tokens first: ${list(remap.map(({ name }) => name))}. As utilities: \`bg-primary\`, \`text-primary-foreground\`, \`bg-card\`, \`text-muted-foreground\`, \`border-border\`, and so on.
-2. Use an MD3 role only where shadcn has no name for it: ${list(unnamed)}. As utilities: \`bg-surface-dim\`, \`bg-tertiary-container\`, \`text-on-tertiary-container\`, and so on. ${list(shadowed)} are shadcn's names too, and there the utility is shadcn's: \`bg-secondary\` is the shadcn \`secondary\`.
-3. The brand colours are named: ${list(brandColors)}. Each has four roles, \`bg-<name>\`, \`text-on-<name>\`, \`bg-<name>-container\`, \`text-on-<name>-container\`, and shades \`bg-<name>-50\` to \`bg-<name>-950\`. Use them for accents, not as a substitute for the tokens above.
-4. Never write a colour value: no hex, no \`rgb()\`, no \`oklch()\`, no Tailwind stock palette (\`bg-zinc-800\`). Every colour has a light and a dark value, and only a token or a role follows the scheme. Dark is the \`dark\` class on \`<html>\`.
+A \`<colour>\` is, by preference:
 
-## Icons
+1. a shadcn token: \`<token>\` ${list([`{${foregrounds.join(',')}}-foreground`, ...grouped(otherShadcn)])};
+2. an MD3 role shadcn has no name for: ${list(grouped(md3Colors))};
+3. a brand accent, never in place of a token: ${list([`{${brandColors.join(',')}}`])}, each also \`on-\`, \`-container\`, \`on-…-container\`.
 
-5. Use ${icons} icons only. No other icon set, no emoji as an icon.
+## Rules
 
-## Type
+- Icons: ${preset.values.iconLibrary} only, \`size-4\` or \`size-5\`, coloured with \`text-*\`. No emoji.
+- Never hardcode a colour or a font family. Text is ${sans.family}; \`code\` \`kbd\` \`samp\` \`pre\` are ${mono.family} on their own.
+- Corners derive from \`--radius: ${radius}\`.
+- The logo, \`/pmndrs/logo_{${logoFiles.join(',')}}.svg\`, only on its own black square: never recoloured or cropped.
+- Decided by pmndrs: ${decided.join(', ')}. Inherited, never cite them as pmndrs rules: ${[...inherited].map(([from, headings]) => `${headings.join(', ')} (${from})`).join('; ')}.
 
-6. Never set \`font-sans\` or \`font-mono\` to pick a family for a component. Text inherits ${sans.family}; \`code\`, \`kbd\`, \`samp\` and \`pre\` get ${mono.family} on their own. For monospace text, use one of those elements.
-7. Size text with the \`text-*\` scale (\`text-sm\`, \`text-xl\`); weight with \`font-medium\`, \`font-semibold\`.
+## Where truth lives
 
-## Shape and space
+Generated from [pmndrs/design-system](https://github.com/pmndrs/design-system) at a release tag. The cards render the same CSS; these rules win over them. In code: \`npx shadcn@latest add pmndrs/design-system/theme#<tag>\`.
 
-8. Round corners with \`rounded-sm\` to \`rounded-4xl\`, all derived from \`--radius\`. Never an arbitrary radius.
-9. Space with the spacing scale (\`p-4\`, \`gap-2\`) and elevate with \`shadow-*\`. Both are Tailwind defaults (see below): follow them, but do not treat them as brand rules.
+## Example
 
-## Logo
-
-10. Show the pmndrs logo only on its own black square: each file paints it, and there is no transparent variant. Never recolour it, crop it, or draw it on another background.
-11. Four variants, one file each: ${logos.map(({ variant, file }) => `${variant} (\`/${file.replace(/^public\//, '')}\`)`).join(', ')}.
-
-## Decided and inherited
-
-What pmndrs decided is the brand. What it inherited from Tailwind or shadcn is a default, kept until a decision replaces it: do not cite it as a pmndrs rule.
-
-| Foundation | Decided by pmndrs | Inherited |
-| --- | --- | --- |
-${foundations.join('\n')}
-
-## Install
-
-\`\`\`sh
-npx shadcn@latest init --preset ${preset.code}
-npx shadcn@latest add pmndrs/design-system/theme#<tag>
+\`\`\`jsx
+${example}
 \`\`\`
-
-\`<tag>\` is a release tag of [pmndrs/design-system](https://github.com/pmndrs/design-system/releases).
 `
 }
 
@@ -590,33 +846,27 @@ npx shadcn@latest add pmndrs/design-system/theme#<tag>
 /* ------------------------------------------------------------------------ */
 
 /**
- * Every file of the bundle, as `[url, content]`. Exported rather than written
- * on import, as `build.mjs` does: `design-bundle.test.mjs` asserts the
- * committed `design/` against exactly these strings.
+ * Every file the script writes, as `[path, content]`, `path` relative to the
+ * output folder. Exported rather than written on import, as `build.mjs` does,
+ * so `design-bundle.test.mjs` can write them where it checks them.
  */
 export const outputs = [
-  ...(await Promise.all(markup.map(async (card) => [new URL(card.file, designDir), await page(card)]))),
-  [new URL('guidelines.md', designDir), guidelines()],
+  ...(await Promise.all(markup.map(async (card) => [`cards/${card.file}`, await page(card)]))),
+  ['styles.css', await designStylesheet()],
+  ['guidelines.md', guidelines()],
 ]
 
+/** Writes `outputs` into `dir`, emptied first: a card no page produces any more must not linger. */
+export function writeDesign(dir) {
+  rmSync(dir, { recursive: true, force: true })
+  for (const [path, content] of outputs) {
+    const url = new URL(path, dir)
+    mkdirSync(new URL('./', url), { recursive: true })
+    writeFileSync(url, content)
+  }
+}
+
 if (import.meta.main) {
-  mkdirSync(designDir, { recursive: true })
-  const expected = new Set(outputs.map(([url]) => url.href))
-  const changed = []
-
-  // `design/` is generated whole, so a file no card produces any more goes.
-  for (const name of readdirSync(designDir)) {
-    const url = new URL(name, designDir)
-    if (expected.has(url.href)) continue
-    rmSync(url, { recursive: true })
-    changed.push(`-${url.pathname.replace(root.pathname, '')}`)
-  }
-
-  for (const [url, next] of outputs) {
-    if (existsSync(url) && readFileSync(url, 'utf8') === next) continue
-    writeFileSync(url, next)
-    changed.push(url.pathname.replace(root.pathname, ''))
-  }
-
-  console.log(changed.length ? `built ${changed.join(', ')}` : `design/ is current (${outputs.length} files)`)
+  writeDesign(designDir)
+  console.log(`built ${outputs.length} files into ${designDir.pathname.replace(root.pathname, '')}`)
 }

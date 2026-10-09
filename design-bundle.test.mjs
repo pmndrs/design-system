@@ -1,46 +1,39 @@
 /**
- * `design/` is what a design tool is handed — Claude Design through
- * `/design-sync`, or anything else that reads plain files. These assert the
- * shape it receives, read off the committed files, not how
- * `scripts/design-bundle.mjs` builds it; the one exception is the "is current"
- * check, which compares against the script's own `outputs` as `build.test.mjs`
- * does for `registry.json`.
+ * What `npm run design-bundle` hands the `/design-sync` converter: the design
+ * stylesheet, the guidelines and the cards. These run the generator into a
+ * temporary folder and assert the shape of what lands there, not how
+ * `scripts/design-bundle.mjs` builds it.
  */
 import assert from 'node:assert/strict'
-import { readdirSync, readFileSync, statSync } from 'node:fs'
-import { test } from 'node:test'
+import { mkdtempSync, readdirSync, readFileSync, rmSync, statSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { after, test } from 'node:test'
+import { pathToFileURL } from 'node:url'
 import pkg from './package.json' with { type: 'json' }
-import { designDir, outputs } from './scripts/design-bundle.mjs'
+import { writeDesign } from './scripts/design-bundle.mjs'
 
-const root = new URL('./', import.meta.url)
-const files = readdirSync(designDir).map((name) => new URL(name, designDir))
+const out = pathToFileURL(`${mkdtempSync(join(tmpdir(), 'design-bundle-'))}/`)
+writeDesign(out)
+after(() => rmSync(out, { recursive: true, force: true }))
+
+const files = readdirSync(out, { recursive: true })
+  .map((name) => new URL(name, out))
+  .filter((url) => statSync(url).isFile())
 const read = (url) => readFileSync(url, 'utf8')
-const relative = (url) => url.pathname.replace(root.pathname, '')
+const relative = (url) => url.pathname.replace(out.pathname, '')
 
 const marker = /^<!-- @dsCard group="([^"]+)" -->$/
 const cards = files
   .filter((url) => url.pathname.endsWith('.html'))
   .map((url) => ({ url, html: read(url), group: read(url).split('\n')[0].match(marker)?.[1] }))
 
-for (const [url, next] of outputs) {
-  test(`${relative(url)} is current`, () => {
-    const current = files.some((file) => file.href === url.href) ? read(url) : null
-    assert.equal(current, next, `${relative(url)} is out of date — run \`npm run design-bundle\` and commit the result.`)
-  })
-}
-
-/** A card the script stopped producing would still be synced, as a stale card. */
-test('design/ holds nothing the script does not produce', () => {
-  const produced = new Set(outputs.map(([url]) => url.href))
-  assert.deepEqual(files.filter((url) => !produced.has(url.href)).map(relative), [])
-})
-
 /**
  * Claude Design makes a card of an HTML file only when its very first line is
  * the marker; anywhere else, the file is synced and never shown.
  */
 test('every card starts with the @dsCard marker', () => {
-  assert.ok(cards.length, 'no card in design/')
+  assert.ok(cards.length, 'no card generated')
   assert.deepEqual(cards.filter((card) => !card.group).map((card) => relative(card.url)), [])
 })
 
@@ -90,11 +83,28 @@ test('every docs foundation page has a card in its group', () => {
 })
 
 /**
- * Synced once per release, and committed, so the bundle must not go stale on
- * a version bump: no version and no pinned install ref in it. An install
- * address reads `#<tag>`.
+ * Built from a release tag and synced once per release, so the output must
+ * depend on the tag alone: no version and no pinned install ref in it. An
+ * install address reads `#<tag>`.
  */
 test('no file names a version', () => {
   const version = new RegExp(`#v\\d+\\.\\d+\\.\\d+|\\b${pkg.version.replaceAll('.', '\\.')}\\b`)
   assert.deepEqual(files.filter((url) => version.test(read(url))).map(relative), [])
+})
+
+/**
+ * The snippet the guidelines end on is what a design copies first: each of
+ * its classes must have a rule in the stylesheet the design is handed, or the
+ * snippet renders unstyled.
+ */
+test('every class of the guidelines example is in the stylesheet', () => {
+  const guidelines = read(new URL('guidelines.md', out))
+  const css = read(new URL('styles.css', out))
+  const snippet = guidelines.match(/```jsx\n([\s\S]*?)```/)?.[1]
+  assert.ok(snippet, 'no jsx example in guidelines.md')
+
+  const classes = [...snippet.matchAll(/className="([^"]*)"/g)].flatMap(([, list]) => list.split(/\s+/))
+  const selector = (name) => `.${name.replace(/[^\w-]/g, (char) => `\\${char}`)}`
+  const missing = classes.filter((name) => !new RegExp(`${RegExp.escape(selector(name))}(?![\\w\\\\-])`).test(css))
+  assert.deepEqual(missing, [])
 })

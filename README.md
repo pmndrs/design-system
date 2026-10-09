@@ -83,29 +83,32 @@ it inherits the consumer's. Icons come from
 
 ## Claude Design
 
-`design/` is the design system as a design tool reads it: one HTML card per
-foundation of the docs (Colors, Type, Spacing, Radius, Shadows) and per logo
-variant, each rendered with the real theme CSS in light and dark, and
-[`design/guidelines.md`](design/guidelines.md), the rules to design with. Plain
-files: any browser opens a card, any AI tool or person reads the guidelines.
-Generated and committed, never edited by hand:
+The design system is synced by hand to a [Claude Design](https://claude.ai/design)
+project, so that the designs it generates stay on brand. A maintainer runs the
+sync from Claude Code after each release, on the release tag checked out. It
+signs in with the maintainer's claude.ai account, which is why CI cannot run
+it. Three steps:
 
-```sh
-npm run design-bundle
-```
+1. `npm run design-bundle` generates the converter's inputs into
+   `.design-sync/.cache/design/` (gitignored): `styles.css`, the theme compiled
+   for a bounded set of Tailwind classes; `guidelines.md`, the rules a design
+   agent reads first; and one preview card per foundation page of the docs and
+   per logo variant.
+2. The `/design-sync` converter builds `ds-bundle/` (gitignored) from them,
+   through `.design-sync/config.json`, with `.design-sync/fonts.css` for Inter
+   and Inconsolata and `.design-sync/entry.mjs` as its empty entry: a tokens-only
+   design system, with no components.
+3. `/design-sync` uploads `ds-bundle/` to the project.
 
-[Claude Design](https://claude.ai/design) takes it as a design-system project.
-After each release tag, a maintainer checks the tag out and runs `/design-sync`
-from Claude Code to push `design/` there. The bundle names no version, and
-`npm run lgtm` fails when it is stale, so the tag's copy is the one to sync. It
-signs in with the maintainer's claude.ai account, which is why CI cannot run it.
+Nothing of it is committed: it is regenerated from the tag's sources, and names
+no version.
 
 ## dev
 
 ```sh
 npm install
 npm run build   # regenerate registry.json, figma/*.tokens.json, the docs catalog
-npm run design-bundle  # regenerate design/, the Claude Design bundle
+npm run design-bundle  # generate the Claude Design sync inputs
 npm run lgtm    # outputs are current and valid, preset code round-trips
 npm run refresh-catalog  # re-fetch the other repos' items listed in the docs catalog
 ```

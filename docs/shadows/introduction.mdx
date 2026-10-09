@@ -1,0 +1,83 @@
+---
+title: Shadows
+description: The box, inset and drop shadows your project gets, as Tailwind v4 ships them.
+nav: 5
+---
+
+<Intro>
+  Three families of shadow, each a scale of Tailwind utilities: `shadow-*` for elevation,
+  `inset-shadow-*` for recessed surfaces, and `drop-shadow-*` for shapes that are not boxes.
+</Intro>
+
+> [!NOTE]
+> Inherited from Tailwind v4 defaults, not yet a pmndrs decision. See [Tailwind's box-shadow docs](https://tailwindcss.com/docs/box-shadow).
+
+Every shadow is black at low opacity. On a dark surface, the lighter ones barely show. Each
+family also has a `-none` utility that removes the shadow.
+
+## Box shadow
+
+`shadow-*` sets `box-shadow` from the `--shadow-*` theme variable:
+
+| Utility      | Variable       | Value                                                           |
+| ------------ | -------------- | --------------------------------------------------------------- |
+| `shadow-2xs` | `--shadow-2xs` | `0 1px rgb(0 0 0 / 0.05)`                                       |
+| `shadow-xs`  | `--shadow-xs`  | `0 1px 2px 0 rgb(0 0 0 / 0.05)`                                 |
+| `shadow-sm`  | `--shadow-sm`  | `0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)` |
+| `shadow-md`  | `--shadow-md`  | `0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)` |
+| `shadow-lg`  | `--shadow-lg`  | `0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)` |
+| `shadow-xl`  | `--shadow-xl`  | `0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)` |
+| `shadow-2xl` | `--shadow-2xl` | `0 25px 50px -12px rgb(0 0 0 / 0.25)`                           |
+
+<div className="grid! grid-cols-2 gap-6 rounded-lg bg-surface-container-low p-6 sm:grid-cols-4">
+  {['shadow-2xs', 'shadow-xs', 'shadow-sm', 'shadow-md', 'shadow-lg', 'shadow-xl', 'shadow-2xl'].map((shadow) => (
+    <div key={shadow} className={`flex h-20 items-center justify-center rounded-lg bg-surface-container-lowest ${shadow}`}>
+      <code className="text-sm">{shadow}</code>
+    </div>
+  ))}
+</div>
+
+## Inset shadow
+
+`inset-shadow-*` sets an inner `box-shadow` from the `--inset-shadow-*` theme variable. It
+stacks with `shadow-*` on the same element:
+
+| Utility            | Variable             | Value                               |
+| ------------------ | -------------------- | ----------------------------------- |
+| `inset-shadow-2xs` | `--inset-shadow-2xs` | `inset 0 1px rgb(0 0 0 / 0.05)`     |
+| `inset-shadow-xs`  | `--inset-shadow-xs`  | `inset 0 1px 1px rgb(0 0 0 / 0.05)` |
+| `inset-shadow-sm`  | `--inset-shadow-sm`  | `inset 0 2px 4px rgb(0 0 0 / 0.05)` |
+
+<div className="grid! grid-cols-1 gap-6 rounded-lg bg-surface-container-low p-6 sm:grid-cols-3">
+  {['inset-shadow-2xs', 'inset-shadow-xs', 'inset-shadow-sm'].map((shadow) => (
+    <div key={shadow} className={`flex h-20 items-center justify-center rounded-lg bg-surface-container-lowest ${shadow}`}>
+      <code className="text-sm">{shadow}</code>
+    </div>
+  ))}
+</div>
+
+## Drop shadow
+
+`drop-shadow-*` applies `filter: drop-shadow()` from the `--drop-shadow-*` theme variable. It
+follows the painted shape, transparent pixels excluded, so it suits icons, SVGs and cut-out
+images:
+
+| Utility           | Variable            | Value                          |
+| ----------------- | ------------------- | ------------------------------ |
+| `drop-shadow-xs`  | `--drop-shadow-xs`  | `0 1px 1px rgb(0 0 0 / 0.05)`  |
+| `drop-shadow-sm`  | `--drop-shadow-sm`  | `0 1px 2px rgb(0 0 0 / 0.15)`  |
+| `drop-shadow-md`  | `--drop-shadow-md`  | `0 3px 3px rgb(0 0 0 / 0.12)`  |
+| `drop-shadow-lg`  | `--drop-shadow-lg`  | `0 4px 4px rgb(0 0 0 / 0.15)`  |
+| `drop-shadow-xl`  | `--drop-shadow-xl`  | `0 9px 7px rgb(0 0 0 / 0.1)`   |
+| `drop-shadow-2xl` | `--drop-shadow-2xl` | `0 25px 25px rgb(0 0 0 / 0.15)` |
+
+<div className="grid! grid-cols-2 gap-6 rounded-lg bg-surface-container-low p-6 sm:grid-cols-3">
+  {['drop-shadow-xs', 'drop-shadow-sm', 'drop-shadow-md', 'drop-shadow-lg', 'drop-shadow-xl', 'drop-shadow-2xl'].map((shadow) => (
+    <div key={shadow} className="flex flex-col items-center gap-3">
+      <svg viewBox="0 0 24 24" className={`size-16 fill-primary-container ${shadow}`} aria-hidden="true">
+        <polygon points="12,2 15,9 22,9.5 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9.5 9,9" />
+      </svg>
+      <code className="text-sm">{shadow}</code>
+    </div>
+  ))}
+</div>

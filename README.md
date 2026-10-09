@@ -81,11 +81,31 @@ A block never hardcodes a font family (the `font-sans` / `font-mono` utilities):
 it inherits the consumer's. Icons come from
 `components.json`'s `iconLibrary`; `lucide` is the pmndrs baseline.
 
+## Claude Design
+
+`design/` is the design system as a design tool reads it: one HTML card per
+foundation of the docs (Colors, Type, Spacing, Radius, Shadows) and per logo
+variant, each rendered with the real theme CSS in light and dark, and
+[`design/guidelines.md`](design/guidelines.md), the rules to design with. Plain
+files: any browser opens a card, any AI tool or person reads the guidelines.
+Generated and committed, never edited by hand:
+
+```sh
+npm run design-bundle
+```
+
+[Claude Design](https://claude.ai/design) takes it as a design-system project.
+After each release tag, a maintainer checks the tag out and runs `/design-sync`
+from Claude Code to push `design/` there. The bundle names no version, and
+`npm run lgtm` fails when it is stale, so the tag's copy is the one to sync. It
+signs in with the maintainer's claude.ai account, which is why CI cannot run it.
+
 ## dev
 
 ```sh
 npm install
 npm run build   # regenerate registry.json, figma/*.tokens.json, the docs catalog
+npm run design-bundle  # regenerate design/, the Claude Design bundle
 npm run lgtm    # outputs are current and valid, preset code round-trips
 npm run refresh-catalog  # re-fetch the other repos' items listed in the docs catalog
 ```

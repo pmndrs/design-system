@@ -122,6 +122,15 @@ function radius(page) {
   }
 }
 
+/**
+ * `css` with every colour written the Shadows page's way, `rgb(0 0 0 / 0.1)`,
+ * rewritten `rgba(0, 0, 0, 0.1)`: the form both the artifact and Tokens Studio
+ * take, a colour function with plain comma-separated numbers.
+ *
+ * @param {string} css
+ */
+export const commaRgba = (css) => css.replace(/rgb\((\d+) (\d+) (\d+) \/ ([\d.]+)\)/g, 'rgba($1, $2, $3, $4)')
+
 /** The Shadows page: its three families, each a list of utility, variable and value. */
 function shadows(page) {
   const rows = (heading) => rowsOf(page, heading).map(([utility, variable, value]) => ({ utility, variable, value }))

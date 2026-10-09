@@ -1,3 +1,5 @@
+<!-- Generated from artifact/README.md by scripts/build.mjs: do not edit. -->
+
 # Poimandres design system guidelines
 
 Poimandres is a distributed design system: nothing is installed from npm. It ships as a shadcn preset and a shadcn registry, so every pmndrs app gets the same colours by copying code in. shadcn's tokens are the base; Material Design 3 colour roles are additive, for what shadcn has no name for.

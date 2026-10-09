@@ -15,15 +15,11 @@
  * a build that met one would fail on it, rather than name a commit in a
  * generated file that would then go stale on every commit.
  */
-import { readFileSync } from 'node:fs'
 import pkg from '../package.json' with { type: 'json' }
 import preset from '../preset.json' with { type: 'json' }
 import external from '../registry/external.json' with { type: 'json' }
 import notes from './artifact.notes.json' with { type: 'json' }
-
-/** `x.y.z` of an installed package. */
-export const installedVersion = (name) =>
-  JSON.parse(readFileSync(new URL(`../node_modules/${name}/package.json`, import.meta.url), 'utf8')).version
+import { installedVersion } from './packages.mjs'
 
 /**
  * The release is `package.json`'s version, which Changesets bumps and the
@@ -42,6 +38,10 @@ export const placeholders = {
 /**
  * `text` with its `{{name}}` placeholders filled from `values`. Throws on an
  * unknown one, naming `where` it was found.
+ *
+ * @param {string} text
+ * @param {string} where
+ * @param {Record<string, string>} [values]
  */
 export function fill(text, where, values = placeholders) {
   return text.replace(/\{\{(\w+)\}\}/g, (match, name) => {
@@ -60,6 +60,8 @@ const artifactOnly = /<!-- artifact-only -->[\s\S]*?<!-- \/artifact-only -->/g
 /**
  * The text for the docs site: every artifact-only passage removed, and the
  * blank lines a removed paragraph leaves behind collapsed into one.
+ *
+ * @param {string} text
  */
 export function stripArtifactOnly(text) {
   return text.replace(artifactOnly, '').replace(/\n{3,}/g, '\n\n')
@@ -68,6 +70,8 @@ export function stripArtifactOnly(text) {
 /**
  * The text for the artifact: every passage kept, only the markers removed.
  * A marker on a line of its own takes its line with it.
+ *
+ * @param {string} text
  */
 export function unmarkArtifactOnly(text) {
   return text.replace(/^<!-- \/?artifact-only -->\n/gm, '').replace(/<!-- \/?artifact-only -->/g, '')

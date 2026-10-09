@@ -1,0 +1,220 @@
+---
+title: Typography
+description: The two font families, the text-* type scale, and the class recipe for headings, paragraphs, lists and code.
+nav: 2
+---
+
+<Intro>
+  Two font families: Inter for everything, Inconsolata for code. Sizes come from Tailwind's
+  `text-*` scale, and headings, paragraphs and lists follow shadcn's class recipe.
+</Intro>
+
+## Font family
+
+| Role | Family      | Utility     | Variable      | Comes from                                    |
+| ---- | ----------- | ----------- | ------------- | --------------------------------------------- |
+| Sans | Inter       | `font-sans` | `--font-sans` | the preset `b5cR4Y50S`                        |
+| Mono | Inconsolata | `font-mono` | `--font-mono` | the `font-mono` registry item, via `theme`    |
+
+**Inter** comes from the poimandres shadcn preset (`b5cR4Y50S`, font `inter`), applied by
+`npx shadcn@latest init --preset b5cR4Y50S`. On Next.js it loads through `next/font/google` as
+`--font-sans`. Headings use the same family: the preset sets `--font-heading: var(--font-sans)`.
+
+**Inconsolata** comes from the `font-mono` registry item, which `theme` depends on, so adding the
+theme installs it:
+
+```sh
+npx shadcn@latest add pmndrs/design-system/theme#v0.5.0
+```
+
+It is scoped to `code, kbd, samp, pre`: those elements use it without a class, and the rest of
+the UI keeps Inter. Anywhere else, add `font-mono`.
+
+The specimens below render with this site's CSS, which may not load the same fonts as your
+project. The table is the source of truth.
+
+<div className="grid! gap-4 sm:grid-cols-2">
+  <div className="flex flex-col gap-2 rounded-lg border p-6">
+    <p className="font-sans text-4xl">Aa Bb Cc 0123</p>
+    <p className="font-sans text-base">The quick brown fox jumps over the lazy dog.</p>
+    <code>font-sans</code>
+  </div>
+  <div className="flex flex-col gap-2 rounded-lg border p-6">
+    <p className="font-mono text-4xl">Aa Bb Cc 0123</p>
+    <p className="font-mono text-base">The quick brown fox jumps over the lazy dog.</p>
+    <code>font-mono</code>
+  </div>
+</div>
+
+## Type scale
+
+> [!NOTE]
+> Inherited from Tailwind v4 defaults, not yet a pmndrs decision. See [Tailwind's font-size docs](https://tailwindcss.com/docs/font-size).
+
+Each `text-*` utility sets a font size and its paired line height, from the `--text-*` and
+`--text-*--line-height` theme variables. Pixels assume the browser's default 16px root. The
+previews render with this site's CSS: its root is 17px, so they draw slightly larger than in
+your project.
+
+| Utility     | Font size             | Line height                     | Preview                          |
+| ----------- | --------------------- | ------------------------------- | -------------------------------- |
+| `text-xs`   | `0.75rem` (12px)      | `calc(1 / 0.75)` (16px)         | <span className="text-xs">Aa</span>   |
+| `text-sm`   | `0.875rem` (14px)     | `calc(1.25 / 0.875)` (20px)     | <span className="text-sm">Aa</span>   |
+| `text-base` | `1rem` (16px)         | `calc(1.5 / 1)` (24px)          | <span className="text-base">Aa</span> |
+| `text-lg`   | `1.125rem` (18px)     | `calc(1.75 / 1.125)` (28px)     | <span className="text-lg">Aa</span>   |
+| `text-xl`   | `1.25rem` (20px)      | `calc(1.75 / 1.25)` (28px)      | <span className="text-xl">Aa</span>   |
+| `text-2xl`  | `1.5rem` (24px)       | `calc(2 / 1.5)` (32px)          | <span className="text-2xl">Aa</span>  |
+| `text-3xl`  | `1.875rem` (30px)     | `calc(2.25 / 1.875)` (36px)     | <span className="text-3xl">Aa</span>  |
+| `text-4xl`  | `2.25rem` (36px)      | `calc(2.5 / 2.25)` (40px)       | <span className="text-4xl">Aa</span>  |
+| `text-5xl`  | `3rem` (48px)         | `1` (48px)                      | <span className="text-5xl">Aa</span>  |
+| `text-6xl`  | `3.75rem` (60px)      | `1` (60px)                      | <span className="text-6xl">Aa</span>  |
+| `text-7xl`  | `4.5rem` (72px)       | `1` (72px)                      | <span className="text-7xl">Aa</span>  |
+| `text-8xl`  | `6rem` (96px)         | `1` (96px)                      | <span className="text-8xl">Aa</span>  |
+| `text-9xl`  | `8rem` (128px)        | `1` (128px)                     | <span className="text-9xl">Aa</span>  |
+
+Override the line height with a slash: `text-sm/6` is `0.875rem` on a `1.5rem` line.
+
+## Elements
+
+> [!NOTE]
+> Inherited from shadcn, not yet a pmndrs decision. See [shadcn's Typography page](https://ui.shadcn.com/docs/components/typography).
+
+No element is styled by default: this is a recipe of utility classes to put on the elements
+yourself. Each preview below is followed by its classes.
+
+### h1
+
+<div className="rounded-lg border p-6">
+  <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
+    Ready-made building blocks
+  </h1>
+</div>
+
+```tsx
+<h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
+```
+
+### h2
+
+<div className="rounded-lg border p-6">
+  <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+    Getting started
+  </h2>
+</div>
+
+```tsx
+<h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+```
+
+### h3
+
+<div className="rounded-lg border p-6">
+  <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Install the theme</h3>
+</div>
+
+```tsx
+<h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+```
+
+### h4
+
+<div className="rounded-lg border p-6">
+  <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Add the dark class</h4>
+</div>
+
+```tsx
+<h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+```
+
+### p
+
+<div className="rounded-lg border p-6">
+  <p className="leading-7 [&:not(:first-child)]:mt-6">
+    Every pmndrs project gets the same colours, fonts and radii by copying code in, not by
+    depending on a package.
+  </p>
+</div>
+
+```tsx
+<p className="leading-7 [&:not(:first-child)]:mt-6">
+```
+
+### Lead
+
+<div className="rounded-lg border p-6">
+  <p className="text-xl text-muted-foreground">
+    A design system shipped as a shadcn registry.
+  </p>
+</div>
+
+```tsx
+<p className="text-xl text-muted-foreground">
+```
+
+### Large
+
+<div className="rounded-lg border p-6">
+  <div className="text-lg font-semibold">Ready to install?</div>
+</div>
+
+```tsx
+<div className="text-lg font-semibold">
+```
+
+### Small
+
+<div className="rounded-lg border p-6">
+  <small className="text-sm leading-none font-medium">Registry item</small>
+</div>
+
+```tsx
+<small className="text-sm leading-none font-medium">
+```
+
+### Muted
+
+<div className="rounded-lg border p-6">
+  <p className="text-sm text-muted-foreground">Add the dark class to html for the dark scheme.</p>
+</div>
+
+```tsx
+<p className="text-sm text-muted-foreground">
+```
+
+### Blockquote
+
+<div className="rounded-lg border p-6">
+  <blockquote className="mt-6 border-l-2 pl-6 italic">
+    Whatever the preset or the registry fixes is a pmndrs decision.
+  </blockquote>
+</div>
+
+```tsx
+<blockquote className="mt-6 border-l-2 pl-6 italic">
+```
+
+### List
+
+<div className="rounded-lg border p-6">
+  <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
+    <li>Colours from the theme</li>
+    <li>Inter from the preset</li>
+    <li>Inconsolata from the registry</li>
+  </ul>
+</div>
+
+```tsx
+<ul className="my-6 ml-6 list-disc [&>li]:mt-2">
+```
+
+### Inline code
+
+<div className="rounded-lg border p-6">
+  <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
+    npx shadcn@latest add
+  </code>
+</div>
+
+```tsx
+<code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
+```

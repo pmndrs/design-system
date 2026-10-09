@@ -98,7 +98,12 @@ Every file of it comes from this repo. `npm run artifact` writes them into
 - `README.md`, `assets/Logos/README.md` and `components/<Block>/*`, copied
   from `artifact/` with their `{{placeholders}}` filled: every version and sha
   in them comes from git, `package.json`, `node_modules` or
-  `registry/external.json`;
+  `registry/external.json`. `README.md` is the brand book, which
+  `npm run build` also turns into the docs site's
+  [Guidelines](https://pmndrs.github.io/design-system/guidelines/introduction)
+  page and the `guidelines` item's `Guidelines.md`: passages that only make
+  sense in the artifact sit between `<!-- artifact-only -->` and
+  `<!-- /artifact-only -->`, and stay out of those two;
 - `fonts/*`, the latin subsets of Inter and Inconsolata.
 
 `components/` mirrors the catalog's blocks (`registry:block` items of

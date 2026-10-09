@@ -605,6 +605,21 @@
         }
       ],
       "docs": "Two files, in `design/tokens/pmndrs/` at the root of your project: `Light.tokens.json` and `Dark.tokens.json`. They are the pmndrs palette as [DTCG](https://www.designtokens.org) design tokens — the light and dark modes of one Figma variable collection.\n\n- **They are the colours `theme` bakes into CSS**, hex for hex. Roles stay aliased onto the tonal shades (`{ref.palette.Neutral.98}`), the way the CSS uses `var()`.\n- **Import them into Figma** as variables, or feed them to a token pipeline (Style Dictionary, Tokens Studio).\n- **Nothing in your app reads them.** They are not imported by any code this registry installs, and they are outside `public/`, so nothing serves them either.\n\nTo update them, add the item again at the newer tag, with `--overwrite`."
+    },
+    {
+      "name": "guidelines",
+      "type": "registry:item",
+      "title": "pmndrs guidelines",
+      "description": "The pmndrs brand book as `guidelines/Guidelines.md`: how to use the colour layer, type, spacing, components, the logo and the voice. The file Figma Make reads, and one to point Claude or Cursor at.",
+      "author": "pmndrs",
+      "files": [
+        {
+          "path": "registry/guidelines/Guidelines.md",
+          "type": "registry:file",
+          "target": "~/guidelines/Guidelines.md"
+        }
+      ],
+      "docs": "One file, `guidelines/Guidelines.md` at the root of your project: the pmndrs brand book, the do and don't of the colour layer, type, spacing, radii and shadows, components, the logo, iconography and voice.\n\n- **It is the Guidelines page of the docs site**, word for word: [pmndrs.github.io/design-system/guidelines](https://pmndrs.github.io/design-system/guidelines/introduction).\n- **Figma Make reads it** from that path, so a Make project follows the pmndrs rules once it is there.\n- **Point Claude or Cursor at it** (`@guidelines/Guidelines.md`, or a line in `CLAUDE.md` or a Cursor rule) so the UI they generate uses the shadcn tokens first and never a raw hex.\n- **Nothing in your app reads it.** It is outside `public/`, so nothing serves it either.\n\nTo update it, add the item again at the newer tag, with `--overwrite`."
     }
   ]
 }

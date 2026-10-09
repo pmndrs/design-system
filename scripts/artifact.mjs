@@ -40,7 +40,9 @@
  *                                    block and the few external pins
  *   artifact/                        the hand-written files (the brand book,
  *                                    the block cards, the logo notes), copied
- *                                    with their `{{placeholders}}` filled
+ *                                    with their `{{placeholders}}` filled and
+ *                                    their artifact-only markers removed (see
+ *                                    `brand-book.mjs`)
  *
  * Every version and sha in the output is one of those placeholders, filled
  * from git, `package.json`, `node_modules` and `registry/external.json`, so a
@@ -49,11 +51,10 @@
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import pkg from '../package.json' with { type: 'json' }
 import registry from '../registry.json' with { type: 'json' }
 import external from '../registry/external.json' with { type: 'json' }
 import notesSource from './artifact.notes.json' with { type: 'json' }
-import preset from '../preset.json' with { type: 'json' }
+import { fill as fillPlaceholders, installedVersion, placeholders as sharedPlaceholders, unmarkArtifactOnly } from './brand-book.mjs'
 import { readFoundations, readPage, section } from './foundations.mjs'
 
 const root = new URL('../', import.meta.url)
@@ -120,10 +121,6 @@ const tailwindDefaults = Object.fromEntries(
 /** The two families, from the Typography page: `Inter` on `--font-sans`, … */
 const fonts = foundations.typography.fonts.map((font) => ({ ...font, key: font.variable.slice('--font-'.length) }))
 
-/** `x.y.z` of an installed package. */
-const installedVersion = (name) =>
-  JSON.parse(readFileSync(new URL(`../node_modules/${name}/package.json`, import.meta.url), 'utf8')).version
-
 const git = (...args) => execFileSync('git', args, { cwd: fileURLToPath(root), encoding: 'utf8' }).trim()
 
 /**
@@ -142,32 +139,23 @@ function sourceCommit() {
 
 /**
  * The values of the `{{placeholders}}`: every version or sha the output names
- * comes from one of these. The release is `package.json`'s version, which
- * Changesets bumps and the release workflow tags. The shadcn preset, its code
- * and its style (`base-<style>`, as shadcn names it), is `preset.json`'s.
+ * comes from one of these. The shared ones are `brand-book.mjs`'s, the same
+ * the build fills the Guidelines page with; the source commit and the font
+ * package version are the artifact's own, and only artifact-only passages name
+ * them.
  */
 const fontsourceVersions = [...new Set(fonts.map(({ family }) => installedVersion(`@fontsource-variable/${family.toLowerCase()}`)))]
 if (fontsourceVersions.length !== 1) throw new Error(`the font packages disagree: ${fontsourceVersions.join(', ')}`)
 const commit = sourceCommit()
 export const placeholders = {
+  ...sharedPlaceholders,
   sha: commit.sha,
   synced: commit.date,
-  release: `v${pkg.version}`,
-  docsRef: external.find(({ repo }) => repo === 'pmndrs/docs').ref,
   fontsourceVersion: fontsourceVersions[0],
-  mtbVersion: installedVersion('material-theme-builder'),
-  presetCode: preset.code,
-  presetStyle: `base-${preset.values.style}`,
-  ...notesSource.pins,
 }
 
 /** `text` with its `{{name}}` placeholders filled. Throws on an unknown one. */
-function fill(text, where) {
-  return text.replace(/\{\{(\w+)\}\}/g, (match, name) => {
-    if (!(name in placeholders)) throw new Error(`${where}: unknown placeholder ${match}`)
-    return placeholders[name]
-  })
-}
+const fill = (text, where) => fillPlaceholders(text, where, placeholders)
 
 /** `artifact.notes.json`, its `{{placeholders}}` filled. */
 const notes = JSON.parse(fill(JSON.stringify(notesSource), 'scripts/artifact.notes.json'))
@@ -431,7 +419,7 @@ if (problems.length) throw new Error(problems.join('\n'))
  */
 export const outputs = [
   ['tokens.json', `${JSON.stringify(tokens(), null, 2)}\n`],
-  ...sourcePaths.map((path) => [path, fill(readFileSync(new URL(path, sourceDir), 'utf8'), `artifact/${path}`)]),
+  ...sourcePaths.map((path) => [path, fill(unmarkArtifactOnly(readFileSync(new URL(path, sourceDir), 'utf8')), `artifact/${path}`)]),
   ...fontFiles.map(({ file, source }) => [file, readFileSync(source)]),
 ].sort(([a], [b]) => a.localeCompare(b))
 

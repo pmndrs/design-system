@@ -54,8 +54,10 @@ Declare the [namespace](https://ui.shadcn.com/docs/registry/namespace) in `compo
 }
 ```
 
-then `npx shadcn@latest add @pmndrs/theme`. It serves the latest release; the git address
-(`pmndrs/design-system/theme#v0.7.0`) stays the pinned one. The
+then `npx shadcn@latest add @pmndrs/theme`. It serves the latest state of `main`; the git
+address at a tag (`pmndrs/design-system/theme#v0.7.0`) stays the pinned one. A branch's
+preview deployment serves its own `r/`, but `preset`'s dependency on `theme` is that tagged
+git address, so it resolves to the released tag, not to the branch. The
 [shadcn MCP server](https://ui.shadcn.com/docs/mcp) (`npx shadcn@latest mcp init --client claude`)
 reads the same namespace to list and install the items.
 

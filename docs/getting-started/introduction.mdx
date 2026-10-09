@@ -153,8 +153,12 @@ npx shadcn@latest add @pmndrs/theme
 npx shadcn@latest search @pmndrs
 ```
 
-The namespace serves the latest release, rebuilt from `registry.json` on every deploy of
-`main`. Pin the git address above where an app must not move.
+The namespace serves the latest state of `main`, rebuilt from `registry.json` on every
+deploy of it. Pin the git address above, at a tag, where an app must not move.
+
+A branch's preview deployment serves its own `r/` too, but not all the way down: `preset`
+depends on `pmndrs/design-system/theme#v0.7.0`, so the theme it installs is the released
+tag's, not the branch's.
 
 The [shadcn MCP server](https://ui.shadcn.com/docs/mcp) reads the same namespace, so Claude,
 Cursor or VS Code can list, read and install the items from the conversation:

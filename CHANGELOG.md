@@ -1,5 +1,22 @@
 # @pmndrs/design-system
 
+## 0.6.0
+
+### Minor Changes
+
+- [#23](https://github.com/pmndrs/design-system/pull/23) [`df567c9`](https://github.com/pmndrs/design-system/commit/df567c918f2099c44008e8db24feacafc04266d4) Thanks [@abernier](https://github.com/abernier)! - Add two items that ship files rather than code, as `registry:file`s copied byte for byte to their `target`:
+  
+  - `logo`: the four SVGs of the Assets page — `logo_complete`, `logo_idle`, `logo_animated` and `logo_loading` — into `public/pmndrs/`, so `<img src="/pmndrs/logo_loading.svg" />` works as installed. The PNGs stay downloads: the CLI reads every file as text.
+  - `figma-tokens`: the Figma tokens, `Light.tokens.json` and `Dark.tokens.json`, into `design/tokens/pmndrs/` — the same DTCG files `figma/` has, now with an install address.
+  
+  Both land at the root of the project, `src/` directory or not: every target starts with `~/`. A bare `public/…` target would have landed in `src/public/` in an app made with `create-next-app --src-dir`, where nothing serves it.
+
+- [#30](https://github.com/pmndrs/design-system/pull/30) [`3934fe1`](https://github.com/pmndrs/design-system/commit/3934fe14f81951554115f086c96d9ad4fd999d19) Thanks [@abernier](https://github.com/abernier)! - Rename the `md3` item to `theme`, the single install target, and ship Inconsolata as the pmndrs monospace font.
+  
+  - `theme` (was `md3`) carries the baked pmndrs palette and now depends on `md3-base` and the new `font-mono`. Breaking: replace `pmndrs/design-system/md3#<ref>` with `pmndrs/design-system/theme#<ref>`, in `shadcn add` commands and in `registryDependencies`.
+  - `font-mono` (new, `registry:font`) sets `--font-mono` to Inconsolata, through `next/font/google` on Next.js and `@fontsource-variable/inconsolata` elsewhere, applied to `code, kbd, samp, pre` only.
+  - `md3-base` is unchanged, and still installs on its own for a palette of your own.
+
 ## 0.5.0
 
 ### Minor Changes

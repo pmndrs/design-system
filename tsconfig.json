@@ -10,5 +10,6 @@
     "skipLibCheck": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["registry", "scripts"]
+  "include": ["registry", "scripts"],
+  "exclude": ["registry/v0/app"]
 }

@@ -70,6 +70,11 @@ npx shadcn@latest init https://pmndrs.github.io/design-system/r/preset.json
 
 To prototype in v0 with the pmndrs colours, fonts and radius already applied:
 [Open in v0](https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs).
+Or have v0 build the brand guidelines from it, as slides:
+[brand guidelines in v0](https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs+brand+guidelines&prompt=pmndrs+brand+guidelines%2C+16%3A9+slides%2C+strict+editorial+grid%2C+layout+inspired+by+https%3A%2F%2Fmir-s3-cdn-cf.behance.net%2Fprojects%2F808%2Fbc1589229031299.Y3JvcCwxNjgzLDEzMTYsMCww.jpg%2C+not+its+colours.+Follow+guidelines%2FGuidelines.md.+app%2Fglobals.css+is+the+palette%3A+never+edit%2C+no+hex%3B+brand+lime+%3D+bg-lime-container+%2B+text-on-lime-container.+Not+the+Poimandres+VS+Code+theme.+Light%2Fdark+toggle.+Cover%3A+%2Fpmndrs%2Flogo_complete.svg.+Then%3A+foreword%2C+logo%2C+colour%2C+type%2C+spacing%2C+radius%2C+icons%2C+components%2C+voice.).
+Both open the `v0` item: a starter page, the logo, `guidelines/Guidelines.md` and a
+`globals.css` with the colours resolved, under the utility names a pmndrs project has
+(`bg-primary-container`, `bg-lime-container`), so what v0 writes runs unchanged in one.
 
 ## Reseeding (optional)
 

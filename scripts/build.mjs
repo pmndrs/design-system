@@ -43,7 +43,7 @@ import { foundationStyles, foundationVariables } from './foundation-tokens.mjs'
 import { readFoundations } from './foundations.mjs'
 import { hostedUrl } from './hosted-registry.mjs'
 import { readRemap, tailwindColors } from './remap.mjs'
-import { sansFont, v0GlobalsCss } from './v0.mjs'
+import { rewriteV0Links, sansFont, v0GlobalsCss } from './v0.mjs'
 
 /**
  * Refs are not inherited, so a cross-item dependency carries its own — and it
@@ -89,6 +89,29 @@ const registry = {
   name: 'pmndrs',
   homepage: 'https://github.com/pmndrs/design-system',
 }
+
+/**
+ * The `logo` item's files, which the `v0` item ships too: see `logo` below.
+ */
+const logoFiles = ['logo_complete', 'logo_idle', 'logo_animated', 'logo_loading'].map((logo) => ({
+  path: `docs/assets/${logo}.svg`,
+  type: 'registry:file',
+  target: `~/public/pmndrs/${logo}.svg`,
+}))
+
+/**
+ * The `guidelines` item's file, which the `v0` item ships too. Generated below
+ * from the brand book, like the Guidelines page, so it cannot say something
+ * the page does not. `guidelines/Guidelines.md` at the project root is the one
+ * path Figma Make reads.
+ */
+const guidelinesFiles = [
+  {
+    path: 'registry/guidelines/Guidelines.md',
+    type: 'registry:file',
+    target: '~/guidelines/Guidelines.md',
+  },
+]
 
 /**
  * `docs` comes from `registry/<name>/docs.md`, and `palette: true` means the
@@ -261,11 +284,7 @@ const items = [
      * lived under `registry/` could not be shown on the page. One file serves
      * both, and the installed name is the one the page lists.
      */
-    files: ['logo_complete', 'logo_idle', 'logo_animated', 'logo_loading'].map((logo) => ({
-      path: `docs/assets/${logo}.svg`,
-      type: 'registry:file',
-      target: `~/public/pmndrs/${logo}.svg`,
-    })),
+    files: logoFiles,
   },
   {
     name: 'figma-tokens',
@@ -298,41 +317,38 @@ const items = [
     description:
       'The pmndrs brand book as `guidelines/Guidelines.md`: how to use the colour layer, type, spacing, components, the logo and the voice. The file Figma Make reads, and one to point Claude or Cursor at.',
     author: 'pmndrs',
-    /**
-     * Generated below from the brand book, like the Guidelines page, so it
-     * cannot say something the page does not. `guidelines/Guidelines.md` at
-     * the project root is the one path Figma Make reads.
-     */
-    files: [
-      {
-        path: 'registry/guidelines/Guidelines.md',
-        type: 'registry:file',
-        target: '~/guidelines/Guidelines.md',
-      },
-    ],
+    files: guidelinesFiles,
   },
   /**
    * What an "Open in v0" link opens. v0 drops `css`, `cssVars` and
    * namespaces, and resolves no GitHub address, so nothing above reaches it:
-   * this item carries the theme as a file instead, the `globals.css` of v0's
-   * Next.js project, generated below with every colour resolved to a literal.
-   * The shape is shadcn's own Open in v0 payload's: a `registry:file` at
-   * `app/globals.css`, which is why its target has no `~/` (v0 reads it, not
-   * the CLI).
+   * this item carries everything as files of v0's Next.js project instead.
+   * The `globals.css`, generated below with every colour resolved to a
+   * literal; a layout and a starter page, so the preview shows the theme as
+   * soon as it opens rather than nothing; and the `logo` and `guidelines`
+   * items' own files, so v0 has the mark and the brand book to work from.
+   * The shape is shadcn's own Open in v0 payload's: `registry:file`s at the
+   * project's paths, which is why no target has a `~/` (v0 reads them, not the
+   * CLI).
    */
   {
     name: 'v0',
     type: 'registry:item',
     title: 'pmndrs theme for v0',
     description:
-      'The pmndrs theme as one `app/globals.css`, for Open in v0: the shadcn colours resolved to the pmndrs palette, light and dark, Inter and Inconsolata, and the default radius. Overwrites the stylesheet of a v0 project; in your own project, install `theme` or `preset` instead.',
+      'The pmndrs theme as a v0 project, for Open in v0: an `app/globals.css` with the shadcn colours and the Material Design 3 roles resolved to the pmndrs palette, light and dark, Inter and Inconsolata, and the default radius; a layout and a starter page; the logo in `public/pmndrs/`; and the brand book as `guidelines/Guidelines.md`. In your own project, install `theme` or `preset` instead.',
     author: 'pmndrs',
     dependencies: [
       'shadcn@latest',
       'tw-animate-css',
       ...[sansFont(foundations), fontMono].map(({ dependency }) => `${dependency}@${pkg.devDependencies[dependency]}`),
     ],
-    files: [{ path: 'registry/v0/globals.css', type: 'registry:file', target: 'app/globals.css' }],
+    files: [
+      { path: 'registry/v0/globals.css', target: 'app/globals.css' },
+      { path: 'registry/v0/app/layout.tsx', target: 'app/layout.tsx' },
+      { path: 'registry/v0/app/page.tsx', target: 'app/page.tsx' },
+      ...[...logoFiles, ...guidelinesFiles].map(({ path, target }) => ({ path, target: target.replace(/^~\//, '') })),
+    ].map((file) => ({ ...file, type: 'registry:file' })),
   },
 ]
 
@@ -466,8 +482,9 @@ const registries = [{ repo: 'pmndrs/design-system', ref: version, items: built.i
 
 const bumpInstallRefs = (text) => text.replace(installRef, `pmndrs/design-system/$1#${version}`)
 
+// The Open in v0 links are rewritten too: a prompt names tokens, and each link is written once, in `v0.mjs`.
 for (const url of docs) {
-  let page = bumpInstallRefs(readFileSync(url, 'utf8'))
+  let page = rewriteV0Links(bumpInstallRefs(readFileSync(url, 'utf8')))
   if (url.href === pageUrl.href) page = writeCatalog(page, registries)
   outputs.push([url, page])
 }

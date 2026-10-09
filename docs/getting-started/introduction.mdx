@@ -132,6 +132,37 @@ a tag: an address without one follows the repo's default branch, and changes und
 [`npx shadcn@latest view <address>`](https://ui.shadcn.com/docs/cli#view) prints an item,
 files and all, before you [`add`](https://ui.shadcn.com/docs/cli#add) it.
 
+### Namespace
+
+This site also serves every item of this repo as static JSON, under
+`https://pmndrs.github.io/design-system/r/`. Declare it once as a
+[namespace](https://ui.shadcn.com/docs/registry/namespace) in `components.json`:
+
+```json title="components.json"
+{
+  "registries": {
+    "@pmndrs": "https://pmndrs.github.io/design-system/r/{name}.json"
+  }
+}
+```
+
+Then an item is a name, no repo and no ref:
+
+```sh
+npx shadcn@latest add @pmndrs/theme
+npx shadcn@latest search @pmndrs
+```
+
+The namespace serves the latest release, rebuilt from `registry.json` on every deploy of
+`main`. Pin the git address above where an app must not move.
+
+The [shadcn MCP server](https://ui.shadcn.com/docs/mcp) reads the same namespace, so Claude,
+Cursor or VS Code can list, read and install the items from the conversation:
+
+```sh
+npx shadcn@latest mcp init --client claude
+```
+
 ### Publish a block
 
 A block has one source of truth, and it moves. It starts in the repo it was born in, used

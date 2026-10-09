@@ -52,8 +52,43 @@ jobs:
       # behind their URL. An empty list would fall back to that default, hence `main` spelled out.
       version_branches_list: 'main'
 
-  deploy:
+  #
+  # The hosted registry: `registry.json` as static files under the site's `r/`, one
+  # `<name>.json` per item plus the index, so `https://pmndrs.github.io/design-system/r/{name}.json`
+  # is a shadcn namespace (see `scripts/hosted-registry.mjs`). The reusable workflow above has
+  # no input for extra static files, so its `github-pages` artifact is unpacked here, gets
+  # `r/` at its root (which both Pages and the Vercel job below serve under the base path), and
+  # is uploaded again as `site`: the one artifact both deployments take, so they serve the same
+  # files. A new name rather than `github-pages` overwritten, which the Vercel job may be
+  # downloading meanwhile.
+  #
+  registry:
     needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v8
+        with:
+          name: github-pages
+          path: ${{ runner.temp }}/github-pages
+      - run: |
+          mkdir -p "$SITE"
+          tar -xf "$RUNNER_TEMP/github-pages/artifact.tar" -C "$SITE"
+          npm run hosted-registry -- "$SITE/r"
+        env:
+          SITE: ${{ runner.temp }}/site
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          name: site
+          path: ${{ runner.temp }}/site
+
+  deploy:
+    needs: registry
     # Pages is `main` only: the previews are the `vercel` job's
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -71,15 +106,19 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v5
+        with:
+          artifact_name: site
 
   #
   # Whatever Pages got, we deploy to Vercel too (preview for branches, production for `main`),
   # the way pmndrs/docs deploys its own site — except that this site is static, built once above
-  # by the reusable workflow: so rather than having Vercel build it, the Pages artifact is handed
-  # to it as is, in the Build Output API layout (`.vercel/output`).
+  # by the reusable workflow: so rather than having Vercel build it, the Pages artifact (`site`,
+  # the reusable workflow's plus the hosted registry's `r/`) is handed to it as is, in the Build
+  # Output API layout (`.vercel/output`). A branch preview so serves that branch's `r/` files.
   #
   vercel:
-    needs: build
+    # `build` for its `version_hostname` output, `registry` for the `site` artifact
+    needs: [build, registry]
     runs-on: ubuntu-latest
     env:
       # No token, no deployment: that is a fork's pull request, which cannot read the repo
@@ -102,7 +141,7 @@ jobs:
       - if: env.VERCEL == 'true'
         uses: actions/download-artifact@v8
         with:
-          name: github-pages
+          name: site
       - if: env.VERCEL == 'true'
         uses: actions/setup-node@v7
         with:

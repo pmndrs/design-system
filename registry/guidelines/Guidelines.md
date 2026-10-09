@@ -31,7 +31,7 @@ No colour is picked by hand. A few seeds go in and Material Design 3 computes ev
 - The seed hex itself is the *container* role: `--md-sys-color-primary-container` is the lime. `primary` is a dark olive in light and white in dark, so use the container where the brand colour itself must show.
 - `--md-sys-color-secondary` and `--md-sys-color-tertiary` are generated but intentionally unused as accents: the named brand colours take their place.
 - The dark scheme is the `dark` class on `<html>`.
-- Designers get the same palette as Figma tokens, light and dark as two modes of one variable collection: `npx shadcn@latest add pmndrs/design-system/figma-tokens#v0.7.0`.
+- Designers get the same palette as Figma tokens, light and dark as two modes of one variable collection: `npx shadcn@latest add pmndrs/design-system/figma-tokens#v0.7.0`. The same item carries type, spacing, radius and motion as a second collection, and the text and shadow styles as a file for Tokens Studio.
 
 ### shadcn tokens and the roles they point at
 

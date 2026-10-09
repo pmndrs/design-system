@@ -80,13 +80,14 @@ const pixelNote = (cell) => parseFloat(cell.match(/\((\d+(?:\.\d+)?)px\)/)[1])
 const quoted = (cell) => cell.match(/^`([^`]+)`/)[1]
 
 /**
- * The Typography page: the two font families, and the `text-*` type scale,
- * each step's size and line height as Tailwind writes them, with their pixels
- * at a 16px root.
+ * The Typography page: the two font families, the `text-*` type scale, each
+ * step's size and line height as Tailwind writes them, with their pixels at a
+ * 16px root, and the `font-*` weights, each a number.
  */
 function typography(page) {
   return {
     fonts: rowsOf(page, 'Font family').map(([role, family, utility, variable]) => ({ role, family, utility, variable })),
+    weights: rowsOf(page, 'Font weight').map(([utility, variable, value]) => ({ utility, variable, value: Number(value) })),
     scale: rowsOf(page, 'Type scale').map(([utility, size, leading]) => ({
       utility,
       fontSize: quoted(size),

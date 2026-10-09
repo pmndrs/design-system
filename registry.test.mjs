@@ -196,6 +196,31 @@ test('the baked palette is what builder(pmndrsMtb) renders', () => {
   assert.deepEqual(mismatches, [])
 })
 
+/**
+ * The alert roles are what every pmndrs docs site styles its GitHub alerts,
+ * hints and badges with. Drop one from the options and the bake stays current
+ * and faithful — `build.test.mjs` and the builder test above both pass — while
+ * the sites lose the colour silently: `var()` falls back to nothing.
+ *
+ * `.dark` only carries what differs from `:root` (Color match keeps a
+ * container the same in both modes), so dark is `:root` with `.dark` on top.
+ */
+test('the baked theme declares every alert role, light and dark', () => {
+  const css = registry.items.find((item) => item.name === 'theme').css
+  const modes = { light: css[':root'], dark: { ...css[':root'], ...css['.dark'] } }
+  const missing = []
+  for (const alert of ['note', 'tip', 'important', 'warning', 'caution']) {
+    const roles = [alert, `on-${alert}`, `${alert}-container`, `on-${alert}-container`]
+    for (const [mode, block] of Object.entries(modes)) {
+      for (const role of roles) {
+        if (!block[`--md-sys-color-${role}`]) missing.push(`${mode} --md-sys-color-${role}`)
+      }
+    }
+  }
+
+  assert.deepEqual(missing, [])
+})
+
 /** Every `registry:file` this registry ships, with the item it belongs to. */
 const shipped = registry.items.flatMap((item) =>
   (item.files ?? []).filter((file) => file.type === 'registry:file').map((file) => ({ item: item.name, ...file }))

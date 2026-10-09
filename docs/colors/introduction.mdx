@@ -161,9 +161,14 @@ without it the colour stays true to its hex. For custom colours of your *own*, d
 installed `md3.ts`: spread `pmndrsMtb` into your config, add yours there, and name them in the
 `@plugin` body — `md3-base`'s docs walk through it.
 
-The seven brand colours are declared this way, none of them blended: each stays its exact hex.
-Lime is also the `source` seed, and red also drives the `error` role. Their shade utilities take
-over Tailwind's stock palettes of the same names.
+Twelve are declared this way, in this order: the seven brand colours, then the five alert
+colours. The brand colours are not blended, the alert colours are.
+
+### Brand colours
+
+The seven brand colours are none of them blended: each stays its exact hex. Lime is also the
+`source` seed, and red also drives the `error` role. Their shade utilities take over Tailwind's
+stock palettes of the same names.
 
 | Name | Seed | Blend | Utilities |
 | --- | --- | --- | --- |
@@ -186,10 +191,43 @@ over Tailwind's stock palettes of the same names.
   ))}
 </ColorGroup>
 
-To change them, edit `customColors` in
+### Alert colours
+
+The five alert colours are the design system's semantic roles. Use them for GitHub alerts
+(`> [!NOTE]`…), hints, badges and statuses. They are seeded with GitHub's alert hues, so a
+reader recognises them at a glance.
+
+They are blended: each is pulled toward the `source` seed. So it keeps its meaning and still
+sits in the palette, this one or that of any library that reseeds it. A brand colour would not
+do. `cyan` is not a note, and unblended, its container is far too loud for an alert's
+background.
+
+| Name | Seed | Blend | Override | Utilities |
+| --- | --- | --- | --- | --- |
+| `note` | <Color color="#1F6FEB" /> `#1F6FEB` | yes | `THEME_NOTE` | `bg-note`, `text-on-note`, `bg-note-container`, `text-on-note-container` |
+| `tip` | <Color color="#238636" /> `#238636` | yes | `THEME_TIP` | `bg-tip`, `text-on-tip`, `bg-tip-container`, `text-on-tip-container` |
+| `important` | <Color color="#8957E5" /> `#8957E5` | yes | `THEME_IMPORTANT` | `bg-important`, `text-on-important`, `bg-important-container`, `text-on-important-container` |
+| `warning` | <Color color="#D29922" /> `#D29922` | yes | `THEME_WARNING` | `bg-warning`, `text-on-warning`, `bg-warning-container`, `text-on-warning-container` |
+| `caution` | <Color color="#DA3633" /> `#DA3633` | yes | `THEME_CAUTION` | `bg-caution`, `text-on-caution`, `bg-caution-container`, `text-on-caution-container` |
+
+<ColorGroup orientation="vertical">
+  {['note', 'tip', 'important', 'warning', 'caution'].map((name) => (
+    <ColorGroup key={name}>
+      <Color role={name} variant="cell" />
+      <Color role={`on-${name}`} variant="cell" />
+      <Color role={`${name}-container`} variant="cell" />
+      <Color role={`on-${name}-container`} variant="cell" />
+    </ColorGroup>
+  ))}
+</ColorGroup>
+
+Each seed can be overridden from the environment, as the primary can with `THEME_PRIMARY`; the
+baked `theme` is always built without them, so it ships the seeds above.
+
+To change any custom colour, edit `customColors` in
 [`md3.ts`](https://github.com/pmndrs/design-system/blob/main/registry/md3-base/md3.ts), run
-`npm run build`, and update this table and the `theme_custom_colors` line of the docs workflow,
-which is what makes the swatches above follow the scheme and contrast of this site.
+`npm run build`, and update these tables. The swatches above are this site's own theme, which
+the docs engine computes with the same custom colours.
 
 ## Tonal palettes
 
@@ -212,7 +250,7 @@ one fits: a role follows the scheme, a tone does not.
       <span key={tone} className="rotate-180 text-center [writing-mode:vertical-rl]">{tone}</span>
     ))}
   </div>
-  {['primary', 'secondary', 'tertiary', 'neutral', 'neutral-variant', 'error', 'lime', 'teal', 'cyan', 'purple', 'red', 'orange', 'yellow'].map((palette) => (
+  {['primary', 'secondary', 'tertiary', 'neutral', 'neutral-variant', 'error', 'lime', 'teal', 'cyan', 'purple', 'red', 'orange', 'yellow', 'note', 'tip', 'important', 'warning', 'caution'].map((palette) => (
     <div key={palette} className="contents">
       <code className="text-sm">{palette}</code>
       <ColorGroup>

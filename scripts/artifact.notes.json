@@ -1,0 +1,241 @@
+{
+  "pins": {
+    "themeRename": "v0.6.0",
+    "keypointsColourLayer": "pmndrs/design-system/md3#v0.5.0",
+    "exampleBlockAddress": "pmndrs/docs/mdx-prose#v1.0.0"
+  },
+  "meta": {
+    "source": "github",
+    "repo": "pmndrs/design-system",
+    "ref": "main@{{sha}}",
+    "release": "{{release}}",
+    "package": ".",
+    "paths": {
+      "tokens": [
+        "registry.json",
+        "registry/md3-base/md3.ts",
+        "preset.json",
+        "docs/colors/introduction.mdx",
+        "docs/typography/introduction.mdx",
+        "docs/spacing/introduction.mdx",
+        "docs/radius/introduction.mdx",
+        "docs/shadows/introduction.mdx",
+        "node_modules/material-theme-builder/dist/shadcn.css"
+      ],
+      "fonts": [
+        "node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2",
+        "node_modules/@fontsource-variable/inconsolata/files/inconsolata-latin-wght-normal.woff2"
+      ],
+      "assets": [
+        "docs/assets/logo_complete.svg",
+        "docs/assets/logo_idle.svg"
+      ],
+      "docs": [
+        "README.md",
+        "docs/getting-started/introduction.mdx",
+        "docs/colors/introduction.mdx",
+        "docs/typography/introduction.mdx",
+        "docs/spacing/introduction.mdx",
+        "docs/radius/introduction.mdx",
+        "docs/shadows/introduction.mdx",
+        "docs/assets/introduction.mdx",
+        "registry/theme/docs.md",
+        "registry/md3-base/docs.md",
+        "registry/font-mono/docs.md",
+        "registry/logo/docs.md",
+        "registry/external.json"
+      ]
+    },
+    "components": {
+      "Keypoints": "pmndrs/docs@{{docsRef}}:registry/keypoints/keypoints.tsx"
+    },
+    "synced": "{{synced}}",
+    "defaults": "tailwind v4: type scale, spacing, shadows (inherited, per the docs pages); radius: preset b5cR4Y50S base-nova",
+    "docsSite": {
+      "main": "https://pmndrs.github.io/design-system/"
+    }
+  },
+  "families": {
+    "color": {
+      "usage": {
+        "background": "Page background (`bg-background`). Pair with `foreground`.",
+        "foreground": "Default text and icons on `background`, `card`, `popover` and `muted` (`text-foreground`).",
+        "card": "Card surface, one step off `background`. Text on it: `foreground`.",
+        "card-foreground": "Text and icons on `card`; the same role as `foreground`.",
+        "popover": "Popover, dropdown and menu surface. Text on it: `foreground`.",
+        "popover-foreground": "Text and icons on `popover`; the same role as `foreground`.",
+        "primary": "Primary actions: default button fill, links, active states (`bg-primary`). Text on it: `primary-foreground`.",
+        "primary-foreground": "Text and icons on `primary`.",
+        "secondary": "Secondary button fill. This is the MD3 secondary *container*, not `md-sys-color-secondary`. Text on it: `secondary-foreground`.",
+        "secondary-foreground": "Text and icons on `secondary`.",
+        "muted": "Muted fill: skeletons, inactive tabs, subtle panels. Text on it: `foreground` or `muted-foreground`.",
+        "muted-foreground": "Lower-emphasis text (captions, placeholders, help text) on `background`, `card`, `popover` and `muted`.",
+        "accent": "Hover and selected fill of menu items and ghost buttons. Same role as `secondary`. Text on it: `accent-foreground`.",
+        "accent-foreground": "Text and icons on `accent`.",
+        "destructive": "Destructive actions and error states. As a fill, put `md-sys-color-on-error` on it.",
+        "border": "Decorative dividers and container borders. Too faint to carry meaning alone; use `input` for control boundaries.",
+        "input": "Borders of inputs and other controls, on `background` and `card`.",
+        "ring": "Focus ring, on every surface.",
+        "chart-{n}": "Chart series {n}. Same value in light and dark.",
+        "sidebar": "Sidebar surface; same role as `card`. Text on it: `foreground`.",
+        "sidebar-foreground": "Text and icons on `sidebar`; the same role as `foreground`.",
+        "sidebar-primary": "Primary fill inside the sidebar; follows `primary`.",
+        "sidebar-primary-foreground": "Text and icons on `sidebar-primary`; follows `primary-foreground`.",
+        "sidebar-accent": "Hover and selected fill inside the sidebar; follows `accent`.",
+        "sidebar-accent-foreground": "Text and icons on `sidebar-accent`; follows `accent-foreground`.",
+        "sidebar-border": "Sidebar dividers; follows `border`.",
+        "sidebar-ring": "Focus ring inside the sidebar; follows `ring`.",
+        "md-sys-color-background": "Page background. Same value as `md-sys-color-surface`. Text on it: `md-sys-color-on-background`.",
+        "md-sys-color-error": "Errors and destructive actions; seeded from the brand red `#ff4980`. High-emphasis fill. Text on it: `md-sys-color-on-error`.",
+        "md-sys-color-error-container": "Lower-emphasis error fill. Text on it: `md-sys-color-on-error-container`.",
+        "md-sys-color-inverse-on-surface": "Text and icons on `md-sys-color-inverse-surface`.",
+        "md-sys-color-inverse-primary": "Primary-coloured text and actions on `md-sys-color-inverse-surface`.",
+        "md-sys-color-inverse-surface": "Surface that contrasts with the scheme (snackbars, tooltips). Text on it: `md-sys-color-inverse-on-surface`.",
+        "md-sys-color-on-background": "Text and icons on `md-sys-color-background`.",
+        "md-sys-color-on-error": "Text and icons on `md-sys-color-error`.",
+        "md-sys-color-on-error-container": "Text and icons on `md-sys-color-error-container`.",
+        "md-sys-color-on-primary": "Text and icons on `md-sys-color-primary`.",
+        "md-sys-color-on-primary-container": "Text and icons on `md-sys-color-primary-container`.",
+        "md-sys-color-on-primary-fixed": "Text and icons on `md-sys-color-primary-fixed` and `md-sys-color-primary-fixed-dim`.",
+        "md-sys-color-on-primary-fixed-variant": "Lower-emphasis text on `md-sys-color-primary-fixed` and `md-sys-color-primary-fixed-dim`.",
+        "md-sys-color-on-secondary": "Text and icons on `md-sys-color-secondary`.",
+        "md-sys-color-on-secondary-container": "Text and icons on `md-sys-color-secondary-container`.",
+        "md-sys-color-on-secondary-fixed": "Text and icons on `md-sys-color-secondary-fixed` and `md-sys-color-secondary-fixed-dim`.",
+        "md-sys-color-on-secondary-fixed-variant": "Lower-emphasis text on `md-sys-color-secondary-fixed` and `md-sys-color-secondary-fixed-dim`.",
+        "md-sys-color-on-surface": "Default text and icons on every `md-sys-color-surface*` role; shadcn `foreground`.",
+        "md-sys-color-on-surface-variant": "Lower-emphasis text and icons on every `md-sys-color-surface*` role; shadcn `muted-foreground`.",
+        "md-sys-color-on-tertiary": "Text and icons on `md-sys-color-tertiary`.",
+        "md-sys-color-on-tertiary-container": "Text and icons on `md-sys-color-tertiary-container`.",
+        "md-sys-color-on-tertiary-fixed": "Text and icons on `md-sys-color-tertiary-fixed` and `md-sys-color-tertiary-fixed-dim`.",
+        "md-sys-color-on-tertiary-fixed-variant": "Lower-emphasis text on `md-sys-color-tertiary-fixed` and `md-sys-color-tertiary-fixed-dim`.",
+        "md-sys-color-outline": "Boundaries that carry meaning (input borders) on surface roles; shadcn `input`.",
+        "md-sys-color-outline-variant": "Decorative dividers on surface roles; shadcn `border`.",
+        "md-sys-color-primary": "The main accent, computed from the poimandres lime seed `#caf543`. High-emphasis fill. Text on it: `md-sys-color-on-primary`.",
+        "md-sys-color-primary-container": "Lower-emphasis primary fill. Text on it: `md-sys-color-on-primary-container`.",
+        "md-sys-color-primary-fixed": "Primary fill that keeps the same value in light and dark. Text on it: `md-sys-color-on-primary-fixed`, `md-sys-color-on-primary-fixed-variant`.",
+        "md-sys-color-primary-fixed-dim": "Dimmer fixed primary fill, same value in light and dark. Text on it: `md-sys-color-on-primary-fixed`, `md-sys-color-on-primary-fixed-variant`.",
+        "md-sys-color-scrim": "Scrim behind modals, applied with opacity. Black in both schemes.",
+        "md-sys-color-secondary": "Generated by MD3 from the seed; intentionally unused as an accent, the named brand colours take its place. High-emphasis fill. Text on it: `md-sys-color-on-secondary`.",
+        "md-sys-color-secondary-container": "Lower-emphasis secondary fill. Text on it: `md-sys-color-on-secondary-container`.",
+        "md-sys-color-secondary-fixed": "Secondary fill that keeps the same value in light and dark. Text on it: `md-sys-color-on-secondary-fixed`, `md-sys-color-on-secondary-fixed-variant`.",
+        "md-sys-color-secondary-fixed-dim": "Dimmer fixed secondary fill, same value in light and dark. Text on it: `md-sys-color-on-secondary-fixed`, `md-sys-color-on-secondary-fixed-variant`.",
+        "md-sys-color-shadow": "Shadow colour. Black in both schemes.",
+        "md-sys-color-surface": "Default surface. Text on it: `md-sys-color-on-surface`, `md-sys-color-on-surface-variant`.",
+        "md-sys-color-surface-bright": "Brightest surface. Text on it: `md-sys-color-on-surface`.",
+        "md-sys-color-surface-container": "Default container surface. Text on it: `md-sys-color-on-surface`.",
+        "md-sys-color-surface-container-high": "High-emphasis container; shadcn `popover`. Text on it: `md-sys-color-on-surface`.",
+        "md-sys-color-surface-container-highest": "Highest-emphasis container; shadcn `muted`. Text on it: `md-sys-color-on-surface`.",
+        "md-sys-color-surface-container-low": "Low-emphasis container; shadcn `card` and `sidebar`. Text on it: `md-sys-color-on-surface`.",
+        "md-sys-color-surface-container-lowest": "Lowest-emphasis container surface. Text on it: `md-sys-color-on-surface`.",
+        "md-sys-color-surface-dim": "Dimmest surface (`bg-surface-dim`), a role shadcn has no name for; the Keypoints panel sits on it. Text on it: `md-sys-color-on-surface`.",
+        "md-sys-color-surface-tint": "Tint colour for elevation overlays; same shade as `md-sys-color-primary`.",
+        "md-sys-color-surface-variant": "Alternate surface from the neutral-variant palette. Text on it: `md-sys-color-on-surface-variant`.",
+        "md-sys-color-tertiary": "Generated by MD3 from the seed; intentionally unused as an accent, the named brand colours take its place. High-emphasis fill. Text on it: `md-sys-color-on-tertiary`.",
+        "md-sys-color-tertiary-container": "Lower-emphasis tertiary fill. Text on it: `md-sys-color-on-tertiary-container`.",
+        "md-sys-color-tertiary-fixed": "Tertiary fill that keeps the same value in light and dark. Text on it: `md-sys-color-on-tertiary-fixed`, `md-sys-color-on-tertiary-fixed-variant`.",
+        "md-sys-color-tertiary-fixed-dim": "Dimmer fixed tertiary fill, same value in light and dark. Text on it: `md-sys-color-on-tertiary-fixed`, `md-sys-color-on-tertiary-fixed-variant`.",
+        "md-sys-color-lime": "Brand colour lime (seed `#caf543`, not blended). Also the primary source seed. High-emphasis fill. Text on it: `md-sys-color-on-lime`.",
+        "md-sys-color-on-lime": "Text and icons on `md-sys-color-lime`.",
+        "md-sys-color-lime-container": "Lower-emphasis lime fill. Text on it: `md-sys-color-on-lime-container`.",
+        "md-sys-color-on-lime-container": "Text and icons on `md-sys-color-lime-container`.",
+        "md-sys-color-teal": "Brand colour teal (seed `#00f7a3`, not blended). High-emphasis fill. Text on it: `md-sys-color-on-teal`.",
+        "md-sys-color-on-teal": "Text and icons on `md-sys-color-teal`.",
+        "md-sys-color-teal-container": "Lower-emphasis teal fill. Text on it: `md-sys-color-on-teal-container`.",
+        "md-sys-color-on-teal-container": "Text and icons on `md-sys-color-teal-container`.",
+        "md-sys-color-cyan": "Brand colour cyan (seed `#2bdcf6`, not blended). High-emphasis fill. Text on it: `md-sys-color-on-cyan`.",
+        "md-sys-color-on-cyan": "Text and icons on `md-sys-color-cyan`.",
+        "md-sys-color-cyan-container": "Lower-emphasis cyan fill. Text on it: `md-sys-color-on-cyan-container`.",
+        "md-sys-color-on-cyan-container": "Text and icons on `md-sys-color-cyan-container`.",
+        "md-sys-color-purple": "Brand colour purple (seed `#d855f9`, not blended). High-emphasis fill. Text on it: `md-sys-color-on-purple`.",
+        "md-sys-color-on-purple": "Text and icons on `md-sys-color-purple`.",
+        "md-sys-color-purple-container": "Lower-emphasis purple fill. Text on it: `md-sys-color-on-purple-container`.",
+        "md-sys-color-on-purple-container": "Text and icons on `md-sys-color-purple-container`.",
+        "md-sys-color-red": "Brand colour red (seed `#ff4980`, not blended). Also drives the error role. High-emphasis fill. Text on it: `md-sys-color-on-red`.",
+        "md-sys-color-on-red": "Text and icons on `md-sys-color-red`.",
+        "md-sys-color-red-container": "Lower-emphasis red fill. Text on it: `md-sys-color-on-red-container`.",
+        "md-sys-color-on-red-container": "Text and icons on `md-sys-color-red-container`.",
+        "md-sys-color-orange": "Brand colour orange (seed `#ffc043`, not blended). High-emphasis fill. Text on it: `md-sys-color-on-orange`.",
+        "md-sys-color-on-orange": "Text and icons on `md-sys-color-orange`.",
+        "md-sys-color-orange-container": "Lower-emphasis orange fill. Text on it: `md-sys-color-on-orange-container`.",
+        "md-sys-color-on-orange-container": "Text and icons on `md-sys-color-orange-container`.",
+        "md-sys-color-yellow": "Brand colour yellow (seed `#ebff0f`, not blended). High-emphasis fill. Text on it: `md-sys-color-on-yellow`.",
+        "md-sys-color-on-yellow": "Text and icons on `md-sys-color-yellow`.",
+        "md-sys-color-yellow-container": "Lower-emphasis yellow fill. Text on it: `md-sys-color-on-yellow-container`.",
+        "md-sys-color-on-yellow-container": "Text and icons on `md-sys-color-yellow-container`.",
+        "md-ref-palette-primary-{tone}": "Tone {tone} of the primary tonal palette. Reference shade, same in both schemes: build with the `md-sys-color-*` roles that alias it, not with this directly.",
+        "md-ref-palette-secondary-{tone}": "Tone {tone} of the secondary tonal palette. Reference shade, same in both schemes: build with the `md-sys-color-*` roles that alias it, not with this directly.",
+        "md-ref-palette-tertiary-{tone}": "Tone {tone} of the tertiary tonal palette. Reference shade, same in both schemes: build with the `md-sys-color-*` roles that alias it, not with this directly.",
+        "md-ref-palette-error-{tone}": "Tone {tone} of the error tonal palette. Reference shade, same in both schemes: build with the `md-sys-color-*` roles that alias it, not with this directly.",
+        "md-ref-palette-neutral-{tone}": "Tone {tone} of the neutral tonal palette. Reference shade, same in both schemes: build with the `md-sys-color-*` roles that alias it, not with this directly.",
+        "md-ref-palette-neutral-variant-{tone}": "Tone {tone} of the neutral-variant tonal palette. Reference shade, same in both schemes: build with the `md-sys-color-*` roles that alias it, not with this directly.",
+        "md-ref-palette-lime-{tone}": "Tone {tone} of the lime brand tonal palette. Reference shade, same in both schemes: build with the `md-sys-color-*` roles that alias it, not with this directly.",
+        "md-ref-palette-teal-{tone}": "Tone {tone} of the teal brand tonal palette. Reference shade, same in both schemes: build with the `md-sys-color-*` roles that alias it, not with this directly.",
+        "md-ref-palette-cyan-{tone}": "Tone {tone} of the cyan brand tonal palette. Reference shade, same in both schemes: build with the `md-sys-color-*` roles that alias it, not with this directly.",
+        "md-ref-palette-purple-{tone}": "Tone {tone} of the purple brand tonal palette. Reference shade, same in both schemes: build with the `md-sys-color-*` roles that alias it, not with this directly.",
+        "md-ref-palette-red-{tone}": "Tone {tone} of the red brand tonal palette. Reference shade, same in both schemes: build with the `md-sys-color-*` roles that alias it, not with this directly.",
+        "md-ref-palette-orange-{tone}": "Tone {tone} of the orange brand tonal palette. Reference shade, same in both schemes: build with the `md-sys-color-*` roles that alias it, not with this directly.",
+        "md-ref-palette-yellow-{tone}": "Tone {tone} of the yellow brand tonal palette. Reference shade, same in both schemes: build with the `md-sys-color-*` roles that alias it, not with this directly."
+      }
+    },
+    "type": {
+      "usage": {
+        "text-xs": "Captions, badges, fine print. Tailwind default `text-xs`.",
+        "text-sm": "Default UI text in shadcn components: buttons, inputs, labels, menus. Tailwind default `text-sm`.",
+        "text-base": "Body copy. Tailwind default `text-base`.",
+        "text-lg": "Lead paragraphs, card titles. Tailwind default `text-lg`.",
+        "text-xl": "Small headings. Tailwind default `text-xl`.",
+        "text-2xl": "Section headings. Tailwind default `text-2xl`.",
+        "text-3xl": "Page headings. Tailwind default `text-3xl`.",
+        "text-4xl": "Large page headings. Tailwind default `text-4xl`.",
+        "text-5xl": "Display sizes for hero and marketing headlines. Tailwind default `text-5xl`.",
+        "text-6xl": "Display sizes for hero and marketing headlines. Tailwind default `text-6xl`.",
+        "text-7xl": "Display sizes for hero and marketing headlines. Tailwind default `text-7xl`.",
+        "text-8xl": "Display sizes for hero and marketing headlines. Tailwind default `text-8xl`.",
+        "text-9xl": "Display sizes for hero and marketing headlines. Tailwind default `text-9xl`.",
+        "code-inline": "Inline code, shadcn's recipe: `font-mono text-sm font-semibold` on `bg-muted`. `code`, `kbd`, `samp` and `pre` are Inconsolata without a class."
+      }
+    },
+    "spacing": {
+      "note": "Inherited from Tailwind v4 defaults, not yet a pmndrs decision (the Spacing page of the docs). Every step is a multiple of `spacing`.",
+      "usage": {
+        "spacing": "The base unit, `--spacing`: utility `n` is `n × 0.25rem`, so any multiple works (`p-13` is `3.25rem`). Tailwind v4 default.",
+        "spacing-{step}": "Tailwind default step {step} ({pixels}): `p-{step}`, `gap-{step}`, `size-{step}`. Every step is a multiple of the 0.25rem base."
+      }
+    },
+    "radius": {
+      "note": "A pmndrs decision: one base, `radius` (0.625rem), and the preset's base-nova scale multiplying it (the Radius page of the docs). Values at a 16px root.",
+      "usage": {
+        "radius": "The base radius, `--radius`: a pmndrs decision, from the preset `b5cR4Y50S` (style `base-nova`, radius `default`). Every `rounded-sm` to `rounded-4xl` step is a multiple of it; change it and every corner rescales.",
+        "radius-xs": "Tailwind default `rounded-xs`, outside the base-nova scale: the Radius page does not list it, and it does not follow `radius`.",
+        "radius-sm": "`rounded-sm`: `calc(var(--radius) * 0.6)`, the preset's base-nova scale.",
+        "radius-md": "`rounded-md`: `calc(var(--radius) * 0.8)`, the preset's base-nova scale.",
+        "radius-lg": "`rounded-lg`: `var(--radius)` itself, the preset's base-nova scale.",
+        "radius-xl": "`rounded-xl`: `calc(var(--radius) * 1.4)`, the preset's base-nova scale.",
+        "radius-2xl": "`rounded-2xl`: `calc(var(--radius) * 1.8)`, the preset's base-nova scale.",
+        "radius-3xl": "`rounded-3xl`: `calc(var(--radius) * 2.2)`, the preset's base-nova scale.",
+        "radius-4xl": "`rounded-4xl`: `calc(var(--radius) * 2.6)`, the preset's base-nova scale."
+      }
+    },
+    "shadow": {
+      "note": "Inherited from Tailwind v4 defaults, not yet a pmndrs decision (the Shadows page of the docs). Black at low opacity in both schemes.",
+      "usage": {
+        "shadow-2xs": "Hairline lift. Tailwind default `shadow-2xs`.",
+        "shadow-xs": "Inputs and buttons. Tailwind default `shadow-xs`.",
+        "shadow-sm": "Cards. Tailwind default `shadow-sm`.",
+        "shadow-md": "Dropdowns and popovers. Tailwind default `shadow-md`.",
+        "shadow-lg": "Dialogs and sheets. Tailwind default `shadow-lg`.",
+        "shadow-xl": "Large floating panels. Tailwind default `shadow-xl`.",
+        "shadow-2xl": "The highest elevation. Tailwind default `shadow-2xl`.",
+        "inset-shadow-2xs": "Recessed surfaces, the lightest. Tailwind default `inset-shadow-2xs`; stacks with `shadow-*`.",
+        "inset-shadow-xs": "Recessed surfaces. Tailwind default `inset-shadow-xs`; stacks with `shadow-*`.",
+        "inset-shadow-sm": "Recessed surfaces, the deepest. Tailwind default `inset-shadow-sm`; stacks with `shadow-*`."
+      }
+    },
+    "dropShadow": {
+      "note": "`filter: drop-shadow()` values, for shapes that are not boxes: icons, SVGs, cut-out images. Inherited from Tailwind v4 defaults, not yet a pmndrs decision (the Shadows page of the docs).",
+      "usage": {
+        "drop-shadow-{step}": "Tailwind default `drop-shadow-{step}`: follows the painted shape, transparent pixels excluded."
+      }
+    }
+  }
+}

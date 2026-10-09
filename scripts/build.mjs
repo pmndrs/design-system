@@ -482,13 +482,20 @@ for (const url of docs) {
  *
  * Written whole on every build rather than bumped in place, which is why it is
  * not one of the `docPages` above.
+ *
+ * Both copies open on `generatedFrom`, so an edit lands in the brand book and
+ * not in an output the next build overwrites. On the page it is a YAML comment
+ * in the frontmatter, which pmndrs/docs drops: an MDX comment would stay in the
+ * body, and so in `llms-full.txt`.
  */
 const brandBookPath = 'artifact/README.md'
 const guidelines = fill(stripArtifactOnly(readFileSync(new URL(`../${brandBookPath}`, import.meta.url), 'utf8')), brandBookPath).trim()
+const generatedFrom = `Generated from ${brandBookPath} by scripts/build.mjs: do not edit.`
 
 outputs.push([
   guidelinesPageUrl,
   `---
+# ${generatedFrom}
 title: Guidelines
 description: The do and don't of the pmndrs design system — colour, type, spacing, components, logo, iconography and voice.
 nav: 0.5
@@ -499,7 +506,10 @@ ${guidelines}
 ])
 
 /** The same text as the `guidelines` item installs it, with a title of its own in place of the frontmatter. */
-outputs.push([new URL('../registry/guidelines/Guidelines.md', import.meta.url), `# Poimandres design system guidelines\n\n${guidelines}\n`])
+outputs.push([
+  new URL('../registry/guidelines/Guidelines.md', import.meta.url),
+  `<!-- ${generatedFrom} -->\n\n# Poimandres design system guidelines\n\n${guidelines}\n`,
+])
 
 /** The `v0` item's stylesheet; what is in it is `v0.mjs`'s story. */
 outputs.push([new URL('../registry/v0/globals.css', import.meta.url), v0GlobalsCss(palette, foundations, fontMono)])

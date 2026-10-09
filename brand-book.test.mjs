@@ -67,13 +67,32 @@ test('the guidelines item writes Guidelines.md where Figma Make reads it', () =>
   )
 })
 
+const guidelinesFile = () => readFileSync(new URL('./registry/guidelines/Guidelines.md', import.meta.url), 'utf8')
+
+/**
+ * Both copies are generated, so each says so at the top, where someone about
+ * to edit it looks first, and names the source to edit instead. Out of what a
+ * reader sees: an HTML comment in `Guidelines.md`, and in the page a YAML
+ * comment in the frontmatter, which pmndrs/docs drops along with the rest of
+ * it, where an MDX comment would reach `llms-full.txt` with the body.
+ */
+test('the Guidelines page and Guidelines.md say they are generated, and from what', () => {
+  const marker = /generated from artifact\/README\.md by scripts\/build\.mjs: do not edit/i
+  const frontmatter = guidelinesPage().match(/^---\n([\s\S]*?)\n---\n/)?.[1] ?? ''
+  const file = guidelinesFile()
+
+  assert.ok(frontmatter.split('\n').some((line) => line.startsWith('#') && marker.test(line)), 'no marker in the page frontmatter')
+  assert.ok(marker.test(file.match(/^<!--([\s\S]*?)-->\n/)?.[1] ?? ''), 'Guidelines.md does not open on the marker')
+})
+
 /** One brand book: what the item installs says what the Guidelines page says. */
 test('Guidelines.md carries the text of the Guidelines page', () => {
   const [file] = registry.items.find((item) => item.name === 'guidelines').files
-  // Each with its own title: frontmatter on the page, a `#` heading in the file.
+  // Each with its own title and marker: frontmatter on the page, a comment and a `#` heading in the file.
   const body = (text) =>
     text
       .replace(/^---\n[\s\S]*?\n---\n/, '')
+      .replace(/^<!--[\s\S]*?-->\n/, '')
       .replace(/^\s*# .*\n/, '')
       .trim()
 

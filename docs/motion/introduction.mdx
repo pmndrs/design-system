@@ -1,0 +1,85 @@
+---
+title: Motion
+description: The transition durations and ease curves your project gets, as Tailwind v4 ships them.
+nav: 6
+---
+
+<Intro>
+  Two families of motion utilities: `duration-*` sets how long a transition runs, and `ease-*`
+  the curve it follows. A transition that names neither runs on one default for each.
+</Intro>
+
+> [!NOTE]
+> Inherited from Tailwind v4 defaults, not yet a pmndrs decision. See [Tailwind's transition-duration docs](https://tailwindcss.com/docs/transition-duration).
+
+## Defaults
+
+A `transition-*` utility (`transition`, `transition-colors`, `transition-transform`…) without a
+`duration-*` or an `ease-*` runs on these two theme variables:
+
+| Variable                               | Value                          |
+| -------------------------------------- | ------------------------------ |
+| `--default-transition-duration`        | `150ms`                        |
+| `--default-transition-timing-function` | `cubic-bezier(0.4, 0, 0.2, 1)` |
+
+The default curve is the one `ease-in-out` sets.
+
+## Duration
+
+`duration-*` sets `transition-duration` in milliseconds: `duration-300` is `300ms`. No theme
+variable stands behind it, so any number works, not only the steps below: `duration-250` is
+`250ms`. Use brackets for another unit (`duration-[2s]`).
+
+| Utility         | Value    |
+| --------------- | -------- |
+| `duration-0`    | `0ms`    |
+| `duration-75`   | `75ms`   |
+| `duration-100`  | `100ms`  |
+| `duration-150`  | `150ms`  |
+| `duration-200`  | `200ms`  |
+| `duration-300`  | `300ms`  |
+| `duration-500`  | `500ms`  |
+| `duration-700`  | `700ms`  |
+| `duration-1000` | `1000ms` |
+
+Hover the panel to run every step at once, on the default curve:
+
+<div className="group grid! gap-3 rounded-lg bg-surface-container-low p-6">
+  {['duration-0', 'duration-75', 'duration-100', 'duration-150', 'duration-200', 'duration-300', 'duration-500', 'duration-700', 'duration-1000'].map((duration) => (
+    <div key={duration} className="grid! grid-cols-[8rem_1fr] items-center gap-4">
+      <code className="text-sm">{duration}</code>
+      <div className={`h-3 origin-left scale-x-0 rounded-full bg-primary transition-transform group-hover:scale-x-100 motion-reduce:transition-none ${duration}`} />
+    </div>
+  ))}
+</div>
+
+## Easing
+
+`ease-*` sets `transition-timing-function`, from the `--ease-*` theme variables. See
+[Tailwind's transition-timing-function docs](https://tailwindcss.com/docs/transition-timing-function).
+
+| Utility       | Variable        | Value                          |
+| ------------- | --------------- | ------------------------------ |
+| `ease-linear` | none            | `linear`                       |
+| `ease-in`     | `--ease-in`     | `cubic-bezier(0.4, 0, 1, 1)`   |
+| `ease-out`    | `--ease-out`    | `cubic-bezier(0, 0, 0.2, 1)`   |
+| `ease-in-out` | `--ease-in-out` | `cubic-bezier(0.4, 0, 0.2, 1)` |
+
+`ease-in` starts slow, so it suits an element leaving the screen. `ease-out` ends slow, so it
+suits an element arriving. `ease-in-out` suits an element that moves from one place to another.
+
+Hover the panel to run every curve at once, over `duration-1000`:
+
+<div className="group grid! gap-3 rounded-lg bg-surface-container-low p-6">
+  {['ease-linear', 'ease-in', 'ease-out', 'ease-in-out'].map((ease) => (
+    <div key={ease} className="grid! grid-cols-[8rem_1fr] items-center gap-4">
+      <code className="text-sm">{ease}</code>
+      <div className={`h-3 origin-left scale-x-0 rounded-full bg-primary transition-transform duration-1000 group-hover:scale-x-100 motion-reduce:transition-none ${ease}`} />
+    </div>
+  ))}
+</div>
+
+## Reduced motion
+
+Prefix a utility with `motion-reduce:` to drop a transition for people who ask their system for
+less motion: `motion-reduce:transition-none`. The previews above do.

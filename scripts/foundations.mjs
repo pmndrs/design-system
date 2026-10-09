@@ -1,6 +1,6 @@
 /**
  * The foundations values, read off the docs pages that decide them:
- * Typography, Spacing, Radius and Shadows. Those pages are the source of
+ * Typography, Spacing, Radius, Shadows and Motion. Those pages are the source of
  * truth, so every generated file that carries a foundation value reads it
  * here rather than restating it.
  *
@@ -128,6 +128,23 @@ function shadows(page) {
 }
 
 /**
+ * The Motion page: the two variables a transition falls back on, the
+ * `duration-*` steps and the `ease-*` curves. `ease-linear` has no theme
+ * variable, so its `variable` is `null`.
+ */
+function motion(page) {
+  return {
+    defaults: rowsOf(page, 'Defaults').map(([variable, value]) => ({ variable, value })),
+    durations: rowsOf(page, 'Duration').map(([utility, value]) => ({ utility, value })),
+    easings: rowsOf(page, 'Easing').map(([utility, variable, value]) => ({
+      utility,
+      variable: variable.startsWith('--') ? variable : null,
+      value,
+    })),
+  }
+}
+
+/**
  * The foundations values, one entry per family, read off the docs pages under
  * `docsDir` (the repo's `docs/` by default).
  *
@@ -140,5 +157,6 @@ export function readFoundations(docsDir = defaultDocsDir) {
     spacing: spacing(page('spacing')),
     radius: radius(page('radius')),
     shadows: shadows(page('shadows')),
+    motion: motion(page('motion')),
   }
 }

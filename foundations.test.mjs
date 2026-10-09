@@ -98,6 +98,30 @@ test('the box, inset and drop shadows are Tailwind v4 defaults', () => {
   }
 })
 
+test('the transition defaults and the ease curves are Tailwind v4 defaults', () => {
+  const { defaults, easings } = foundations.motion
+  assert.deepEqual(defaults, [
+    { variable: '--default-transition-duration', value: tailwind['--default-transition-duration'] },
+    { variable: '--default-transition-timing-function', value: tailwind['--default-transition-timing-function'] },
+  ])
+  assert.deepEqual(easings, [
+    { utility: 'ease-linear', variable: null, value: 'linear' },
+    { utility: 'ease-in', variable: '--ease-in', value: tailwind['--ease-in'] },
+    { utility: 'ease-out', variable: '--ease-out', value: tailwind['--ease-out'] },
+    { utility: 'ease-in-out', variable: '--ease-in-out', value: tailwind['--ease-in-out'] },
+  ])
+})
+
+test('the duration scale is its utilities in milliseconds, the default among them', () => {
+  const { defaults, durations } = foundations.motion
+  assert.deepEqual(
+    durations.map(({ utility, value }) => [utility, value]),
+    [0, 75, 100, 150, 200, 300, 500, 700, 1000].map((ms) => [`duration-${ms}`, `${ms}ms`])
+  )
+  const fallback = defaults.find(({ variable }) => variable === '--default-transition-duration').value
+  assert.ok(durations.some(({ value }) => value === fallback), `no step is the default, ${fallback}`)
+})
+
 test('a foundations page without the section or table it should have is an error naming it', () => {
   const docs = pathToFileURL(`${mkdtempSync(join(tmpdir(), 'foundations-'))}/`)
   try {

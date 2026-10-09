@@ -231,3 +231,17 @@ test('every version in the output comes from a placeholder', () => {
     []
   )
 })
+
+/**
+ * `meta.paths.docs` points a design agent at the pages the design system is
+ * written down in: every page of the docs site, a new one included.
+ */
+test('every page of the docs site is listed in meta.paths.docs', () => {
+  const pages = walk(new URL('./docs/', import.meta.url))
+    .filter((path) => path.endsWith('.mdx'))
+    .map((path) => `docs/${path}`)
+  assert.deepEqual(
+    pages.filter((page) => !tokens.meta.paths.docs.includes(page)),
+    []
+  )
+})

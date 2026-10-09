@@ -29,7 +29,13 @@ function declarations(css, found = []) {
 }
 
 const declared = registry.items.flatMap((item) => declarations(item.css))
-const names = new Set(declared.map(([name]) => name))
+/**
+ * Plus what `md3-base`'s `@import` declares: the remap, shadcn's variables set
+ * to MD3 roles, as the package ships it.
+ */
+const remapCss = readFileSync(new URL(import.meta.resolve('material-theme-builder/shadcn.css')), 'utf8')
+const remapped = [...remapCss.matchAll(/^\s*(--[\w-]+):\s*var\(--md-/gm)].map(([, name]) => name)
+const names = new Set([...declared.map(([name]) => name), ...remapped])
 
 /**
  * Registry-wide rather than per item, deliberately: `md3-base` is the layer
@@ -57,16 +63,21 @@ test('every var() reference resolves to a variable the registry declares', () =>
  * variable. The palette belongs in `css`; this keeps it there.
  *
  * A colour in `cssVars` is worse still: it lands in `:root` after the remap's
- * `@import`, and overrides it. The one exception is the preset's two
- * non-colour choices, which shadcn only knows how to write from `cssVars`:
- * `radius`, from which it derives the `--radius-*` scale, and the heading font.
+ * `@import`, and overrides it. The one exception is the preset, for what
+ * shadcn only knows how to write from `cssVars`, none of it a colour value:
+ * `radius`, from which it derives the `--radius-*` scale, and in `@theme
+ * inline` the heading font and the Tailwind colour of each remapped variable.
  */
 test('no item declares cssVars but the preset, and it no colour', () => {
-  const allowed = new Set(['preset light.radius', 'preset theme.--font-heading'])
+  const allowed = new Set([
+    'preset light.radius',
+    'preset theme.--font-heading: var(--font-sans)',
+    ...remapped.map((name) => `preset theme.--color-${name.slice(2)}: var(${name})`),
+  ])
   const offenders = registry.items.flatMap((item) =>
     Object.entries(item.cssVars ?? {}).flatMap(([block, vars]) =>
-      Object.keys(vars)
-        .map((name) => `${item.name} ${block}.${name}`)
+      Object.entries(vars)
+        .map(([name, value]) => (block === 'theme' ? `${item.name} ${block}.${name}: ${value}` : `${item.name} ${block}.${name}`))
         .filter((declaration) => !allowed.has(declaration))
     )
   )
@@ -167,7 +178,26 @@ test('preset is a registry:base carrying the poimandres preset and the theme', (
   // `radius: default`, as the Radius page gives it.
   assert.equal(item.cssVars?.light?.radius, readFoundations().radius.base)
   // The stylesheet lines the preset's own item writes, which `extends: none` no longer brings.
-  assert.deepEqual(Object.keys(item.css ?? {}), ['@import "tw-animate-css"', '@import "shadcn/tailwind.css"', '@layer base'])
+  for (const line of ['@import "tw-animate-css"', '@import "shadcn/tailwind.css"', '@layer base']) {
+    assert.ok(item.css?.[line], `no ${line}`)
+  }
+})
+
+/**
+ * shadcn writes `--color-card: var(--card)` and the rest into `@theme inline`
+ * from the colours in `cssVars`, and the preset has none: without its own
+ * mapping, `bg-card` and `border-border` do not exist, and the base layer's
+ * `@apply border-border` fails the Tailwind build (measured with a Vite app
+ * on shadcn 4.18). The MD3 plugin maps the MD3 role names only. So the preset
+ * maps every variable the remap sets, as shadcn would have, from
+ * `cssVars.theme`: `css` cannot put a declaration in `@theme inline`.
+ */
+test('the preset maps every shadcn variable the remap sets to a Tailwind colour', () => {
+  const item = registry.items.find((entry) => entry.name === 'preset')
+  const theme = item.cssVars?.theme ?? {}
+
+  const missing = remapped.filter((name) => theme[`--color-${name.slice(2)}`] !== `var(${name})`)
+  assert.deepEqual(missing, [])
 })
 
 /** The families a Fontsource package's stylesheet registers, by `@font-face`. */
@@ -465,7 +495,6 @@ const globalsCss = () => read(v0().files[0])
  * bake, and against the remap as the package ships it.
  */
 test('the v0 globals.css gives every shadcn variable the hex of its MD3 role, light and dark', () => {
-  const remapCss = readFileSync(new URL(import.meta.resolve('material-theme-builder/shadcn.css')), 'utf8')
   const remap = block(remapCss, ':root:root,\n.dark.dark')
   const css = globalsCss()
 

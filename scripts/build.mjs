@@ -170,10 +170,11 @@ const items = [
    *
    * What it leaves out is that item's colours: literal `cssVars` land in
    * `:root` after the remap's `@import` and override it, so the colours stay
-   * `theme`'s. Its two other `cssVars` stay, because shadcn writes them from
-   * there only: `radius` (and the `--radius-*` scale it derives from it) and
-   * the heading font. `registry.test.mjs` holds both rules, and the choices to
-   * `preset.json`.
+   * `theme`'s. What else it has in `cssVars` stays, none of it a colour
+   * value, because shadcn writes it from there only: `radius` (and the
+   * `--radius-*` scale it derives from it), the heading font, and the
+   * `@theme inline` mapping it would have derived from the colours.
+   * `registry.test.mjs` holds both rules, and the choices to `preset.json`.
    */
   {
     name: 'preset',
@@ -196,7 +197,18 @@ const items = [
     dependencies: ['shadcn@latest', 'class-variance-authority', 'cn', 'tw-animate-css', '@base-ui/react', 'lucide-react'],
     registryDependencies: ['utils', 'font-inter', `pmndrs/design-system/theme#${version}`],
     cssVars: {
-      theme: { '--font-heading': 'var(--font-sans)' },
+      theme: {
+        '--font-heading': 'var(--font-sans)',
+        /**
+         * What shadcn would have derived from the colours left out: the
+         * Tailwind colour of each variable the remap sets (`bg-card`,
+         * `border-border`…). Without it the `@apply border-border` below fails
+         * the Tailwind build; the MD3 plugin maps the MD3 role names only.
+         * Here and not in `css`, which cannot put a declaration in
+         * `@theme inline`.
+         */
+        ...Object.fromEntries(remapRoles().map(([name]) => [`--color-${name.slice(2)}`, `var(${name})`])),
+      },
       light: { radius: foundations.radius.base },
     },
     css: {

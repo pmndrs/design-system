@@ -163,6 +163,19 @@ Cursor or VS Code can list, read and install the items from the conversation:
 npx shadcn@latest mcp init --client claude
 ```
 
+A fresh project can start from it too: `preset` is the poimandres preset and the theme in one
+item, so `init` with its URL does what the Quick start does, without the preset code, and
+declares the namespace in `components.json` on the way:
+
+```sh
+npx shadcn@latest init https://pmndrs.github.io/design-system/r/preset.json
+```
+
+To prototype in v0 with the pmndrs colours, fonts and radius already applied,
+[open the theme in v0](https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs).
+v0 reads no namespace, so this opens the `v0` item: one `globals.css` with the colours resolved,
+light and dark.
+
 ### Publish a block
 
 A block has one source of truth, and it moves. It starts in the repo it was born in, used

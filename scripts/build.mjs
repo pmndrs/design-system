@@ -40,6 +40,7 @@ import { pmndrsMtb } from '../registry/md3-base/md3.ts'
 import { fill, stripArtifactOnly } from './brand-book.mjs'
 import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
 import { readFoundations } from './foundations.mjs'
+import { hostedUrl } from './hosted-registry.mjs'
 
 /**
  * Refs are not inherited, so a cross-item dependency carries its own — and it
@@ -189,6 +190,8 @@ const items = [
       rtl: false,
       menuColor: 'default',
       menuAccent: 'subtle',
+      // The namespace, declared on the way: `shadcn add @pmndrs/logo` works next.
+      registries: { '@pmndrs': `${hostedUrl}{name}.json` },
     },
     dependencies: ['shadcn@latest', 'class-variance-authority', 'cn', 'tw-animate-css', '@base-ui/react', 'lucide-react'],
     registryDependencies: ['utils', 'font-inter', `pmndrs/design-system/theme#${version}`],

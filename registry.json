@@ -540,7 +540,7 @@
       "docs": "The colours are already working. The pmndrs palette is baked into the CSS this item writes, so there is nothing to mount, no provider, and no client JavaScript.\n\nA few things to know:\n\n- **This is the item to depend on.** It pulls `md3-base` — the Tailwind `@theme` mapping, the shadcn remap and the seed — and adds the palette those point at.\n- **The brand colours are named.** Lime, teal, cyan, purple, red, orange and yellow are custom colours: list them in the `@plugin` line `md3-base` added (`custom-colors: lime, teal, cyan, purple, red, orange, yellow;`) for `bg-lime`, `text-on-teal`, `bg-cyan-container`, `bg-purple-500` and the rest. Their shade utilities take over Tailwind's stock palettes of the same names.\n- If you want a palette other than the pmndrs one, install **`md3-base`** instead and compute your own. See its docs. Installing both means committing a whole baked palette you immediately override.\n- **The bake is the seed's own output.** It is `builder(pmndrsMtb)` as Material Theme Builder computes it, with nothing redrawn on top, so `<Mtb>` or `builder()` at runtime with the same seed renders exactly these colours."
     },
     {
-      "name": "pmndrs-logo",
+      "name": "logo",
       "type": "registry:item",
       "title": "pmndrs logo",
       "description": "The pmndrs logo as SVG — complete, idle, animated and loading — into `public/pmndrs/`, so `/pmndrs/logo_loading.svg` is a plain image URL. The animations are CSS inside the files, with a reduced-motion fallback.",
@@ -570,7 +570,7 @@
       "docs": "Four SVG files, in `public/pmndrs/` at the root of your project: `logo_complete`, `logo_idle`, `logo_animated` and `logo_loading`. Your app serves them as they are:\n\n```tsx\n<img src=\"/pmndrs/logo_loading.svg\" width={48} height={48} alt=\"Loading\" />\n```\n\n- **The animations are CSS inside the file.** A plain `<img>` plays them, and so does `next/image` with `unoptimized`. Under reduced motion, `logo_animated` shows the complete mark, and `logo_loading` only fades.\n- **Every file paints its own black square**, 600×600. There is no transparent variant yet.\n- **PNGs are not included**: the registry carries text files only. The Assets page of the docs previews each variant.\n\nMIT, like the rest of pmndrs/design-system. No attribution required."
     },
     {
-      "name": "pmndrs-tokens",
+      "name": "figma-tokens",
       "type": "registry:item",
       "title": "pmndrs Figma tokens",
       "description": "The pmndrs palette as DTCG design tokens, light and dark — the files a Figma variable collection imports — into `design/tokens/pmndrs/`. The same colours `md3` bakes into CSS, alias for alias.",

@@ -113,7 +113,7 @@ const items = [
    * pinned ref, the way it fetches `md3.ts`.
    *
    * Text only, for the same reason: the CLI reads every file as a string, so a
-   * PNG would arrive mangled. Those stay downloads on the Assets page.
+   * PNG would arrive mangled: the logo ships as SVG only.
    *
    * Every `target` starts with `~/`, which is the project root. A bare
    * `public/…` is not: in an app with a `src/` directory — what
@@ -122,7 +122,7 @@ const items = [
    * shadcn 4.18; `registry.test.mjs` rejects any target without the `~/`.
    */
   {
-    name: 'pmndrs-logo',
+    name: 'logo',
     type: 'registry:item',
     title: 'pmndrs logo',
     description:
@@ -133,7 +133,7 @@ const items = [
      * resolves a relative image against the docs folder of the branch on
      * GitHub (`MDX_BASEURL`), and clamps `..` at that folder, so an SVG that
      * lived under `registry/` could not be shown on the page. One file serves
-     * both, and the installed name is the one the page offers for download.
+     * both, and the installed name is the one the page lists.
      */
     files: ['logo_complete', 'logo_idle', 'logo_animated', 'logo_loading'].map((logo) => ({
       path: `docs/assets/${logo}.svg`,
@@ -142,7 +142,7 @@ const items = [
     })),
   },
   {
-    name: 'pmndrs-tokens',
+    name: 'figma-tokens',
     type: 'registry:item',
     title: 'pmndrs Figma tokens',
     description:

@@ -1,5 +1,11 @@
 # @pmndrs/design-system
 
+## 0.9.1
+
+### Patch Changes
+
+- [#48](https://github.com/pmndrs/design-system/pull/48) [`0fd1a9c`](https://github.com/pmndrs/design-system/commit/0fd1a9ca792a0523bc23c33f424a7af77ec09998) Thanks [@abernier](https://github.com/abernier)! - `font-mono` declares the `latin` subset, so on Next shadcn writes `subsets: ["latin"]` into the `next/font/google` call. Before, the call had no subsets: nothing was preloaded, and `next build --webpack` failed with "Preload is enabled but no subsets were specified". To fix an existing layout, re-run `shadcn add` for `font-mono` (or `theme`) at the new tag: it rewrites the `--font-mono` initializer.
+
 ## 0.9.0
 
 ### Minor Changes

@@ -72,7 +72,7 @@ Add the `dark` class to `<html>` for the dark scheme.
 > No block in mind? Add the theme on its own — the palette and the mono font:
 >
 > ```sh
-> npx shadcn@latest add pmndrs/design-system/theme#v0.9.0
+> npx shadcn@latest add pmndrs/design-system/theme#v0.9.1
 > ```
 
 ## Tokens
@@ -123,7 +123,7 @@ CLI never looks inside. A shader, a drei helper or a `SKILL.md`
 An item's address is the registry, the item and a git ref:
 
 ```sh
-npx shadcn@latest add pmndrs/design-system/theme#v0.9.0
+npx shadcn@latest add pmndrs/design-system/theme#v0.9.1
 ```
 
 The CLI reads `registry.json` and the item's files at that
@@ -157,7 +157,7 @@ The namespace serves the latest state of `main`, rebuilt from `registry.json` on
 deploy of it. Pin the git address above, at a tag, where an app must not move.
 
 A branch's preview deployment serves its own `r/` too, but not all the way down: `preset`
-depends on `pmndrs/design-system/theme#v0.9.0`, so the theme it installs is the released
+depends on `pmndrs/design-system/theme#v0.9.1`, so the theme it installs is the released
 tag's, not the branch's.
 
 The [shadcn MCP server](https://ui.shadcn.com/docs/mcp) reads the same namespace, so Claude,
@@ -209,7 +209,7 @@ shape.
       "registryDependencies": [
         "sidebar",
         "collapsible",
-        "pmndrs/design-system/theme#v0.9.0"
+        "pmndrs/design-system/theme#v0.9.1"
       ],
       "files": [{ "path": "registry/<block>/<block>.tsx", "type": "registry:block" }]
     }
@@ -236,21 +236,21 @@ Here they all are, across repos, each linked to its source, then the same list f
 
 | Item | Type | Registry |
 | --- | --- | --- |
-| [md3-base](https://github.com/pmndrs/design-system/tree/v0.9.0/registry/md3-base) | lib | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.0/registry.json) |
-| [font-mono](https://github.com/pmndrs/design-system/tree/v0.9.0/registry/font-mono) | font | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.0/registry.json) |
-| [theme](https://github.com/pmndrs/design-system/tree/v0.9.0/registry/theme) | lib | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.0/registry.json) |
-| [preset](https://github.com/pmndrs/design-system/tree/v0.9.0/registry/preset) | base | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.0/registry.json) |
-| [logo](https://github.com/pmndrs/design-system/tree/v0.9.0/registry/logo) | item | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.0/registry.json) |
-| [figma-tokens](https://github.com/pmndrs/design-system/tree/v0.9.0/registry/figma-tokens) | item | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.0/registry.json) |
-| [guidelines](https://github.com/pmndrs/design-system/tree/v0.9.0/registry/guidelines) | item | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.0/registry.json) |
-| [v0](https://github.com/pmndrs/design-system/tree/v0.9.0/registry/v0) | item | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.0/registry.json) |
+| [md3-base](https://github.com/pmndrs/design-system/tree/v0.9.1/registry/md3-base) | lib | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.1/registry.json) |
+| [font-mono](https://github.com/pmndrs/design-system/tree/v0.9.1/registry/font-mono) | font | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.1/registry.json) |
+| [theme](https://github.com/pmndrs/design-system/tree/v0.9.1/registry/theme) | lib | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.1/registry.json) |
+| [preset](https://github.com/pmndrs/design-system/tree/v0.9.1/registry/preset) | base | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.1/registry.json) |
+| [logo](https://github.com/pmndrs/design-system/tree/v0.9.1/registry/logo) | item | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.1/registry.json) |
+| [figma-tokens](https://github.com/pmndrs/design-system/tree/v0.9.1/registry/figma-tokens) | item | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.1/registry.json) |
+| [guidelines](https://github.com/pmndrs/design-system/tree/v0.9.1/registry/guidelines) | item | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.1/registry.json) |
+| [v0](https://github.com/pmndrs/design-system/tree/v0.9.1/registry/v0) | item | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.9.1/registry.json) |
 | [keypoints](https://github.com/pmndrs/docs/tree/v4.22.0/registry/keypoints) | block | [pmndrs/docs](https://github.com/pmndrs/docs/blob/v4.22.0/registry.json) |
 | [color](https://github.com/pmndrs/docs/tree/v4.22.0/registry/color) | block | [pmndrs/docs](https://github.com/pmndrs/docs/blob/v4.22.0/registry.json) |
 
 The CLI lists the same items, read live from each repo at the ref to pin:
 
 ```sh
-npx shadcn@latest search pmndrs/design-system#v0.9.0 pmndrs/docs#v4.22.0
+npx shadcn@latest search pmndrs/design-system#v0.9.1 pmndrs/docs#v4.22.0
 ```
 
 {/* catalog:end */}

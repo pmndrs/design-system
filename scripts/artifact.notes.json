@@ -37,6 +37,7 @@
         "docs/spacing/introduction.mdx",
         "docs/radius/introduction.mdx",
         "docs/shadows/introduction.mdx",
+        "docs/motion/introduction.mdx",
         "docs/assets/introduction.mdx",
         "registry/theme/docs.md",
         "registry/md3-base/docs.md",

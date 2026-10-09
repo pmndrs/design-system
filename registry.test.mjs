@@ -142,6 +142,17 @@ test('font-mono is a registry:font on --font-mono, scoped below html', () => {
 })
 
 /**
+ * On Next, shadcn writes `font.subsets` into the `next/font/google` call, and
+ * `next/font` preloads by default: without a subset the build fails with
+ * "Preload is enabled but no subsets were specified".
+ */
+test('font-mono declares a subset, so next/font can preload it', () => {
+  const { font } = registry.items.find((item) => item.name === 'font-mono')
+
+  assert.ok(font.subsets?.length, '`font-mono` has no subsets, so `next build` fails on preload')
+})
+
+/**
  * `shadcn init <url>` on the hosted `preset` has to configure what
  * `shadcn init --preset b1VlIttI` does, plus the theme: `preset.json` is the
  * reviewable form of that preset, so the item is held to it. A `registry:style`

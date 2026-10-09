@@ -13,6 +13,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "artifact": "node scripts/artifact.mjs",
+    "hosted-registry": "node scripts/hosted-registry.mjs",
     "refresh-catalog": "node scripts/catalog.mjs && npm run build",
     "check-registry": "shadcn registry validate ./registry.json",
     "test": "node --test",

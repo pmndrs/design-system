@@ -121,7 +121,7 @@ Poimandres is a distributed architecture based on shadcn blocks: any `pmndrs/*` 
 ## Not synced
 
 - From the repository (`main` at {{sha}}, release {{release}}): the colour layer, the font families and files, the base radius and its scale, and the two static logo SVGs.
-- The type scale, spacing and shadows are Tailwind v4's defaults, as the repository's Typography, Spacing and Shadows pages list them: inherited, not pmndrs decisions. `radius-xs` is Tailwind's default step; the Radius page does not list it.
+- The type scale, spacing and shadows are Tailwind v4's defaults, as the repository's Typography, Spacing and Shadows pages list them: inherited, not pmndrs decisions. `radius-xs` is Tailwind's default step, which the Radius page lists as inherited.
 - Fonts: only the latin subset of each, from `@fontsource-variable/inter` and `@fontsource-variable/inconsolata` {{fontsourceVersion}} (variable weight, normal style). The latin-ext, Cyrillic, Greek and Vietnamese subsets and Inter's italic are not stored.
 - `logo_animated.svg` and `logo_loading.svg` are not included: their animation is CSS inside the file, which is stripped when stored here, leaving a still copy of the complete mark. The logo PNGs were not requested.
 - The shadcn tokens are aliased as `material-theme-builder`'s `shadcn.css` maps them ({{mtbVersion}}, the `md3-base` dependency), every one of them.

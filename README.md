@@ -10,7 +10,7 @@ cd /tmp && rm -rf pmndrs-foo && \
 npx -y create-next-app@latest pmndrs-foo --ts --tailwind --app --eslint --src-dir --import-alias "@/*" --no-turbopack --use-npm --yes && \
 cd pmndrs-foo && \
 npx -y shadcn@latest init --preset b1VlIttI --yes && \
-npx -y shadcn@latest add pmndrs/docs/keypoints#v4.20.0 --yes && \
+npx -y shadcn@latest add pmndrs/docs/keypoints#v4.22.0 --yes && \
 printf '%s' 'import { Keypoints, KeypointsItem } from "@/components/keypoints"
 
 export default function Home() {
@@ -81,11 +81,55 @@ A block never hardcodes a font family (the `font-sans` / `font-mono` utilities):
 it inherits the consumer's. Icons come from
 `components.json`'s `iconLibrary`; `lucide` is the pmndrs baseline.
 
+## Claude Design
+
+The design system is published to Claude as the
+[Poimandres Design System artifact](https://claude.ai/artifact/FF46zANDT1mt2kdF9D9QAf),
+so that the designs Claude generates stay on brand: its tokens, its brand book
+(`README.md`), its fonts, and a card per pmndrs block of the registry catalog.
+The artifact draws the foundations, colours to shadows, from the tokens itself.
+
+Every file of it comes from this repo. `npm run artifact` writes them into
+`out/artifact/project/` (gitignored), laid out as the artifact's own
+`project/`:
+
+- `tokens.json`, from the theme palette, the shadcn remap and the docs tables,
+  with the usage lines and provenance of `scripts/artifact.notes.json`;
+- `README.md`, `assets/Logos/README.md` and `components/<Block>/*`, copied
+  from `artifact/` with their `{{placeholders}}` filled: every version and sha
+  in them comes from git, `package.json`, `node_modules` or
+  `registry/external.json`;
+- `fonts/*`, the latin subsets of Inter and Inconsolata.
+
+`components/` mirrors the catalog's blocks (`registry:block` items of
+`registry.json` and `registry/external.json`): each has a hand-written
+`preview.html`, a static rendition styled with the artifact's token variables,
+and a `README.md`. A block listed without its card fails the run, and so does
+a card whose block left the catalog.
+
+The artifact generates the rest itself (`tokens.css`, `manifest.json`, `api/`),
+and its index, `design-system.json`, which names the logo uploads, is edited
+in place.
+
+A maintainer publishes after each release, from Claude Code, signed in to
+claude.ai, which is why CI cannot do it:
+
+1. Check out `main` at the release and run `npm run artifact`.
+2. Diff `out/artifact/project/` against the artifact's files, and publish only
+   the files that changed to https://claude.ai/artifact/FF46zANDT1mt2kdF9D9QAf
+   with Claude Code's Artifact tool.
+3. Last, update `design-system.json`'s `lastChange` (`by`, `at`, `via` naming
+   the commit, `note`).
+
+Nothing of it is committed but its sources: `scripts/artifact.mjs`,
+`scripts/artifact.notes.json` and `artifact/`.
+
 ## dev
 
 ```sh
 npm install
 npm run build   # regenerate registry.json, figma/*.tokens.json, the docs catalog
+npm run artifact  # generate the Claude Design artifact files into out/artifact/
 npm run lgtm    # outputs are current and valid, preset code round-trips
 npm run refresh-catalog  # re-fetch the other repos' items listed in the docs catalog
 ```

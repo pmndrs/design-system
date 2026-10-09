@@ -217,7 +217,7 @@ const docs = [new URL('../README.md', import.meta.url), new URL('../.changeset/R
 
 /**
  * `pmndrs/design-system/<item>#v<semver>`, for this repo's items only — an
- * address into another repo (`pmndrs/docs/…#v4.20.0`) is never touched.
+ * address into another repo (`pmndrs/docs/…#v4.22.0`) is never touched.
  */
 const installRef = new RegExp(`pmndrs/design-system/(${items.map(({ name }) => name).join('|')})#v\\d+\\.\\d+\\.\\d+`, 'g')
 

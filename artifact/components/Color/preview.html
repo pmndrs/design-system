@@ -1,0 +1,42 @@
+<!-- @dsCard group="Blocks" height=320 subtitle="Static rendition" -->
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html,body{margin:0}
+  body{background:var(--background);color:var(--foreground);font-family:var(--font-sans, Inter, sans-serif);padding:var(--spacing-6, 1.5rem)}
+  p{margin:0 0 var(--spacing-4, 1rem);font-size:0.875rem;line-height:1.25rem}
+  .pill{display:inline-block;vertical-align:middle;width:1.25rem;height:1.25rem;border-radius:9999px;border:1px solid var(--border)}
+  .groups{display:flex;gap:var(--spacing-3, 0.75rem);max-width:640px}
+  .group{flex:1;display:grid;grid-auto-flow:row;gap:1px;overflow:hidden;border-radius:var(--radius-lg, 0.625rem)}
+  .group span{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:var(--spacing-2, 0.5rem);font-size:0.75rem;line-height:1rem}
+  .group .cell{height:5rem}
+  .primary{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)}
+  .on-primary{background:var(--md-sys-color-on-primary);color:var(--md-sys-color-primary)}
+  .primary-container{background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container)}
+  .on-primary-container{background:var(--md-sys-color-on-primary-container);color:var(--md-sys-color-primary-container)}
+  .secondary{background:var(--md-sys-color-secondary);color:var(--md-sys-color-on-secondary)}
+  .on-secondary{background:var(--md-sys-color-on-secondary);color:var(--md-sys-color-secondary)}
+  .secondary-container{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+  .on-secondary-container{background:var(--md-sys-color-on-secondary-container);color:var(--md-sys-color-secondary-container)}
+  .tertiary{background:var(--md-sys-color-tertiary);color:var(--md-sys-color-on-tertiary)}
+  .on-tertiary{background:var(--md-sys-color-on-tertiary);color:var(--md-sys-color-tertiary)}
+  .tertiary-container{background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container)}
+  .on-tertiary-container{background:var(--md-sys-color-on-tertiary-container);color:var(--md-sys-color-tertiary-container)}
+  .lime{background:var(--md-sys-color-lime);color:var(--md-sys-color-on-lime)}
+  .on-lime{background:var(--md-sys-color-on-lime);color:var(--md-sys-color-lime)}
+  .lime-container{background:var(--md-sys-color-lime-container);color:var(--md-sys-color-on-lime-container)}
+  .on-lime-container{background:var(--md-sys-color-on-lime-container);color:var(--md-sys-color-lime-container)}
+</style>
+</head>
+<body>
+<p>The accents of the theme, <span class="pill primary" title="Primary"></span> <span class="pill secondary" title="Secondary"></span> and <span class="pill tertiary" title="Tertiary"></span>, and a pmndrs colour, <span class="pill lime" title="Lime"></span>.</p>
+<div class="groups">
+  <div class="group"><span class="cell primary">Primary</span><span class="on-primary">On Primary</span><span class="cell primary-container">Primary Container</span><span class="on-primary-container">On Primary Container</span></div>
+  <div class="group"><span class="cell secondary">Secondary</span><span class="on-secondary">On Secondary</span><span class="cell secondary-container">Secondary Container</span><span class="on-secondary-container">On Secondary Container</span></div>
+  <div class="group"><span class="cell tertiary">Tertiary</span><span class="on-tertiary">On Tertiary</span><span class="cell tertiary-container">Tertiary Container</span><span class="on-tertiary-container">On Tertiary Container</span></div>
+  <div class="group"><span class="cell lime">Lime</span><span class="on-lime">On Lime</span><span class="cell lime-container">Lime Container</span><span class="on-lime-container">On Lime Container</span></div>
+</div>
+</body>
+</html>

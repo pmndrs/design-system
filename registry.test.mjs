@@ -1,9 +1,9 @@
 /**
- * `registry.json` is generated, so most of it is already pinned: `check-build`
- * compares the output to what is committed, which fixes anything that is a pure
+ * `registry.json` is generated, so most of it is already pinned: `build.test.mjs`
+ * (in `npm run lgtm`) compares the output to what is committed, which fixes anything that is a pure
  * function of the inputs. Asserting those here would only restate the build.
  *
- * What `check-build` cannot catch is a bad *input*. Mistype a variable in the
+ * What `build.test.mjs` cannot catch is a bad *input*. Mistype a variable in the
  * shadcn remap, add a `cssVars` block, point a dependency at an item that does
  * not exist — rebuild, and the output is faithfully current and wrong. These
  * assert the coherence the generator never checks.
@@ -52,8 +52,8 @@ test('every var() reference resolves to a variable the registry declares', () =>
 /**
  * shadcn derives an `@theme inline` entry from every `cssVars` it is handed, and
  * builds the reference by prefixing `--` — so an already-prefixed MD3 name lands
- * as `var(----md-ref-palette-primary-40)`, alongside 252 junk Tailwind theme
- * names. The palette belongs in `css`; this keeps it there.
+ * as `var(----md-ref-palette-primary-40)`, one junk Tailwind theme name per
+ * variable. The palette belongs in `css`; this keeps it there.
  */
 test('no item declares cssVars', () => {
   const offenders = registry.items.filter((item) => item.cssVars).map((item) => item.name)
@@ -121,7 +121,7 @@ test('every Figma role resolves to the hex the baked CSS gives it', () => {
  * `md3`. Compared resolved, through the `var()` aliases, so this pins what a
  * page shows rather than how the build happens to write it.
  *
- * `check-build` cannot catch a departure: it compares against what `build.mjs`
+ * `build.test.mjs` cannot catch a departure: it compares against what `build.mjs`
  * writes, so a step redrawing the palette there would be current and pass.
  */
 test('the baked palette is what builder(pmndrsMtb) renders', () => {

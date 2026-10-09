@@ -77,8 +77,11 @@ const fontMono = {
   dependency: '@fontsource-variable/inconsolata',
   /**
    * Mandatory on Next: shadcn writes it into the `next/font/google` call, and
-   * `next/font` preloads by default, so without a subset `next build` fails
-   * with "Preload is enabled but no subsets were specified".
+   * `next/font` preloads by default, so without a subset
+   * `next build --webpack` fails with "Preload is enabled but no subsets were
+   * specified" (Turbopack builds, but preloads nothing). It only selects what
+   * is preloaded: every unicode range is still self-hosted.
+   * `registry.test.mjs` holds it.
    */
   subsets: ['latin'],
   /**

@@ -105,11 +105,7 @@ test('no md3 item remains', () => {
   )
 })
 
-/**
- * For `--font-mono`, shadcn defaults a missing `selector` to `html`, and on
- * Next the mono class then replaces `font-sans` on `<html>` — the whole site
- * turns monospace. So the selector is required here, and never `html`.
- */
+/** Why the selector is mandatory: see the `font-mono` item in `scripts/build.mjs`. */
 test('font-mono is a registry:font on --font-mono, scoped below html', () => {
   const fontMono = registry.items.find((item) => item.name === 'font-mono')
 

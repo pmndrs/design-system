@@ -29,7 +29,7 @@ jobs:
       github: 'https://github.com/pmndrs/design-system'
       # The swatches of docs/colors are the site's own theme: these
       # mirror the seed of registry/md3-base/md3.ts, so the MD3 posters of the
-      # page are the palette `md3` ships.
+      # page are the palette `theme` ships.
       theme_primary: '#CAF543'
       theme_scheme: 'tonalSpot'
       theme_contrast: '0'

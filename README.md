@@ -77,7 +77,8 @@ inherited**: every entry in `registryDependencies` carries its own.
 - meaningful only here → another entry in the same item's `files`
 - trivial _and_ app-specific → inline it
 
-Never hardcode a font family (`font-sans` / `font-mono`). Icons come from
+A block never hardcodes a font family (the `font-sans` / `font-mono` utilities):
+it inherits the consumer's. Icons come from
 `components.json`'s `iconLibrary`; `lucide` is the pmndrs baseline.
 
 ## dev

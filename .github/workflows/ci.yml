@@ -27,7 +27,7 @@ jobs:
       - run: npm run lgtm
 
   # The package is never published to npm — the git tag *is* the install address
-  # (`md3#v1.2.3`), so a version bump is the whole release. changesets opens the
+  # (`theme#v1.2.3`), so a version bump is the whole release. changesets opens the
   # version PR; merging it tags.
   release:
     needs: lgtm
@@ -57,7 +57,7 @@ jobs:
       # only when it sees packages published to npm. This one is private and
       # publishes nothing, so the tag died with the runner every time and the
       # first ones were pushed by hand — while the install address a consumer
-      # pins (`md3#v0.4.0`) is exactly that tag. Push it here.
+      # pins (`theme#v0.4.0`) is exactly that tag. Push it here.
       - run: git push origin --tags
 
       # `createGithubReleases` is gated on the same signal, so changesets/action

@@ -126,8 +126,7 @@ const items = [
   },
   /**
    * The single documented install target: the pmndrs palette, plus everything
-   * it needs. A later pmndrs decision on shadows or spacing lands here as more
-   * CSS, so it never costs a consumer a new install step.
+   * it needs.
    */
   {
     name: 'theme',

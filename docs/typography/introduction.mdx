@@ -28,7 +28,8 @@ npx shadcn@latest add pmndrs/design-system/theme#v0.5.0
 ```
 
 It is scoped to `code, kbd, samp, pre`: those elements use it without a class, and the rest of
-the UI keeps Inter. Anywhere else, add `font-mono`.
+the UI keeps Inter. In your own app code, add the `font-mono` utility to any other element that
+should be monospace. Blocks never do: they inherit the font of the app they land in.
 
 The specimens below render with this site's CSS, which may not load the same fonts as your
 project. The table is the source of truth.

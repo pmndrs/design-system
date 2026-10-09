@@ -47,8 +47,8 @@
       "description": "The pmndrs theme: the Material Design 3 palette, the colour machinery under it (`md3-base`) and the mono font (`font-mono`). Additive to the stock shadcn tokens — blocks use `bg-primary` by default and reach for `bg-surface-dim` only where shadcn has no equivalent. Nothing to mount.",
       "author": "pmndrs",
       "registryDependencies": [
-        "pmndrs/design-system/md3-base#v0.6.0",
-        "pmndrs/design-system/font-mono#v0.6.0"
+        "pmndrs/design-system/md3-base#v0.7.0",
+        "pmndrs/design-system/font-mono#v0.7.0"
       ],
       "css": {
         ":root": {

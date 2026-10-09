@@ -116,6 +116,30 @@ test('font-mono is a registry:font on --font-mono, scoped below html', () => {
   assert.notEqual(fontMono.font.selector.trim(), 'html')
 })
 
+/** The families a Fontsource package's stylesheet registers, by `@font-face`. */
+const registeredFamilies = (dependency) =>
+  new Set(
+    [...readFileSync(new URL(import.meta.resolve(dependency)), 'utf8').matchAll(/font-family:\s*'([^']+)'/g)].map(
+      ([, family]) => family
+    )
+  )
+
+/** The first family of a `font-family` value, unquoted: `Inter Variable` of `'Inter Variable', sans-serif`. */
+const firstFamily = (value) => value.split(',')[0].trim().replace(/^['"]|['"]$/g, '')
+
+/**
+ * Outside Next, shadcn imports `font.dependency` and writes `font.family` as
+ * `--font-mono`. The family has to be the one that stylesheet registers:
+ * `@fontsource-variable/inconsolata` registers `Inconsolata Variable`, and a
+ * bare `Inconsolata` renders only where the font happens to be installed
+ * locally, and in the fallback everywhere else.
+ */
+test('font-mono names the family its dependency registers', () => {
+  const { font } = registry.items.find((item) => item.name === 'font-mono')
+
+  assert.ok(registeredFamilies(font.dependency).has(firstFamily(font.family)), `${font.dependency} registers no ${font.family}`)
+})
+
 /**
  * "The hex a designer picks is the hex the site renders" holds by construction
  * — the CSS and the Figma tokens come off one `builder()` — and this holds it by

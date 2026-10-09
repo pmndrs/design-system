@@ -115,7 +115,14 @@ const items = [
       'Inconsolata as `--font-mono`, so `font-mono` resolves to the pmndrs monospace — applied to `code, kbd, samp, pre` only. Through `next/font/google` on Next, through `@fontsource-variable/inconsolata` elsewhere.',
     author: 'pmndrs',
     font: {
-      family: 'Inconsolata',
+      /**
+       * What `@fontsource-variable/inconsolata` registers, which is what this
+       * names outside Next — shadcn's own `font-inter` writes
+       * `'Inter Variable', sans-serif` the same way. A bare `Inconsolata`
+       * renders only where the font is installed locally. `next/font` reads
+       * `import` instead, so Next is unaffected.
+       */
+      family: "'Inconsolata Variable', monospace",
       provider: 'google',
       import: 'Inconsolata',
       variable: '--font-mono',

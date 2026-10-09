@@ -292,6 +292,19 @@ test('the Guidelines page has no placeholder, marker or bare brace or tag left',
 })
 
 /**
+ * The artifact names its tokens bare (`md-sys-color-surface-dim`, `spacing-4`,
+ * `radius-sm`), and no stylesheet of a site reader's has those names. The page
+ * names the CSS custom property (`--md-sys-color-surface-dim`) or the Tailwind
+ * class (`p-4`, `rounded-sm`) instead.
+ */
+test('the Guidelines page names no token the way only the artifact does', () => {
+  const code = [...guidelinesPage().matchAll(/`([^`\n]+)`/g)].map(([, span]) => span)
+  const offenders = code.filter((span) => /(^|[\s(,])(md-|spacing\b|spacing-|radius\b|radius-)/.test(span))
+
+  assert.deepEqual(offenders, [])
+})
+
+/**
  * Figma Make reads `guidelines/Guidelines.md` at the root of a project, and
  * nowhere else: a target anywhere else installs a file no tool picks up.
  */

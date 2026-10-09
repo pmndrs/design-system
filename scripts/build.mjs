@@ -21,6 +21,10 @@
  * is generated here for the same reason: one seed, or designers and engineers
  * drift.
  *
+ * The brand book, `artifact/README.md`, is generated into the docs site's
+ * Guidelines page and the `guidelines` item's `Guidelines.md` here, for the
+ * same reason again: written once, it cannot say two things.
+ *
  * The getting-started page lists these items next to the other pmndrs repos' —
  * a catalog generated here so its install refs follow the version too; how the
  * other repos' get in is `catalog.mjs`'s story.

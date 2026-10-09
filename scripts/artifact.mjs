@@ -39,7 +39,9 @@
  *                                    block and the few external pins
  *   artifact/                        the hand-written files (the brand book,
  *                                    the block cards, the logo notes), copied
- *                                    with their `{{placeholders}}` filled
+ *                                    with their `{{placeholders}}` filled and
+ *                                    their artifact-only markers removed (see
+ *                                    `brand-book.mjs`)
  *
  * Every version and sha in the output is one of those placeholders, filled
  * from git, `package.json`, `node_modules` and `registry/external.json`, so a

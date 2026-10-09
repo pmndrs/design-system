@@ -98,6 +98,57 @@ test('every dependency on this registry points at an item it serves, at this rel
   assert.deepEqual(problems, [])
 })
 
+/**
+ * What v0 fetches when an "Open in v0" link is followed: the hosted `v0`
+ * item. It has to stand on its own there, since v0 drops `css` and `cssVars`
+ * and resolves neither a namespace nor a GitHub address: the stylesheet
+ * inlined, with literal colours, and nothing to resolve but absolute URLs.
+ */
+test('the hosted v0 item carries its stylesheet inline, with nothing v0 cannot resolve', () => {
+  const hosted = read('v0.json')
+
+  assert.equal(hosted.css, undefined)
+  assert.equal(hosted.cssVars, undefined)
+  assert.deepEqual(
+    (hosted.registryDependencies ?? []).filter((dependency) => !dependency.startsWith('https://')),
+    []
+  )
+  const [file] = hosted.files
+  assert.equal(file.target, 'app/globals.css')
+  assert.match(file.content, /^:root \{[^}]*--primary: #[0-9a-f]{6};/m)
+  assert.match(file.content, /^\.dark \{[^}]*--primary: #[0-9a-f]{6};/m)
+  assert.doesNotMatch(file.content, /var\(--md-/)
+})
+
+/**
+ * The "Open in v0" links the README and the getting-started page hand out:
+ * each has to open the item above, at the address the docs site serves it.
+ */
+test('every Open in v0 link opens the hosted v0 item', () => {
+  for (const page of ['README.md', 'docs/getting-started/introduction.mdx']) {
+    const text = readFileSync(new URL(page, import.meta.url), 'utf8')
+    const links = [...text.matchAll(/https:\/\/v0\.app\/chat\/api\/open\?[^\s)"']+/g)].map(([link]) => new URL(link))
+
+    assert.ok(links.length, `${page} has no Open in v0 link`)
+    for (const link of links) {
+      const url = link.searchParams.get('url')
+      assert.equal(url, `${hostedUrl}v0.json`, `${page}: ${link}`)
+      assert.ok(files.includes(url.slice(hostedUrl.length)), `${page}: ${url} is not served`)
+    }
+  }
+})
+
+/**
+ * `shadcn init` with the hosted `preset` writes its `config` into
+ * `components.json`, so the project it starts has the namespace declared,
+ * at the address these files are served from.
+ */
+test('the hosted preset declares the namespace it is served from', () => {
+  const { registries } = read('preset.json').config
+
+  assert.equal(registries['@pmndrs'].replace('{name}', 'preset'), `${hostedUrl}preset.json`)
+})
+
 /** The index is the item named `registry`, so an item of that name would overwrite it. */
 test('an item named registry is refused', () => {
   const dir = pathToFileURL(`${mkdtempSync(join(tmpdir(), 'hosted-registry-clash-'))}/`)

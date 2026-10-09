@@ -41,6 +41,7 @@ import { fill, stripArtifactOnly } from './brand-book.mjs'
 import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
 import { foundationStyles, foundationVariables } from './foundation-tokens.mjs'
 import { readFoundations } from './foundations.mjs'
+import { hostedUrl } from './hosted-registry.mjs'
 
 /**
  * Refs are not inherited, so a cross-item dependency carries its own — and it
@@ -49,6 +50,12 @@ import { readFoundations } from './foundations.mjs'
  * (in `npm run lgtm`) fails if it didn't.
  */
 const version = `v${pkg.version}`
+
+/**
+ * The foundations pages' values: the base radius the `preset` and `v0` items
+ * carry, and the Figma foundation tokens below.
+ */
+const foundations = readFoundations()
 
 const registry = {
   $schema: 'https://ui.shadcn.com/schema/registry.json',
@@ -117,7 +124,14 @@ const items = [
       'Inconsolata as `--font-mono`, so `font-mono` resolves to the pmndrs monospace — applied to `code, kbd, samp, pre` only. Through `next/font/google` on Next, through `@fontsource-variable/inconsolata` elsewhere.',
     author: 'pmndrs',
     font: {
-      family: 'Inconsolata',
+      /**
+       * What `@fontsource-variable/inconsolata` registers, which is what this
+       * names outside Next — shadcn's own `font-inter` writes
+       * `'Inter Variable', sans-serif` the same way. A bare `Inconsolata`
+       * renders only where the font is installed locally. `next/font` reads
+       * `import` instead, so Next is unaffected.
+       */
+      family: "'Inconsolata Variable', monospace",
       provider: 'google',
       import: 'Inconsolata',
       variable: '--font-mono',
@@ -144,6 +158,71 @@ const items = [
     author: 'pmndrs',
     registryDependencies: [`pmndrs/design-system/md3-base#${version}`, `pmndrs/design-system/font-mono#${version}`],
     palette: true,
+  },
+  /**
+   * The poimandres preset as an item, the theme with it: what
+   * `npx shadcn@latest init <hosted url>` starts a project from, so a consumer
+   * never needs the preset code.
+   *
+   * A `registry:base`, not a `registry:style`: a style carries no preset
+   * choices, and `shadcn init` with one falls back to `new-york` (measured on
+   * 4.18). A base carries them in `config`, which init merges into
+   * `components.json`. Modelled on the item shadcn itself serves for the
+   * preset code (`ui.shadcn.com/init?…&preset=b1VlIttI`): its `config`,
+   * `dependencies`, `registryDependencies` and `css`, with `extends: 'none'`
+   * so the stock style does not install under it.
+   *
+   * What it leaves out is that item's colours: literal `cssVars` land in
+   * `:root` after the remap's `@import` and override it, so the colours stay
+   * `theme`'s. What else it has in `cssVars` stays, none of it a colour
+   * value, because shadcn writes it from there only: `radius` (and the
+   * `--radius-*` scale it derives from it), the heading font, and the
+   * `@theme inline` mapping it would have derived from the colours.
+   * `registry.test.mjs` holds both rules, and the choices to `preset.json`.
+   */
+  {
+    name: 'preset',
+    type: 'registry:base',
+    title: 'poimandres preset',
+    description:
+      'The poimandres shadcn preset and the pmndrs theme in one item, for `shadcn init`: style `base-luma`, Inter, the default radius, lucide icons, and the Material Design 3 palette with the mono font. Starts a project that already looks like pmndrs, no preset code needed.',
+    author: 'pmndrs',
+    extends: 'none',
+    config: {
+      style: 'base-luma',
+      tailwind: { baseColor: 'neutral' },
+      iconLibrary: 'lucide',
+      rtl: false,
+      menuColor: 'default',
+      menuAccent: 'subtle',
+      // The namespace, declared on the way: `shadcn add @pmndrs/logo` works next.
+      registries: { '@pmndrs': `${hostedUrl}{name}.json` },
+    },
+    dependencies: ['shadcn@latest', 'class-variance-authority', 'cn', 'tw-animate-css', '@base-ui/react', 'lucide-react'],
+    registryDependencies: ['utils', 'font-inter', `pmndrs/design-system/theme#${version}`],
+    cssVars: {
+      theme: {
+        '--font-heading': 'var(--font-sans)',
+        /**
+         * What shadcn would have derived from the colours left out: the
+         * Tailwind colour of each variable the remap sets (`bg-card`,
+         * `border-border`…). Without it the `@apply border-border` below fails
+         * the Tailwind build; the MD3 plugin maps the MD3 role names only.
+         * Here and not in `css`, which cannot put a declaration in
+         * `@theme inline`.
+         */
+        ...Object.fromEntries(remapRoles().map(([name]) => [`--color-${name.slice(2)}`, `var(${name})`])),
+      },
+      light: { radius: foundations.radius.base },
+    },
+    css: {
+      '@import "tw-animate-css"': {},
+      '@import "shadcn/tailwind.css"': {},
+      '@layer base': {
+        '*': { '@apply border-border outline-ring/50': {} },
+        body: { '@apply bg-background text-foreground': {} },
+      },
+    },
   },
   /**
    * The two items below ship files rather than code: `registry:file`, which
@@ -224,6 +303,30 @@ const items = [
         target: '~/guidelines/Guidelines.md',
       },
     ],
+  },
+  /**
+   * What an "Open in v0" link opens. v0 drops `css`, `cssVars` and
+   * namespaces, and resolves no GitHub address, so nothing above reaches it:
+   * this item carries the theme as a file instead, the `globals.css` of v0's
+   * Next.js project, generated below with every colour resolved to a literal.
+   * The shape is shadcn's own Open in v0 payload's: a `registry:file` at
+   * `app/globals.css`, which is why its target has no `~/` (v0 reads it, not
+   * the CLI).
+   */
+  {
+    name: 'v0',
+    type: 'registry:item',
+    title: 'pmndrs theme for v0',
+    description:
+      'The pmndrs theme as one `app/globals.css`, for Open in v0: the shadcn colours resolved to the pmndrs palette, light and dark, Inter and Inconsolata, and the default radius. Overwrites the stylesheet of a v0 project; in your own project, install `theme` or `preset` instead.',
+    author: 'pmndrs',
+    dependencies: [
+      'shadcn@latest',
+      'tw-animate-css',
+      `@fontsource-variable/inter@${pkg.devDependencies['@fontsource-variable/inter']}`,
+      `@fontsource-variable/inconsolata@${pkg.devDependencies['@fontsource-variable/inconsolata']}`,
+    ],
+    files: [{ path: 'registry/v0/globals.css', type: 'registry:file', target: 'app/globals.css' }],
   },
 ]
 
@@ -393,6 +496,105 @@ ${guidelines}
 outputs.push([new URL('../registry/guidelines/Guidelines.md', import.meta.url), `# Poimandres design system guidelines\n\n${guidelines}\n`])
 
 /**
+ * The `v0` item's stylesheet: the theme without the machinery v0 cannot run.
+ *
+ * Where the CLI path writes the remap (`--primary: var(--md-sys-color-primary)`)
+ * and the palette it points at, this writes the end of each chain: shadcn's
+ * variables, the ones the remap sets, as the literal colours the bake gives
+ * their MD3 role, in a `:root` and a `.dark`. No `--md-*` reaches v0, which
+ * is trained on shadcn's names anyway. The rest is the frame shadcn's own Open
+ * in v0 payload writes: the imports, the `@theme inline` mapping with the
+ * `--radius-*` scale shadcn derives, and the base layer, plus the two fonts
+ * from their Fontsource packages, under the families those register.
+ */
+function remapRoles() {
+  const css = readFileSync(new URL(import.meta.resolve('material-theme-builder/shadcn.css')), 'utf8')
+  const body = css.match(/:root:root,\s*\.dark\.dark\s*\{([^}]*)\}/)?.[1]
+  if (!body) throw new Error('material-theme-builder/shadcn.css no longer has its `:root:root, .dark.dark` block')
+  return [...body.matchAll(/(--[\w-]+)\s*:\s*var\((--md-[\w-]+)\)/g)].map(([, name, role]) => [name, role])
+}
+
+/** A palette variable followed through its `var()` aliases to the colour. */
+function literal(block, name) {
+  let value = block[name]
+  for (let ref; (ref = value?.match(/^var\((--[\w-]+)\)$/)); ) value = block[ref[1]]
+  if (!value) throw new Error(`${name} resolves to nothing in the bake`)
+  return value
+}
+
+/** shadcn's `--radius-*` scale, as it derives it from `--radius`. */
+const radiusScale = {
+  sm: 'calc(var(--radius) * 0.6)',
+  md: 'calc(var(--radius) * 0.8)',
+  lg: 'var(--radius)',
+  xl: 'calc(var(--radius) * 1.4)',
+  '2xl': 'calc(var(--radius) * 1.8)',
+  '3xl': 'calc(var(--radius) * 2.2)',
+  '4xl': 'calc(var(--radius) * 2.6)',
+}
+
+function v0GlobalsCss() {
+  const roles = remapRoles()
+  const modes = { ':root': palette[':root'], '.dark': { ...palette[':root'], ...palette['.dark'] } }
+  const declarations = (entries) => entries.map(([name, value]) => `  ${name}: ${value};`).join('\n')
+  // shadcn's `font-inter`, which the preset installs, and `font-mono` above.
+  const sans = "'Inter Variable', sans-serif"
+  const mono = items.find(({ name }) => name === 'font-mono').font.family
+
+  return `/*
+ * The pmndrs theme for a v0 project, generated by pmndrs/design-system: do not edit.
+ * Colours are the pmndrs palette resolved to literal values; in your own project,
+ * install the \`theme\` or \`preset\` registry item instead.
+ */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/inconsolata";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+${declarations([
+  ['--font-sans', sans],
+  ['--font-heading', 'var(--font-sans)'],
+  ['--font-mono', mono],
+  ...roles.map(([name]) => [`--color-${name.slice(2)}`, `var(${name})`]),
+  ...Object.entries(radiusScale).map(([step, value]) => [`--radius-${step}`, value]),
+])}
+}
+
+:root {
+${declarations([['--radius', foundations.radius.base], ...roles.map(([name, role]) => [name, literal(modes[':root'], role)])])}
+}
+
+.dark {
+${declarations(roles.map(([name, role]) => [name, literal(modes['.dark'], role)]))}
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+  code,
+  kbd,
+  samp,
+  pre {
+    @apply font-mono;
+  }
+}
+`
+}
+
+outputs.push([new URL('../registry/v0/globals.css', import.meta.url), v0GlobalsCss()])
+
+/**
  * The palette as DTCG tokens: `Light` and `Dark` become two modes of one Figma
  * variable collection, and the roles stay aliased onto the tonal shades
  * (`"$value": "{ref.palette.Neutral.98}"`) exactly as `var()` does in the CSS.
@@ -415,7 +617,6 @@ for (const [name, tokens] of Object.entries(theme.toFigmaTokens())) {
  * variables file Figma imports natively, `Styles` the text and effect styles
  * Tokens Studio creates; why two shapes is `foundation-tokens.mjs`'s story.
  */
-const foundations = readFoundations()
 for (const [name, tokens] of [
   ['Foundations', foundationVariables(foundations)],
   ['Styles', foundationStyles(foundations)],

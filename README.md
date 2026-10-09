@@ -59,6 +59,16 @@ then `npx shadcn@latest add @pmndrs/theme`. It serves the latest release; the gi
 [shadcn MCP server](https://ui.shadcn.com/docs/mcp) (`npx shadcn@latest mcp init --client claude`)
 reads the same namespace to list and install the items.
 
+To start a fresh project from it, init with `preset`: the poimandres preset and the theme in
+one item, no preset code, and the namespace declared on the way.
+
+```sh
+npx shadcn@latest init https://pmndrs.github.io/design-system/r/preset.json
+```
+
+To prototype in v0 with the pmndrs colours, fonts and radius already applied:
+[Open in v0](https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs).
+
 ## Reseeding (optional)
 
 For a palette other than the pmndrs one: install `md3-base` — same plumbing, no

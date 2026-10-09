@@ -31,7 +31,7 @@
       "description": "Inconsolata as `--font-mono`, so `font-mono` resolves to the pmndrs monospace — applied to `code, kbd, samp, pre` only. Through `next/font/google` on Next, through `@fontsource-variable/inconsolata` elsewhere.",
       "author": "pmndrs",
       "font": {
-        "family": "Inconsolata",
+        "family": "'Inconsolata Variable', monospace",
         "provider": "google",
         "import": "Inconsolata",
         "variable": "--font-mono",
@@ -557,6 +557,92 @@
       "docs": "The colours are already working. The pmndrs palette is baked into the CSS this item writes, so there is nothing to mount, no provider, and no client JavaScript.\n\nA few things to know:\n\n- **This is the item to depend on.** It pulls `md3-base` — the Tailwind `@theme` mapping, the shadcn remap and the seed — and `font-mono`, the pmndrs monospace, and adds the palette the first points at.\n- **The brand colours are named.** Lime, teal, cyan, purple, red, orange and yellow are custom colours: list them in the `@plugin` line `md3-base` added (`custom-colors: lime, teal, cyan, purple, red, orange, yellow;`) for `bg-lime`, `text-on-teal`, `bg-cyan-container`, `bg-purple-500` and the rest. Their shade utilities take over Tailwind's stock palettes of the same names.\n- If you want a palette other than the pmndrs one, install **`md3-base`** instead and compute your own. See its docs. Installing both means committing a whole baked palette you immediately override.\n- **The bake is the seed's own output.** It is `builder(pmndrsMtb)` as Material Theme Builder computes it, with nothing redrawn on top, so `<Mtb>` or `builder()` at runtime with the same seed renders exactly these colours."
     },
     {
+      "name": "preset",
+      "type": "registry:base",
+      "title": "poimandres preset",
+      "description": "The poimandres shadcn preset and the pmndrs theme in one item, for `shadcn init`: style `base-luma`, Inter, the default radius, lucide icons, and the Material Design 3 palette with the mono font. Starts a project that already looks like pmndrs, no preset code needed.",
+      "author": "pmndrs",
+      "extends": "none",
+      "config": {
+        "style": "base-luma",
+        "tailwind": {
+          "baseColor": "neutral"
+        },
+        "iconLibrary": "lucide",
+        "rtl": false,
+        "menuColor": "default",
+        "menuAccent": "subtle",
+        "registries": {
+          "@pmndrs": "https://pmndrs.github.io/design-system/r/{name}.json"
+        }
+      },
+      "dependencies": [
+        "shadcn@latest",
+        "class-variance-authority",
+        "cn",
+        "tw-animate-css",
+        "@base-ui/react",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "utils",
+        "font-inter",
+        "pmndrs/design-system/theme#v0.7.0"
+      ],
+      "cssVars": {
+        "theme": {
+          "--font-heading": "var(--font-sans)",
+          "--color-background": "var(--background)",
+          "--color-foreground": "var(--foreground)",
+          "--color-card": "var(--card)",
+          "--color-card-foreground": "var(--card-foreground)",
+          "--color-popover": "var(--popover)",
+          "--color-popover-foreground": "var(--popover-foreground)",
+          "--color-primary": "var(--primary)",
+          "--color-primary-foreground": "var(--primary-foreground)",
+          "--color-secondary": "var(--secondary)",
+          "--color-secondary-foreground": "var(--secondary-foreground)",
+          "--color-muted": "var(--muted)",
+          "--color-muted-foreground": "var(--muted-foreground)",
+          "--color-accent": "var(--accent)",
+          "--color-accent-foreground": "var(--accent-foreground)",
+          "--color-destructive": "var(--destructive)",
+          "--color-border": "var(--border)",
+          "--color-input": "var(--input)",
+          "--color-ring": "var(--ring)",
+          "--color-chart-1": "var(--chart-1)",
+          "--color-chart-2": "var(--chart-2)",
+          "--color-chart-3": "var(--chart-3)",
+          "--color-chart-4": "var(--chart-4)",
+          "--color-chart-5": "var(--chart-5)",
+          "--color-sidebar": "var(--sidebar)",
+          "--color-sidebar-foreground": "var(--sidebar-foreground)",
+          "--color-sidebar-primary": "var(--sidebar-primary)",
+          "--color-sidebar-primary-foreground": "var(--sidebar-primary-foreground)",
+          "--color-sidebar-accent": "var(--sidebar-accent)",
+          "--color-sidebar-accent-foreground": "var(--sidebar-accent-foreground)",
+          "--color-sidebar-border": "var(--sidebar-border)",
+          "--color-sidebar-ring": "var(--sidebar-ring)"
+        },
+        "light": {
+          "radius": "0.625rem"
+        }
+      },
+      "css": {
+        "@import \"tw-animate-css\"": {},
+        "@import \"shadcn/tailwind.css\"": {},
+        "@layer base": {
+          "*": {
+            "@apply border-border outline-ring/50": {}
+          },
+          "body": {
+            "@apply bg-background text-foreground": {}
+          }
+        }
+      },
+      "docs": "Starts a project that already looks like pmndrs: `npx shadcn@latest init` with this item's URL configures the poimandres preset and installs the theme, in one step and with no preset code.\n\n- **It is the preset and the theme.** `components.json` gets the preset's choices (style `base-luma`, lucide icons, the menu settings) and the `@pmndrs` namespace, the project gets Inter and the default radius, and `theme` brings the Material Design 3 palette and the mono font.\n- **Init only.** It replaces shadcn's stock style rather than sitting on it, so run it on a fresh project. In a project that is already set up, add `theme` instead.\n- **The colours are `theme`'s.** This item declares none: shadcn's stock neutrals would land after the MD3 remap and override it.\n- **The namespace serves the latest release.** For a pinned version, init with the preset code and add `theme` at a tag, as the Quick start does."
+    },
+    {
       "name": "logo",
       "type": "registry:item",
       "title": "pmndrs logo",
@@ -630,6 +716,27 @@
         }
       ],
       "docs": "One file, `guidelines/Guidelines.md` at the root of your project: the pmndrs brand book, the do and don't of the colour layer, type, spacing, radii and shadows, components, the logo, iconography and voice.\n\n- **It is the Guidelines page of the docs site**, word for word: [pmndrs.github.io/design-system/guidelines](https://pmndrs.github.io/design-system/guidelines/introduction).\n- **Figma Make reads it** from that path, so a Make project follows the pmndrs rules once it is there.\n- **Point Claude or Cursor at it** (`@guidelines/Guidelines.md`, or a line in `CLAUDE.md` or a Cursor rule) so the UI they generate uses the shadcn tokens first and never a raw hex.\n- **Nothing in your app reads it.** It is outside `public/`, so nothing serves it either.\n\nTo update it, add the item again at the newer tag, with `--overwrite`."
+    },
+    {
+      "name": "v0",
+      "type": "registry:item",
+      "title": "pmndrs theme for v0",
+      "description": "The pmndrs theme as one `app/globals.css`, for Open in v0: the shadcn colours resolved to the pmndrs palette, light and dark, Inter and Inconsolata, and the default radius. Overwrites the stylesheet of a v0 project; in your own project, install `theme` or `preset` instead.",
+      "author": "pmndrs",
+      "dependencies": [
+        "shadcn@latest",
+        "tw-animate-css",
+        "@fontsource-variable/inter@^5.3.0",
+        "@fontsource-variable/inconsolata@^5.3.0"
+      ],
+      "files": [
+        {
+          "path": "registry/v0/globals.css",
+          "type": "registry:file",
+          "target": "app/globals.css"
+        }
+      ],
+      "docs": "The item an \"Open in v0\" link opens: a v0 chat whose project already has the pmndrs colours, fonts and radius.\n\n- **One file, `app/globals.css`.** v0 ignores `css` and `cssVars`, so the theme travels as the stylesheet of the v0 project, overwriting the default one.\n- **shadcn's names only.** `--background`, `--primary`, `--border` and the rest are the pmndrs palette resolved to literal colours, light and dark, which is what v0 generates with. The MD3 roles (`bg-surface-dim` and the others) are not in it.\n- **Not for your own project.** There, install `theme` or `preset`: the palette stays computed from the seed, and the MD3 roles come with it."
     }
   ]
 }

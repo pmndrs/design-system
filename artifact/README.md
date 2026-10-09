@@ -74,6 +74,21 @@ The seven brand colours are declared next to the seed as custom colours, none of
 - For the brand hex as a fill, use `--md-sys-color-<name>-container` with `--md-sys-color-on-<name>-container` on it.
 - Their shade utilities (`bg-purple-500`) take over Tailwind's stock palettes of the same names.
 
+### Alert colours
+
+Five semantic custom colours follow the brand ones, for alerts, hints, badges and statuses. They are seeded with GitHub's alert hues and, unlike the brand colours, blended toward the `source` seed, so they keep their meaning and still sit in the palette. Same four roles each.
+
+| Name | Seed | Meaning |
+| --- | --- | --- |
+| `note` | `#1F6FEB` | Information the reader should notice |
+| `tip` | `#238636` | Optional advice that helps |
+| `important` | `#8957E5` | Information the reader needs to succeed |
+| `warning` | `#D29922` | Something that needs attention |
+| `caution` | `#DA3633` | A risk or a negative outcome |
+
+- Style an alert with `--md-sys-color-<name>-container` and `--md-sys-color-on-<name>-container`, and its accent (border, icon, title) with `--md-sys-color-<name>`.
+- Never use a brand colour for an alert level: `cyan` is not `note`, `red` is not `caution`.
+
 ## Type
 
 - The preset's font is Inter (`sans`), and headings inherit it. Never hardcode a font family in a block.

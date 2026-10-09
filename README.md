@@ -40,6 +40,25 @@ Add `dark` to `<html>` for the dark scheme.
 Every item, this repo's and the other pmndrs repos', linked to its source:
 [the registry catalog](https://pmndrs.github.io/design-system/getting-started/introduction#registry-items).
 
+### Namespace
+
+The docs site also serves this repo's items as static JSON, rebuilt from `registry.json`
+on every deploy of `main` (`npm run hosted-registry` writes the same files into `public/r/`).
+Declare the [namespace](https://ui.shadcn.com/docs/registry/namespace) in `components.json`:
+
+```json
+{
+  "registries": {
+    "@pmndrs": "https://pmndrs.github.io/design-system/r/{name}.json"
+  }
+}
+```
+
+then `npx shadcn@latest add @pmndrs/theme`. It serves the latest release; the git address
+(`pmndrs/design-system/theme#v0.7.0`) stays the pinned one. The
+[shadcn MCP server](https://ui.shadcn.com/docs/mcp) (`npx shadcn@latest mcp init --client claude`)
+reads the same namespace to list and install the items.
+
 ## Reseeding (optional)
 
 For a palette other than the pmndrs one: install `md3-base` — same plumbing, no

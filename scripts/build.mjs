@@ -76,6 +76,15 @@ const fontMono = {
   variable: '--font-mono',
   dependency: '@fontsource-variable/inconsolata',
   /**
+   * Mandatory on Next: shadcn writes it into the `next/font/google` call, and
+   * `next/font` preloads by default, so without a subset
+   * `next build --webpack` fails with "Preload is enabled but no subsets were
+   * specified" (Turbopack builds, but preloads nothing). It only selects what
+   * is preloaded: every unicode range is still self-hosted.
+   * `registry.test.mjs` holds it.
+   */
+  subsets: ['latin'],
+  /**
    * Mandatory, not cosmetic: for `--font-mono` shadcn defaults a missing
    * selector to `html`, and on Next the mono class then replaces
    * `font-sans` on `<html>` — the whole site turns monospace.

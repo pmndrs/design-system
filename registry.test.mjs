@@ -141,6 +141,13 @@ test('font-mono is a registry:font on --font-mono, scoped below html', () => {
   assert.notEqual(fontMono.font.selector.trim(), 'html')
 })
 
+/** Why subsets are mandatory: see the `font-mono` item in `scripts/build.mjs`. */
+test('font-mono declares a subset, so next/font can preload it', () => {
+  const { font } = registry.items.find((item) => item.name === 'font-mono')
+
+  assert.ok(font.subsets?.length, '`font-mono` has no subsets, so `next build --webpack` fails on preload')
+})
+
 /**
  * `shadcn init <url>` on the hosted `preset` has to configure what
  * `shadcn init --preset b1VlIttI` does, plus the theme: `preset.json` is the

@@ -78,11 +78,11 @@ Five semantic custom colours follow the brand ones, for alerts, hints, badges an
 
 | Name | Seed | Meaning |
 | --- | --- | --- |
-| `note` | `#1f6feb` | Information the reader should notice |
+| `note` | `#1F6FEB` | Information the reader should notice |
 | `tip` | `#238636` | Optional advice that helps |
-| `important` | `#8957e5` | Information the reader needs to succeed |
-| `warning` | `#d29922` | Something that needs attention |
-| `caution` | `#da3633` | A risk or a negative outcome |
+| `important` | `#8957E5` | Information the reader needs to succeed |
+| `warning` | `#D29922` | Something that needs attention |
+| `caution` | `#DA3633` | A risk or a negative outcome |
 
 - Style an alert with `md-sys-color-<name>-container` and `md-sys-color-on-<name>-container`, and its accent (border, icon, title) with `md-sys-color-<name>`.
 - Never use a brand colour for an alert level: `cyan` is not `note`, `red` is not `caution`.

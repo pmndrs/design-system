@@ -193,20 +193,22 @@ stock palettes of the same names.
 
 ### Alert colours
 
-The five alert colours are the design system's semantic roles: for GitHub alerts
+The five alert colours are the design system's semantic roles. Use them for GitHub alerts
 (`> [!NOTE]`…), hints, badges and statuses. They are seeded with GitHub's alert hues, so a
-reader recognises them at a glance, and they are blended: each is pulled toward the `source`
-seed, so it keeps its meaning and still sits in the palette — this one, or any library's that
-reseeds it. A brand colour would not do: `cyan` is not a note, and unblended, its container is
-far too loud for an alert's background.
+reader recognises them at a glance.
+
+They are blended: each is pulled toward the `source` seed. So it keeps its meaning and still
+sits in the palette, this one or that of any library that reseeds it. A brand colour would not
+do. `cyan` is not a note, and unblended, its container is far too loud for an alert's
+background.
 
 | Name | Seed | Blend | Override | Utilities |
 | --- | --- | --- | --- | --- |
-| `note` | <Color color="#1f6feb" /> `#1f6feb` | yes | `THEME_NOTE` | `bg-note`, `text-on-note`, `bg-note-container`, `text-on-note-container` |
+| `note` | <Color color="#1F6FEB" /> `#1F6FEB` | yes | `THEME_NOTE` | `bg-note`, `text-on-note`, `bg-note-container`, `text-on-note-container` |
 | `tip` | <Color color="#238636" /> `#238636` | yes | `THEME_TIP` | `bg-tip`, `text-on-tip`, `bg-tip-container`, `text-on-tip-container` |
-| `important` | <Color color="#8957e5" /> `#8957e5` | yes | `THEME_IMPORTANT` | `bg-important`, `text-on-important`, `bg-important-container`, `text-on-important-container` |
-| `warning` | <Color color="#d29922" /> `#d29922` | yes | `THEME_WARNING` | `bg-warning`, `text-on-warning`, `bg-warning-container`, `text-on-warning-container` |
-| `caution` | <Color color="#da3633" /> `#da3633` | yes | `THEME_CAUTION` | `bg-caution`, `text-on-caution`, `bg-caution-container`, `text-on-caution-container` |
+| `important` | <Color color="#8957E5" /> `#8957E5` | yes | `THEME_IMPORTANT` | `bg-important`, `text-on-important`, `bg-important-container`, `text-on-important-container` |
+| `warning` | <Color color="#D29922" /> `#D29922` | yes | `THEME_WARNING` | `bg-warning`, `text-on-warning`, `bg-warning-container`, `text-on-warning-container` |
+| `caution` | <Color color="#DA3633" /> `#DA3633` | yes | `THEME_CAUTION` | `bg-caution`, `text-on-caution`, `bg-caution-container`, `text-on-caution-container` |
 
 <ColorGroup orientation="vertical">
   {['note', 'tip', 'important', 'warning', 'caution'].map((name) => (

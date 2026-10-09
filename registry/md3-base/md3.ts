@@ -19,7 +19,7 @@ import type { MtbConfig } from 'material-theme-builder'
  * ```ts
  * export const myMtb = {
  *   ...pmndrsMtb,
- *   customColors: [...pmndrsMtb.customColors, { name: 'pending', hex: '#8250df', blend: true }],
+ *   customColors: [...pmndrsMtb.customColors, { name: 'pending', hex: '#8250DF', blend: true }],
  * } satisfies MtbConfig
  * ```
  *
@@ -83,13 +83,6 @@ export const pmndrsMtb = {
    * Secondary and tertiary are intentionally unused — MD3 still generates them
    * (there's no flag to disable them), but these take their place.
    *
-   * Then the five alert roles — `bg-note`, `text-on-tip`,
-   * `bg-warning-container`, `bg-caution-500`, … — for GitHub alerts, hints,
-   * badges and statuses. They keep GitHub's alert hues, so a reader recognises
-   * them at a glance, and `blend: true` pulls them toward the seed, so they sit
-   * in any library's palette, reseeded or not. Each one is overridable, like
-   * the seed.
-   *
    * The order is part of the contract: the generated CSS follows it, so a new
    * colour goes at the end.
    */
@@ -101,10 +94,18 @@ export const pmndrsMtb = {
     { name: 'red', hex: '#FF4980', blend: false },
     { name: 'orange', hex: '#FFC043', blend: false },
     { name: 'yellow', hex: '#EBFF0F', blend: false },
-    { name: 'note', hex: process.env.THEME_NOTE || '#1f6feb', blend: true },
+    /*
+     * The five alert roles: `bg-note`, `text-on-tip`, `bg-warning-container`,
+     * `bg-caution-500`, … for GitHub alerts, hints, badges and statuses.
+     *
+     * They keep GitHub's alert hues, so a reader recognises them at a glance.
+     * `blend: true` pulls them toward the seed, so they sit in any library's
+     * palette, reseeded or not. Each one is overridable, like the seed.
+     */
+    { name: 'note', hex: process.env.THEME_NOTE || '#1F6FEB', blend: true },
     { name: 'tip', hex: process.env.THEME_TIP || '#238636', blend: true },
-    { name: 'important', hex: process.env.THEME_IMPORTANT || '#8957e5', blend: true },
-    { name: 'warning', hex: process.env.THEME_WARNING || '#d29922', blend: true },
-    { name: 'caution', hex: process.env.THEME_CAUTION || '#da3633', blend: true },
+    { name: 'important', hex: process.env.THEME_IMPORTANT || '#8957E5', blend: true },
+    { name: 'warning', hex: process.env.THEME_WARNING || '#D29922', blend: true },
+    { name: 'caution', hex: process.env.THEME_CAUTION || '#DA3633', blend: true },
   ],
 } satisfies MtbConfig

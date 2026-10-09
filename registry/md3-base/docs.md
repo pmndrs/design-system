@@ -21,7 +21,9 @@ Computed here, the palette is the baked `theme` one, colour for colour: both are
 
 `<Mtb>` from `material-theme-builder/react` does the same as a client component. Avoid it in an app that renders on the server, but it is the right tool where there is no build to hook — a Storybook preview decorator, for instance. With `next-themes`, nest `<ThemeProvider>` inside it, not around it.
 
-The seed ships twelve custom colours, and `theme` bakes their roles: the seven brand colours, `lime`, `teal`, `cyan`, `purple`, `red`, `orange` and `yellow`, kept true to their hex; then the five alert roles, `note`, `tip`, `important`, `warning` and `caution`, seeded with GitHub's alert hues and blended toward the seed. Each alert seed is overridable like the primary: `THEME_NOTE`, `THEME_TIP`, `THEME_IMPORTANT`, `THEME_WARNING`, `THEME_CAUTION`. Their utilities are not automatic: the `@plugin` line this item added to your CSS is installed in statement form (`@plugin '...';`), and the registry cannot give it a body, so give it one yourself:
+The seed ships twelve custom colours, and `theme` bakes their roles. Seven are the brand colours. Five are alert roles: `note`, `tip`, `important`, `warning` and `caution`. The [Colors page](https://pmndrs.github.io/design-system/colors/introduction#custom-colours) lists their seeds and what each is for. Each alert seed is overridable, like the primary: `THEME_NOTE`, `THEME_TIP`, `THEME_IMPORTANT`, `THEME_WARNING`, `THEME_CAUTION`.
+
+Their utilities are not automatic. The `@plugin` line this item added to your CSS is installed in statement form (`@plugin '...';`), and the registry cannot give it a body, so give it one yourself:
 
 ```css
 @plugin "material-theme-builder/tailwind" {
@@ -29,6 +31,18 @@ The seed ships twelve custom colours, and `theme` bakes their roles: the seven b
 }
 ```
 
-Need a colour M3 has no role for? Spread `pmndrsMtb` into your own config and append to its `customColors` there, rather than editing the installed file: `customColors: [...pmndrsMtb.customColors, { name: 'pending', hex: '#8250df', blend: true }]`. The spread is what keeps the twelve above — a bare list replaces them, alert roles included. `blend: true` harmonizes yours against the pmndrs seed. Then add yours to the same body, `custom-colors: lime, …, caution, pending;`.
+Need a colour M3 has no role for? Spread `pmndrsMtb` into your own config, rather than editing the installed file. Append to its `customColors`:
 
-Four roles and eleven shades follow per colour — `bg-pending`, `text-on-pending`, `bg-pending-container`, `text-on-pending-container`, `bg-pending-50` … `bg-pending-950`. Nothing else to write.
+```ts
+customColors: [...pmndrsMtb.customColors, { name: 'pending', hex: '#8250DF', blend: true }]
+```
+
+The spread keeps the twelve above. A bare list replaces them, alert roles included. `blend: true` harmonizes yours against the pmndrs seed. Then add yours to the same body:
+
+```css
+@plugin "material-theme-builder/tailwind" {
+  custom-colors: lime, teal, cyan, purple, red, orange, yellow, note, tip, important, warning, caution, pending;
+}
+```
+
+Four roles and eleven shades follow per colour: `bg-pending`, `text-on-pending`, `bg-pending-container`, `text-on-pending-container`, `bg-pending-50` … `bg-pending-950`. Nothing else to write.

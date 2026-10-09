@@ -105,6 +105,66 @@ const items = [
     registryDependencies: [`pmndrs/design-system/md3-base#${version}`],
     palette: true,
   },
+  /**
+   * The two items below ship files rather than code: `registry:file`, which
+   * shadcn copies byte for byte to its `target` — no import rewriting, no
+   * formatting. Nothing in `registry.json` inlines them: an install from a
+   * GitHub address fetches each `path` from raw.githubusercontent.com at the
+   * pinned ref, the way it fetches `md3.ts`.
+   *
+   * Text only, for the same reason: the CLI reads every file as a string, so a
+   * PNG would arrive mangled: the logo ships as SVG only.
+   *
+   * Every `target` starts with `~/`, which is the project root. A bare
+   * `public/…` is not: in an app with a `src/` directory — what
+   * `create-next-app --src-dir` makes, and what the docs tell people to run —
+   * shadcn puts it under `src/public/…`, where Next serves nothing. Measured on
+   * shadcn 4.18; `registry.test.mjs` rejects any target without the `~/`.
+   */
+  {
+    name: 'logo',
+    type: 'registry:item',
+    title: 'pmndrs logo',
+    description:
+      'The pmndrs logo as SVG — complete, idle, animated and loading — into `public/pmndrs/`, so `/pmndrs/logo_loading.svg` is a plain image URL. The animations are CSS inside the files, with a reduced-motion fallback.',
+    author: 'pmndrs',
+    /**
+     * The sources are the Assets page's own previews, not copies: pmndrs/docs
+     * resolves a relative image against the docs folder of the branch on
+     * GitHub (`MDX_BASEURL`), and clamps `..` at that folder, so an SVG that
+     * lived under `registry/` could not be shown on the page. One file serves
+     * both, and the installed name is the one the page lists.
+     */
+    files: ['logo_complete', 'logo_idle', 'logo_animated', 'logo_loading'].map((logo) => ({
+      path: `docs/assets/${logo}.svg`,
+      type: 'registry:file',
+      target: `~/public/pmndrs/${logo}.svg`,
+    })),
+  },
+  {
+    name: 'figma-tokens',
+    type: 'registry:item',
+    title: 'pmndrs Figma tokens',
+    description:
+      'The pmndrs palette as DTCG design tokens, light and dark — the files a Figma variable collection imports — into `design/tokens/pmndrs/`. The same colours `md3` bakes into CSS, alias for alias.',
+    author: 'pmndrs',
+    /**
+     * The `figma/*.tokens.json` this build writes below, so `build.test.mjs`
+     * already holds them current; this only gives them an install address.
+     *
+     * At the root, not in `public/`: tokens are an input to a design tool or a
+     * token pipeline, not something to serve. Under `design/tokens/`, where
+     * such a pipeline looks, and in a `pmndrs/` folder of their own, as the
+     * logo is, so a project's own tokens sit beside them rather than under
+     * them. The file names stay the ones the README and the docs link to; the
+     * mode each one is carries in the file itself (`com.figma.modeName`).
+     */
+    files: ['Light', 'Dark'].map((mode) => ({
+      path: `figma/${mode}.tokens.json`,
+      type: 'registry:file',
+      target: `~/design/tokens/pmndrs/${mode}.tokens.json`,
+    })),
+  },
 ]
 
 const registryUrl = new URL('../registry.json', import.meta.url)

@@ -231,6 +231,19 @@ one fits: a role follows the scheme, a tone does not.
   ))}
 </div>
 
+## Figma tokens
+
+The same palette, for designers: light and dark as two modes of one Figma variable collection,
+in [DTCG](https://www.designtokens.org) files. Every role is the hex the CSS gives it, alias for
+alias. Install them next to your code, into `design/tokens/pmndrs/` at the root of your project:
+
+```sh
+npx shadcn@latest add pmndrs/design-system/figma-tokens#v0.5.0
+```
+
+Or download them: [light](https://github.com/pmndrs/design-system/blob/main/figma/Light.tokens.json),
+[dark](https://github.com/pmndrs/design-system/blob/main/figma/Dark.tokens.json).
+
 ## Reseeding
 
 The palette is computed, never written by hand: change the seeds in

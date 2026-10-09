@@ -37,10 +37,10 @@ jobs:
       theme_neutral: '#c1b793'
       theme_neutral_variant: '#495720'
       theme_error: '#FF4980'
-      # The custom colours of the seed, so `<Color role="lime">` is a role of
-      # the site's theme too: same values as `customColors` in md3.ts, and no
-      # `:blend`, as they are `blend: false` there.
-      theme_custom_colors: 'lime:#CAF543,teal:#00F7A3,cyan:#2BDCF6,purple:#D855F9,red:#FF4980,orange:#FFC043,yellow:#EBFF0F'
+      # No `theme_custom_colors`: the docs engine already declares the seven
+      # brand colours and the five alert colours with the seeds of md3.ts, so
+      # `<Color role="lime">` and `<Color role="note">` are roles of the site's
+      # theme without it.
       # The version switcher in the sidebar footer. Each branch leads to the same page on its
       # Vercel preview, at the URL the `vercel` job below aliases it to — `{branch}` is the slug
       # that job computes, not Vercel's own (`{branch:vercel}`), which only its Git integration

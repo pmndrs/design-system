@@ -9,7 +9,7 @@ Try it:
 cd /tmp && rm -rf pmndrs-foo && \
 npx -y create-next-app@latest pmndrs-foo --ts --tailwind --app --eslint --src-dir --import-alias "@/*" --no-turbopack --use-npm --yes && \
 cd pmndrs-foo && \
-npx -y shadcn@latest init --preset b5cR4Y50S --yes && \
+npx -y shadcn@latest init --preset b1VlIttI --yes && \
 npx -y shadcn@latest add pmndrs/docs/keypoints#v4.20.0 --yes && \
 printf '%s' 'import { Keypoints, KeypointsItem } from "@/components/keypoints"
 
@@ -46,7 +46,7 @@ For a palette other than the pmndrs one: install `md3-base` — same plumbing, n
 baked palette — and follow its docs.
 
 ```sh
-npx shadcn@latest add pmndrs/design-system/md3-base#v0.6.0
+npx shadcn@latest add pmndrs/design-system/md3-base#v0.7.0
 ```
 
 Nothing renders until something emits `--md-sys-color-*`: regenerate the values
@@ -68,7 +68,7 @@ say.
 
 ## Authoring a block
 
-Always pin a ref — `pmndrs/design-system/theme#v0.6.0`. Refs are **not
+Always pin a ref — `pmndrs/design-system/theme#v0.7.0`. Refs are **not
 inherited**: every entry in `registryDependencies` carries its own.
 
 - a shadcn primitive → `registryDependencies: ["button"]`

@@ -1,7 +1,7 @@
 [
   {
     "repo": "pmndrs/docs",
-    "ref": "ds",
+    "ref": "v4.20.0",
     "items": [
       {
         "name": "keypoints",

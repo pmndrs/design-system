@@ -38,8 +38,8 @@ import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
 /**
  * Refs are not inherited, so a cross-item dependency carries its own — and it
  * has to be *this* version, not a frozen one. Derived from package.json so the
- * changesets bump reaches it; `npm run version` rebuilds, and `check-build`
- * fails if it didn't.
+ * changesets bump reaches it; `npm run version` rebuilds, and `build.test.mjs`
+ * (in `npm run lgtm`) fails if it didn't.
  */
 const version = `v${pkg.version}`
 
@@ -124,7 +124,7 @@ const docs = [new URL('../README.md', import.meta.url), new URL('../.changeset/R
 
 /**
  * `pmndrs/design-system/<item>#v<semver>`, for this repo's items only — an
- * address into another repo (`pmndrs/docs/…#ds`) is never touched.
+ * address into another repo (`pmndrs/docs/…#v4.20.0`) is never touched.
  */
 const installRef = new RegExp(`pmndrs/design-system/(${items.map(({ name }) => name).join('|')})#v\\d+\\.\\d+\\.\\d+`, 'g')
 

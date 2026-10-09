@@ -1,9 +1,7 @@
 name: Build documentation and deploy to GitHub Pages and Vercel
 on:
   push:
-    # `ds` as well as `main`: the branch the sidebar's version switcher lists below, so that its
-    # Vercel preview follows it on every push, pull request or not.
-    branches: ['main', 'ds']
+    branches: ['main']
   pull_request:
   workflow_dispatch:
 
@@ -49,10 +47,10 @@ jobs:
       # would create. The site lives under the Pages base path there too, hence the suffix.
       # `main` needs no URL: it is the production branch, served at the site URL itself.
       version_url_template: 'https://design-system-git-{branch}-pmndrs.vercel.app/design-system'
-      # The branches offered, besides `main` and the one being built: `ds`, the one pmndrs/docs
-      # takes its colour layer from (pmndrs/docs#571). Not the remote's branches, the default:
-      # most of them have no deployment behind their URL.
-      version_branches_list: 'ds'
+      # The branches offered: `main` and the one being built, which the switcher always lists,
+      # and no other. Not the remote's branches, the default: most of them have no deployment
+      # behind their URL. An empty list would fall back to that default, hence `main` spelled out.
+      version_branches_list: 'main'
 
   deploy:
     needs: build

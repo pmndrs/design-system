@@ -1,6 +1,6 @@
 /**
  * Generates the inputs of the Claude Design sync, into
- * `.design-sync/.cache/design/` (gitignored). The sync runs in three steps:
+ * `.design-sync/.cache/design/` (gitignored). The sync runs in four steps:
  *
  *   1. `npm run design-bundle`  this script
  *   2. the `/design-sync` converter, which reads these files through

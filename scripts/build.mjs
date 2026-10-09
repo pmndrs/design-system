@@ -33,6 +33,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { builder } from 'material-theme-builder'
 import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
+import { fill, stripArtifactOnly } from './brand-book.mjs'
 import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
 
 /**
@@ -198,6 +199,26 @@ const items = [
       target: `~/design/tokens/pmndrs/${mode}.tokens.json`,
     })),
   },
+  {
+    name: 'guidelines',
+    type: 'registry:item',
+    title: 'pmndrs guidelines',
+    description:
+      'The pmndrs brand book as `guidelines/Guidelines.md`: how to use the colour layer, type, spacing, components, the logo and the voice. The file Figma Make reads, and one to point Claude or Cursor at.',
+    author: 'pmndrs',
+    /**
+     * Generated below from the brand book, like the Guidelines page, so it
+     * cannot say something the page does not. `guidelines/Guidelines.md` at
+     * the project root is the one path Figma Make reads.
+     */
+    files: [
+      {
+        path: 'registry/guidelines/Guidelines.md',
+        type: 'registry:file',
+        target: '~/guidelines/Guidelines.md',
+      },
+    ],
+  },
 ]
 
 const registryUrl = new URL('../registry.json', import.meta.url)
@@ -209,8 +230,11 @@ const registryUrl = new URL('../registry.json', import.meta.url)
  * the docs site. The changeset markdown is history and stays as written.
  */
 const docsDir = new URL('../docs/', import.meta.url)
+/** The Guidelines page, generated whole from the brand book below. */
+const guidelinesPageUrl = new URL('guidelines/introduction.mdx', docsDir)
 const docPages = readdirSync(docsDir, { recursive: true })
   .filter((path) => path.endsWith('.mdx'))
+  .filter((path) => new URL(path, docsDir).href !== guidelinesPageUrl.href)
   .sort()
   .map((path) => new URL(path, docsDir))
 const docs = [new URL('../README.md', import.meta.url), new URL('../.changeset/README.md', import.meta.url), ...docPages]
@@ -332,6 +356,35 @@ for (const url of docs) {
   if (url.href === pageUrl.href) page = writeCatalog(page, registries)
   outputs.push([url, page])
 }
+
+/**
+ * The brand book, `artifact/README.md`, as the docs site reads it: the
+ * Guidelines page, right after Getting Started (`nav` sorts numerically, so
+ * `0.5` sits between it and Colors without renumbering every page). Passages
+ * marked artifact-only are dropped, and the placeholders are filled the way
+ * `artifact.mjs` fills them, so the page, the artifact and `Guidelines.md`
+ * say the same thing at the same versions.
+ *
+ * Written whole on every build rather than bumped in place, which is why it is
+ * not one of the `docPages` above.
+ */
+const brandBookPath = 'artifact/README.md'
+const guidelines = fill(stripArtifactOnly(readFileSync(new URL(`../${brandBookPath}`, import.meta.url), 'utf8')), brandBookPath).trim()
+
+outputs.push([
+  guidelinesPageUrl,
+  `---
+title: Guidelines
+description: The do and don't of the pmndrs design system — colour, type, spacing, components, logo, iconography and voice.
+nav: 0.5
+---
+
+${guidelines}
+`,
+])
+
+/** The same text as the `guidelines` item installs it, with a title of its own in place of the frontmatter. */
+outputs.push([new URL('../registry/guidelines/Guidelines.md', import.meta.url), `# Poimandres design system guidelines\n\n${guidelines}\n`])
 
 /**
  * The palette as DTCG tokens: `Light` and `Dark` become two modes of one Figma

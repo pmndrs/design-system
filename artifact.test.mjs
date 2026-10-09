@@ -107,6 +107,17 @@ test('every card starts with an @dsCard line naming its group and a height withi
   }
 })
 
+/**
+ * The brand book marks what the docs site leaves out, and the artifact keeps
+ * all of it: its "Not synced" section, and no marker a design agent would read
+ * as part of the text.
+ */
+test('the brand book keeps its artifact-only passages, without their markers', () => {
+  const readme = read('README.md')
+  assert.match(readme, /^## Not synced$/m)
+  assert.doesNotMatch(readme, /artifact-only/)
+})
+
 test('every component has a README beside its preview', () => {
   assert.deepEqual(
     cards.map(({ path }) => path.replace('preview.html', 'README.md')).filter((path) => !paths.includes(path)),

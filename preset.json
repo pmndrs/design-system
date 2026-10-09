@@ -1,5 +1,5 @@
 {
-  "code": "b5cR4Y50S",
+  "code": "b5dwpqytk",
   "version": "b",
   "values": {
     "menuColor": "default",
@@ -9,10 +9,10 @@
     "iconLibrary": "lucide",
     "theme": "teal",
     "baseColor": "neutral",
-    "style": "nova",
+    "style": "luma",
     "chartColor": "teal",
     "fontHeading": "inherit"
   },
   "derived": [],
-  "url": "https://ui.shadcn.com/create?preset=b5cR4Y50S"
+  "url": "https://ui.shadcn.com/create?preset=b5dwpqytk"
 }

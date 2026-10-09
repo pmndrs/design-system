@@ -31,8 +31,8 @@
  *   material-theme-builder           the shadcn remap
  *   docs/<page>/introduction.mdx     the type scale, the spacing, radius and
  *                                    shadow tables, the font families
- *   tailwindcss                      the mono fallback stack and `radius-xs`,
- *                                    the two values no docs page lists
+ *   tailwindcss                      the mono fallback stack, the one value
+ *                                    no docs page lists
  *   @fontsource-variable/*           the font files and their weight ranges
  *   scripts/artifact.notes.json      what no source says: each token's usage
  *                                    line, the family notes, the provenance
@@ -146,9 +146,8 @@ for (const name of Object.keys(light)) {
 }
 
 /**
- * Tailwind's own defaults, from its first `@theme default` block, for the two
- * values no docs page lists: the mono fallback stack, and `--radius-xs`, the
- * one Tailwind radius step outside the base-nova scale.
+ * Tailwind's own defaults, from its first `@theme default` block, for the one
+ * value no docs page lists: the mono fallback stack.
  */
 const tailwindThemeCss = readFileSync(resolvePath('tailwindcss/theme.css'), 'utf8')
 const tailwindDefaults = Object.fromEntries(
@@ -359,7 +358,10 @@ function spacingTokens() {
   ]
 }
 
-/** `--radius` and the base-nova scale, from the Radius page. */
+/**
+ * `--radius` and the scale of the Radius page: the base-nova steps, and
+ * `--radius-xs`, Tailwind's, which the page lists as inherited.
+ */
 const radius = pages.radius.text.match(/^\s*--radius:\s*([^;]+);/m)[1]
 const radii = tableRows(section(pages.radius, 'Scale').body).map(([token, utility, formula, value]) => ({
   token,
@@ -368,18 +370,12 @@ const radii = tableRows(section(pages.radius, 'Scale').body).map(([token, utilit
   value,
 }))
 
-/**
- * `radius`, then every Tailwind radius step in Tailwind's order: the
- * Radius page's value where it lists the step, Tailwind's default where it
- * does not (`radius-xs`).
- */
+/** `radius`, then every step of the Radius page, in its order. */
 function radiusTokens() {
-  const steps = Object.keys(tailwindDefaults).filter((name) => /^--radius-[\w]+$/.test(name))
   return [
     { name: 'radius', value: radius, usage: usage('radius', 'radius') },
-    ...steps.map((token) => {
+    ...radii.map(({ token, value }) => {
       const name = token.slice(2)
-      const value = radii.find((entry) => entry.token === token)?.value ?? tailwindDefaults[token]
       return { name, value, usage: usage('radius', name) }
     }),
   ]

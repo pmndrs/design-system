@@ -1,0 +1,1055 @@
+<!-- @dsCard group="Spacing" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>pmndrs: Spacing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&amp;family=Inconsolata:wght@400..700&amp;display=swap" />
+<style>
+/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */
+@layer properties;
+@layer theme, base, components, utilities;
+@layer theme {
+  :root, :host {
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono: 'Inconsolata', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --spacing: 0.25rem;
+    --text-xs: 0.75rem;
+    --text-xs--line-height: calc(1 / 0.75);
+    --text-sm: 0.875rem;
+    --text-sm--line-height: calc(1.25 / 0.875);
+    --text-xl: 1.25rem;
+    --text-xl--line-height: calc(1.75 / 1.25);
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --tracking-tight: -0.025em;
+    --tracking-wide: 0.025em;
+    --default-font-family: var(--font-sans);
+    --default-mono-font-family: var(--font-mono);
+  }
+}
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+  html, :host {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    font-family: var(--default-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+    font-feature-settings: var(--default-font-feature-settings, normal);
+    font-variation-settings: var(--default-font-variation-settings, normal);
+    -webkit-tap-highlight-color: transparent;
+  }
+  hr {
+    height: 0;
+    color: inherit;
+    border-top-width: 1px;
+  }
+  abbr:where([title]) {
+    -webkit-text-decoration: underline dotted;
+    text-decoration: underline dotted;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  a {
+    color: inherit;
+    -webkit-text-decoration: inherit;
+    text-decoration: inherit;
+  }
+  b, strong {
+    font-weight: bolder;
+  }
+  code, kbd, samp, pre {
+    font-family: var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-feature-settings: var(--default-mono-font-feature-settings, normal);
+    font-variation-settings: var(--default-mono-font-variation-settings, normal);
+    font-size: 1em;
+  }
+  small {
+    font-size: 80%;
+  }
+  sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sub {
+    bottom: -0.25em;
+  }
+  sup {
+    top: -0.5em;
+  }
+  table {
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+  }
+  :-moz-focusring:where(:not(iframe)) {
+    outline: auto;
+  }
+  progress {
+    vertical-align: baseline;
+  }
+  summary {
+    display: list-item;
+  }
+  ol, ul, menu {
+    list-style: none;
+  }
+  img, svg, video, canvas, audio, iframe, embed, object {
+    display: block;
+    vertical-align: middle;
+  }
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  button, input, select, optgroup, textarea, ::file-selector-button {
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+  :where(select:is([multiple], [size])) optgroup {
+    font-weight: bolder;
+  }
+  :where(select:is([multiple], [size])) optgroup option {
+    padding-inline-start: 20px;
+  }
+  ::file-selector-button {
+    margin-inline-end: 4px;
+  }
+  ::placeholder {
+    opacity: 1;
+  }
+  @supports (not (-webkit-appearance: -apple-pay-button))  or (contain-intrinsic-size: 1px) {
+    ::placeholder {
+      color: currentcolor;
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, currentcolor 50%, transparent);
+      }
+    }
+  }
+  textarea {
+    resize: vertical;
+  }
+  ::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+  ::-webkit-date-and-time-value {
+    min-height: 1lh;
+    text-align: inherit;
+  }
+  ::-webkit-datetime-edit {
+    display: inline-flex;
+  }
+  ::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+  ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
+    padding-block: 0;
+  }
+  ::-webkit-calendar-picker-indicator {
+    line-height: 1;
+  }
+  :-moz-ui-invalid {
+    box-shadow: none;
+  }
+  button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-selector-button {
+    appearance: button;
+  }
+  ::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
+    height: auto;
+  }
+  [hidden]:where(:not([hidden="until-found"])) {
+    display: none !important;
+  }
+}
+@layer utilities {
+  .flex {
+    display: flex;
+  }
+  .grid {
+    display: grid;
+  }
+  .h-3 {
+    height: calc(var(--spacing) * 3);
+  }
+  .min-h-screen {
+    min-height: 100vh;
+  }
+  .w-0 {
+    width: 0px;
+  }
+  .w-0\.5 {
+    width: calc(var(--spacing) * 0.5);
+  }
+  .w-1 {
+    width: var(--spacing);
+  }
+  .w-1\.5 {
+    width: calc(var(--spacing) * 1.5);
+  }
+  .w-2 {
+    width: calc(var(--spacing) * 2);
+  }
+  .w-2\.5 {
+    width: calc(var(--spacing) * 2.5);
+  }
+  .w-3 {
+    width: calc(var(--spacing) * 3);
+  }
+  .w-3\.5 {
+    width: calc(var(--spacing) * 3.5);
+  }
+  .w-4 {
+    width: calc(var(--spacing) * 4);
+  }
+  .w-5 {
+    width: calc(var(--spacing) * 5);
+  }
+  .w-6 {
+    width: calc(var(--spacing) * 6);
+  }
+  .w-7 {
+    width: calc(var(--spacing) * 7);
+  }
+  .w-8 {
+    width: calc(var(--spacing) * 8);
+  }
+  .w-9 {
+    width: calc(var(--spacing) * 9);
+  }
+  .w-10 {
+    width: calc(var(--spacing) * 10);
+  }
+  .w-11 {
+    width: calc(var(--spacing) * 11);
+  }
+  .w-12 {
+    width: calc(var(--spacing) * 12);
+  }
+  .w-14 {
+    width: calc(var(--spacing) * 14);
+  }
+  .w-16 {
+    width: calc(var(--spacing) * 16);
+  }
+  .w-20 {
+    width: calc(var(--spacing) * 20);
+  }
+  .w-24 {
+    width: calc(var(--spacing) * 24);
+  }
+  .w-28 {
+    width: calc(var(--spacing) * 28);
+  }
+  .w-32 {
+    width: calc(var(--spacing) * 32);
+  }
+  .w-36 {
+    width: calc(var(--spacing) * 36);
+  }
+  .w-40 {
+    width: calc(var(--spacing) * 40);
+  }
+  .w-44 {
+    width: calc(var(--spacing) * 44);
+  }
+  .w-48 {
+    width: calc(var(--spacing) * 48);
+  }
+  .w-52 {
+    width: calc(var(--spacing) * 52);
+  }
+  .w-56 {
+    width: calc(var(--spacing) * 56);
+  }
+  .w-60 {
+    width: calc(var(--spacing) * 60);
+  }
+  .w-64 {
+    width: calc(var(--spacing) * 64);
+  }
+  .w-72 {
+    width: calc(var(--spacing) * 72);
+  }
+  .w-80 {
+    width: calc(var(--spacing) * 80);
+  }
+  .w-96 {
+    width: calc(var(--spacing) * 96);
+  }
+  .w-px {
+    width: 1px;
+  }
+  .max-w-full {
+    max-width: 100%;
+  }
+  .min-w-0 {
+    min-width: 0px;
+  }
+  .shrink-0 {
+    flex-shrink: 0;
+  }
+  .flex-col {
+    flex-direction: column;
+  }
+  .items-center {
+    align-items: center;
+  }
+  .gap-1\.5 {
+    gap: calc(var(--spacing) * 1.5);
+  }
+  .gap-3 {
+    gap: calc(var(--spacing) * 3);
+  }
+  .gap-6 {
+    gap: calc(var(--spacing) * 6);
+  }
+  .rounded-md {
+    border-radius: calc(var(--radius) * 0.8);
+  }
+  .border {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+  }
+  .border-b {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 1px;
+  }
+  .border-dashed {
+    --tw-border-style: dashed;
+    border-style: dashed;
+  }
+  .bg-background {
+    background-color: var(--background);
+  }
+  .bg-primary {
+    background-color: var(--primary);
+  }
+  .p-6 {
+    padding: calc(var(--spacing) * 6);
+  }
+  .px-3 {
+    padding-inline: calc(var(--spacing) * 3);
+  }
+  .px-6 {
+    padding-inline: calc(var(--spacing) * 6);
+  }
+  .py-2 {
+    padding-block: calc(var(--spacing) * 2);
+  }
+  .py-4 {
+    padding-block: calc(var(--spacing) * 4);
+  }
+  .text-sm {
+    font-size: var(--text-sm);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
+  }
+  .text-xl {
+    font-size: var(--text-xl);
+    line-height: var(--tw-leading, var(--text-xl--line-height));
+  }
+  .text-xs {
+    font-size: var(--text-xs);
+    line-height: var(--tw-leading, var(--text-xs--line-height));
+  }
+  .font-medium {
+    --tw-font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-medium);
+  }
+  .font-semibold {
+    --tw-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+  .tracking-tight {
+    --tw-tracking: var(--tracking-tight);
+    letter-spacing: var(--tracking-tight);
+  }
+  .tracking-wide {
+    --tw-tracking: var(--tracking-wide);
+    letter-spacing: var(--tracking-wide);
+  }
+  .text-foreground {
+    color: var(--foreground);
+  }
+  .text-muted-foreground {
+    color: var(--muted-foreground);
+  }
+  .uppercase {
+    text-transform: uppercase;
+  }
+  @media (width >= 64rem) {
+    .lg\:grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+:root:root, .dark.dark {
+  --background: var(--md-sys-color-surface);
+  --foreground: var(--md-sys-color-on-surface);
+  --card: var(--md-sys-color-surface-container-low);
+  --card-foreground: var(--md-sys-color-on-surface);
+  --popover: var(--md-sys-color-surface-container-high);
+  --popover-foreground: var(--md-sys-color-on-surface);
+  --primary: var(--md-sys-color-primary);
+  --primary-foreground: var(--md-sys-color-on-primary);
+  --secondary: var(--md-sys-color-secondary-container);
+  --secondary-foreground: var(--md-sys-color-on-secondary-container);
+  --muted: var(--md-sys-color-surface-container-highest);
+  --muted-foreground: var(--md-sys-color-on-surface-variant);
+  --accent: var(--md-sys-color-secondary-container);
+  --accent-foreground: var(--md-sys-color-on-secondary-container);
+  --destructive: var(--md-sys-color-error);
+  --border: var(--md-sys-color-outline-variant);
+  --input: var(--md-sys-color-outline);
+  --ring: var(--md-sys-color-primary);
+  --chart-1: var(--md-sys-color-primary-fixed);
+  --chart-2: var(--md-sys-color-secondary-fixed);
+  --chart-3: var(--md-sys-color-tertiary-fixed);
+  --chart-4: var(--md-sys-color-primary-fixed-dim);
+  --chart-5: var(--md-sys-color-secondary-fixed-dim);
+  --sidebar: var(--md-sys-color-surface-container-low);
+  --sidebar-foreground: var(--md-sys-color-on-surface);
+  --sidebar-primary: var(--md-sys-color-primary);
+  --sidebar-primary-foreground: var(--md-sys-color-on-primary);
+  --sidebar-accent: var(--md-sys-color-secondary-container);
+  --sidebar-accent-foreground: var(--md-sys-color-on-secondary-container);
+  --sidebar-border: var(--md-sys-color-outline-variant);
+  --sidebar-ring: var(--md-sys-color-primary);
+}
+:root {
+  --radius: 0.625rem;
+  --md-sys-color-background: var(--md-ref-palette-neutral-98);
+  --md-sys-color-error: #b7004e;
+  --md-sys-color-error-container: #da2b66;
+  --md-sys-color-inverse-on-surface: var(--md-ref-palette-neutral-95);
+  --md-sys-color-inverse-primary: var(--md-ref-palette-primary-80);
+  --md-sys-color-inverse-surface: var(--md-ref-palette-neutral-20);
+  --md-sys-color-on-background: var(--md-ref-palette-neutral-10);
+  --md-sys-color-on-error: var(--md-ref-palette-error-100);
+  --md-sys-color-on-error-container: var(--md-ref-palette-error-99);
+  --md-sys-color-on-primary: var(--md-ref-palette-primary-100);
+  --md-sys-color-on-primary-container: #576e00;
+  --md-sys-color-on-primary-fixed: var(--md-ref-palette-primary-10);
+  --md-sys-color-on-primary-fixed-variant: var(--md-ref-palette-primary-30);
+  --md-sys-color-on-secondary: var(--md-ref-palette-secondary-100);
+  --md-sys-color-on-secondary-container: #576920;
+  --md-sys-color-on-secondary-fixed: var(--md-ref-palette-secondary-10);
+  --md-sys-color-on-secondary-fixed-variant: var(--md-ref-palette-secondary-30);
+  --md-sys-color-on-surface: var(--md-ref-palette-neutral-10);
+  --md-sys-color-on-surface-variant: var(--md-ref-palette-neutral-variant-30);
+  --md-sys-color-on-tertiary: var(--md-ref-palette-tertiary-100);
+  --md-sys-color-on-tertiary-container: #00771a;
+  --md-sys-color-on-tertiary-fixed: var(--md-ref-palette-tertiary-10);
+  --md-sys-color-on-tertiary-fixed-variant: var(--md-ref-palette-tertiary-30);
+  --md-sys-color-outline: var(--md-ref-palette-neutral-variant-50);
+  --md-sys-color-outline-variant: var(--md-ref-palette-neutral-variant-80);
+  --md-sys-color-primary: var(--md-ref-palette-primary-40);
+  --md-sys-color-primary-container: #caf543;
+  --md-sys-color-primary-fixed: var(--md-ref-palette-primary-90);
+  --md-sys-color-primary-fixed-dim: var(--md-ref-palette-primary-80);
+  --md-sys-color-scrim: var(--md-ref-palette-neutral-0);
+  --md-sys-color-secondary: var(--md-ref-palette-secondary-40);
+  --md-sys-color-secondary-container: #d3e990;
+  --md-sys-color-secondary-fixed: var(--md-ref-palette-secondary-90);
+  --md-sys-color-secondary-fixed-dim: var(--md-ref-palette-secondary-80);
+  --md-sys-color-shadow: var(--md-ref-palette-neutral-0);
+  --md-sys-color-surface: var(--md-ref-palette-neutral-98);
+  --md-sys-color-surface-bright: var(--md-ref-palette-neutral-98);
+  --md-sys-color-surface-container: var(--md-ref-palette-neutral-94);
+  --md-sys-color-surface-container-high: var(--md-ref-palette-neutral-92);
+  --md-sys-color-surface-container-highest: var(--md-ref-palette-neutral-90);
+  --md-sys-color-surface-container-low: var(--md-ref-palette-neutral-96);
+  --md-sys-color-surface-container-lowest: var(--md-ref-palette-neutral-100);
+  --md-sys-color-surface-dim: var(--md-ref-palette-neutral-87);
+  --md-sys-color-surface-tint: var(--md-ref-palette-primary-40);
+  --md-sys-color-surface-variant: var(--md-ref-palette-neutral-variant-90);
+  --md-sys-color-tertiary: var(--md-ref-palette-tertiary-40);
+  --md-sys-color-tertiary-container: #87ff82;
+  --md-sys-color-tertiary-fixed: var(--md-ref-palette-tertiary-90);
+  --md-sys-color-tertiary-fixed-dim: var(--md-ref-palette-tertiary-80);
+  --md-sys-color-lime: var(--md-ref-palette-lime-40);
+  --md-sys-color-on-lime: var(--md-ref-palette-lime-100);
+  --md-sys-color-lime-container: #caf543;
+  --md-sys-color-on-lime-container: #576e00;
+  --md-sys-color-teal: var(--md-ref-palette-teal-40);
+  --md-sys-color-on-teal: var(--md-ref-palette-teal-100);
+  --md-sys-color-teal-container: #00f7a3;
+  --md-sys-color-on-teal-container: var(--md-ref-palette-teal-40);
+  --md-sys-color-cyan: var(--md-ref-palette-cyan-40);
+  --md-sys-color-on-cyan: var(--md-ref-palette-cyan-100);
+  --md-sys-color-cyan-container: #2bdcf6;
+  --md-sys-color-on-cyan-container: #005d69;
+  --md-sys-color-purple: #9b00be;
+  --md-sys-color-on-purple: var(--md-ref-palette-purple-100);
+  --md-sys-color-purple-container: #b833da;
+  --md-sys-color-on-purple-container: var(--md-ref-palette-purple-99);
+  --md-sys-color-red: #b7004e;
+  --md-sys-color-on-red: var(--md-ref-palette-red-100);
+  --md-sys-color-red-container: #da2b66;
+  --md-sys-color-on-red-container: var(--md-ref-palette-red-99);
+  --md-sys-color-orange: var(--md-ref-palette-orange-40);
+  --md-sys-color-on-orange: var(--md-ref-palette-orange-100);
+  --md-sys-color-orange-container: #ffc043;
+  --md-sys-color-on-orange-container: #714f00;
+  --md-sys-color-yellow: var(--md-ref-palette-yellow-40);
+  --md-sys-color-on-yellow: var(--md-ref-palette-yellow-100);
+  --md-sys-color-yellow-container: #ebff0f;
+  --md-sys-color-on-yellow-container: #6a7400;
+  --md-ref-palette-primary-0: #000000;
+  --md-ref-palette-primary-4: #0a1000;
+  --md-ref-palette-primary-5: #0d1300;
+  --md-ref-palette-primary-6: #0f1600;
+  --md-ref-palette-primary-10: #161e00;
+  --md-ref-palette-primary-12: #1a2300;
+  --md-ref-palette-primary-15: #1f2900;
+  --md-ref-palette-primary-17: #232e00;
+  --md-ref-palette-primary-20: #283500;
+  --md-ref-palette-primary-22: #2c3a00;
+  --md-ref-palette-primary-24: #303e00;
+  --md-ref-palette-primary-25: #324100;
+  --md-ref-palette-primary-30: #3c4d00;
+  --md-ref-palette-primary-35: #465900;
+  --md-ref-palette-primary-40: #506600;
+  --md-ref-palette-primary-50: #668100;
+  --md-ref-palette-primary-60: #7c9c00;
+  --md-ref-palette-primary-70: #93b900;
+  --md-ref-palette-primary-80: #acd520;
+  --md-ref-palette-primary-87: #bfea38;
+  --md-ref-palette-primary-90: #c8f240;
+  --md-ref-palette-primary-92: #cdf846;
+  --md-ref-palette-primary-94: #d3fe4c;
+  --md-ref-palette-primary-95: #daff6e;
+  --md-ref-palette-primary-96: #e3ff92;
+  --md-ref-palette-primary-98: #f3ffca;
+  --md-ref-palette-primary-99: #fbffe2;
+  --md-ref-palette-primary-100: #ffffff;
+  --md-ref-palette-secondary-0: #000000;
+  --md-ref-palette-secondary-4: #0a1000;
+  --md-ref-palette-secondary-5: #0d1300;
+  --md-ref-palette-secondary-6: #0f1600;
+  --md-ref-palette-secondary-10: #161e00;
+  --md-ref-palette-secondary-12: #1a2300;
+  --md-ref-palette-secondary-15: #1f2900;
+  --md-ref-palette-secondary-17: #232e00;
+  --md-ref-palette-secondary-20: #283500;
+  --md-ref-palette-secondary-22: #2c3a00;
+  --md-ref-palette-secondary-24: #303e00;
+  --md-ref-palette-secondary-25: #324100;
+  --md-ref-palette-secondary-30: #3c4d03;
+  --md-ref-palette-secondary-35: #475910;
+  --md-ref-palette-secondary-40: #53651c;
+  --md-ref-palette-secondary-50: #6b7e33;
+  --md-ref-palette-secondary-60: #85994a;
+  --md-ref-palette-secondary-70: #9fb461;
+  --md-ref-palette-secondary-80: #bad07a;
+  --md-ref-palette-secondary-87: #cde38b;
+  --md-ref-palette-secondary-90: #d6ec93;
+  --md-ref-palette-secondary-92: #dbf298;
+  --md-ref-palette-secondary-94: #e1f89d;
+  --md-ref-palette-secondary-95: #e4faa0;
+  --md-ref-palette-secondary-96: #e7fda2;
+  --md-ref-palette-secondary-98: #f3ffca;
+  --md-ref-palette-secondary-99: #fbffe2;
+  --md-ref-palette-secondary-100: #ffffff;
+  --md-ref-palette-tertiary-0: #000000;
+  --md-ref-palette-tertiary-4: #001201;
+  --md-ref-palette-tertiary-5: #001501;
+  --md-ref-palette-tertiary-6: #001802;
+  --md-ref-palette-tertiary-10: #002203;
+  --md-ref-palette-tertiary-12: #002604;
+  --md-ref-palette-tertiary-15: #002d05;
+  --md-ref-palette-tertiary-17: #003206;
+  --md-ref-palette-tertiary-20: #003908;
+  --md-ref-palette-tertiary-22: #003e09;
+  --md-ref-palette-tertiary-24: #00440b;
+  --md-ref-palette-tertiary-25: #00460b;
+  --md-ref-palette-tertiary-30: #00530f;
+  --md-ref-palette-tertiary-35: #006013;
+  --md-ref-palette-tertiary-40: #006e18;
+  --md-ref-palette-tertiary-50: #008a20;
+  --md-ref-palette-tertiary-60: #2ba636;
+  --md-ref-palette-tertiary-70: #4bc24e;
+  --md-ref-palette-tertiary-80: #68df67;
+  --md-ref-palette-tertiary-87: #7cf378;
+  --md-ref-palette-tertiary-90: #84fc80;
+  --md-ref-palette-tertiary-92: #9cff94;
+  --md-ref-palette-tertiary-94: #bbffb1;
+  --md-ref-palette-tertiary-95: #c9ffbe;
+  --md-ref-palette-tertiary-96: #d5ffcb;
+  --md-ref-palette-tertiary-98: #ecffe4;
+  --md-ref-palette-tertiary-99: #f6ffef;
+  --md-ref-palette-tertiary-100: #ffffff;
+  --md-ref-palette-error-0: #000000;
+  --md-ref-palette-error-4: #26000a;
+  --md-ref-palette-error-5: #2c000d;
+  --md-ref-palette-error-6: #30000f;
+  --md-ref-palette-error-10: #3f0016;
+  --md-ref-palette-error-12: #47001a;
+  --md-ref-palette-error-15: #52001f;
+  --md-ref-palette-error-17: #5a0023;
+  --md-ref-palette-error-20: #660028;
+  --md-ref-palette-error-22: #6e002c;
+  --md-ref-palette-error-24: #770030;
+  --md-ref-palette-error-25: #7b0032;
+  --md-ref-palette-error-30: #90003c;
+  --md-ref-palette-error-35: #a60046;
+  --md-ref-palette-error-40: #bb0651;
+  --md-ref-palette-error-50: #de2e68;
+  --md-ref-palette-error-60: #ff4d82;
+  --md-ref-palette-error-70: #ff86a1;
+  --md-ref-palette-error-80: #ffb1c0;
+  --md-ref-palette-error-87: #ffced5;
+  --md-ref-palette-error-90: #ffd9df;
+  --md-ref-palette-error-92: #ffe1e5;
+  --md-ref-palette-error-94: #ffe9eb;
+  --md-ref-palette-error-95: #ffecee;
+  --md-ref-palette-error-96: #fff0f1;
+  --md-ref-palette-error-98: #fff8f7;
+  --md-ref-palette-error-99: #fffbff;
+  --md-ref-palette-error-100: #ffffff;
+  --md-ref-palette-neutral-0: #000000;
+  --md-ref-palette-neutral-4: #0f0e0c;
+  --md-ref-palette-neutral-5: #12110e;
+  --md-ref-palette-neutral-6: #141311;
+  --md-ref-palette-neutral-10: #1d1b19;
+  --md-ref-palette-neutral-12: #211f1d;
+  --md-ref-palette-neutral-15: #272623;
+  --md-ref-palette-neutral-17: #2b2a27;
+  --md-ref-palette-neutral-20: #32302d;
+  --md-ref-palette-neutral-22: #363532;
+  --md-ref-palette-neutral-24: #3b3936;
+  --md-ref-palette-neutral-25: #3d3b38;
+  --md-ref-palette-neutral-30: #484643;
+  --md-ref-palette-neutral-35: #54524f;
+  --md-ref-palette-neutral-40: #605e5b;
+  --md-ref-palette-neutral-50: #797773;
+  --md-ref-palette-neutral-60: #93908c;
+  --md-ref-palette-neutral-70: #aeaba6;
+  --md-ref-palette-neutral-80: #cac6c1;
+  --md-ref-palette-neutral-87: #ded9d5;
+  --md-ref-palette-neutral-90: #e6e2dd;
+  --md-ref-palette-neutral-92: #ece7e3;
+  --md-ref-palette-neutral-94: #f2ede8;
+  --md-ref-palette-neutral-95: #f5f0eb;
+  --md-ref-palette-neutral-96: #f8f3ee;
+  --md-ref-palette-neutral-98: #fef8f4;
+  --md-ref-palette-neutral-99: #fffbff;
+  --md-ref-palette-neutral-100: #ffffff;
+  --md-ref-palette-neutral-variant-0: #000000;
+  --md-ref-palette-neutral-variant-4: #0d0f06;
+  --md-ref-palette-neutral-variant-5: #101209;
+  --md-ref-palette-neutral-variant-6: #12140b;
+  --md-ref-palette-neutral-variant-10: #1a1d13;
+  --md-ref-palette-neutral-variant-12: #1e2116;
+  --md-ref-palette-neutral-variant-15: #24271c;
+  --md-ref-palette-neutral-variant-17: #292b20;
+  --md-ref-palette-neutral-variant-20: #2f3127;
+  --md-ref-palette-neutral-variant-22: #34362b;
+  --md-ref-palette-neutral-variant-24: #383a2f;
+  --md-ref-palette-neutral-variant-25: #3a3d31;
+  --md-ref-palette-neutral-variant-30: #46483c;
+  --md-ref-palette-neutral-variant-35: #515447;
+  --md-ref-palette-neutral-variant-40: #5d6053;
+  --md-ref-palette-neutral-variant-50: #76786b;
+  --md-ref-palette-neutral-variant-60: #909284;
+  --md-ref-palette-neutral-variant-70: #abac9d;
+  --md-ref-palette-neutral-variant-80: #c6c8b8;
+  --md-ref-palette-neutral-variant-87: #dadbcb;
+  --md-ref-palette-neutral-variant-90: #e3e4d3;
+  --md-ref-palette-neutral-variant-92: #e8e9d9;
+  --md-ref-palette-neutral-variant-94: #eeefdf;
+  --md-ref-palette-neutral-variant-95: #f1f2e1;
+  --md-ref-palette-neutral-variant-96: #f4f5e4;
+  --md-ref-palette-neutral-variant-98: #fafbea;
+  --md-ref-palette-neutral-variant-99: #fdfded;
+  --md-ref-palette-neutral-variant-100: #ffffff;
+  --md-ref-palette-lime-0: #000000;
+  --md-ref-palette-lime-4: #0a1000;
+  --md-ref-palette-lime-5: #0d1300;
+  --md-ref-palette-lime-6: #0f1600;
+  --md-ref-palette-lime-10: #161e00;
+  --md-ref-palette-lime-12: #1a2300;
+  --md-ref-palette-lime-15: #1f2900;
+  --md-ref-palette-lime-17: #232e00;
+  --md-ref-palette-lime-20: #283500;
+  --md-ref-palette-lime-22: #2c3a00;
+  --md-ref-palette-lime-24: #303e00;
+  --md-ref-palette-lime-25: #324100;
+  --md-ref-palette-lime-30: #3c4d00;
+  --md-ref-palette-lime-35: #465900;
+  --md-ref-palette-lime-40: #506600;
+  --md-ref-palette-lime-50: #668100;
+  --md-ref-palette-lime-60: #7c9c00;
+  --md-ref-palette-lime-70: #93b900;
+  --md-ref-palette-lime-80: #acd520;
+  --md-ref-palette-lime-87: #bfea38;
+  --md-ref-palette-lime-90: #c8f240;
+  --md-ref-palette-lime-92: #cdf846;
+  --md-ref-palette-lime-94: #d3fe4c;
+  --md-ref-palette-lime-95: #daff6e;
+  --md-ref-palette-lime-96: #e3ff92;
+  --md-ref-palette-lime-98: #f3ffca;
+  --md-ref-palette-lime-99: #fbffe2;
+  --md-ref-palette-lime-100: #ffffff;
+  --md-ref-palette-teal-0: #000000;
+  --md-ref-palette-teal-4: #001208;
+  --md-ref-palette-teal-5: #00150a;
+  --md-ref-palette-teal-6: #00180c;
+  --md-ref-palette-teal-10: #002112;
+  --md-ref-palette-teal-12: #002515;
+  --md-ref-palette-teal-15: #002c1a;
+  --md-ref-palette-teal-17: #00311d;
+  --md-ref-palette-teal-20: #003822;
+  --md-ref-palette-teal-22: #003d25;
+  --md-ref-palette-teal-24: #004228;
+  --md-ref-palette-teal-25: #00452a;
+  --md-ref-palette-teal-30: #005233;
+  --md-ref-palette-teal-35: #005f3c;
+  --md-ref-palette-teal-40: #006c45;
+  --md-ref-palette-teal-50: #008858;
+  --md-ref-palette-teal-60: #00a56c;
+  --md-ref-palette-teal-70: #00c380;
+  --md-ref-palette-teal-80: #00e295;
+  --md-ref-palette-teal-87: #08f8a4;
+  --md-ref-palette-teal-90: #4fffb0;
+  --md-ref-palette-teal-92: #89ffc1;
+  --md-ref-palette-teal-94: #b0ffd0;
+  --md-ref-palette-teal-95: #c0ffd8;
+  --md-ref-palette-teal-96: #ceffdf;
+  --md-ref-palette-teal-98: #e8ffee;
+  --md-ref-palette-teal-99: #f5fff5;
+  --md-ref-palette-teal-100: #ffffff;
+  --md-ref-palette-cyan-0: #000000;
+  --md-ref-palette-cyan-4: #001114;
+  --md-ref-palette-cyan-5: #001418;
+  --md-ref-palette-cyan-6: #00161b;
+  --md-ref-palette-cyan-10: #001f25;
+  --md-ref-palette-cyan-12: #002429;
+  --md-ref-palette-cyan-15: #002a31;
+  --md-ref-palette-cyan-17: #002f36;
+  --md-ref-palette-cyan-20: #00363e;
+  --md-ref-palette-cyan-22: #003b43;
+  --md-ref-palette-cyan-24: #004049;
+  --md-ref-palette-cyan-25: #00424b;
+  --md-ref-palette-cyan-30: #004e59;
+  --md-ref-palette-cyan-35: #005b67;
+  --md-ref-palette-cyan-40: #006876;
+  --md-ref-palette-cyan-50: #008394;
+  --md-ref-palette-cyan-60: #009fb3;
+  --md-ref-palette-cyan-70: #00bcd4;
+  --md-ref-palette-cyan-80: #25d9f3;
+  --md-ref-palette-cyan-87: #78eaff;
+  --md-ref-palette-cyan-90: #9fefff;
+  --md-ref-palette-cyan-92: #b5f2ff;
+  --md-ref-palette-cyan-94: #c9f5ff;
+  --md-ref-palette-cyan-95: #d3f7ff;
+  --md-ref-palette-cyan-96: #dcf9ff;
+  --md-ref-palette-cyan-98: #eefcff;
+  --md-ref-palette-cyan-99: #f7fdff;
+  --md-ref-palette-cyan-100: #ffffff;
+  --md-ref-palette-purple-0: #000000;
+  --md-ref-palette-purple-4: #1f0028;
+  --md-ref-palette-purple-5: #23002d;
+  --md-ref-palette-purple-6: #270032;
+  --md-ref-palette-purple-10: #340042;
+  --md-ref-palette-purple-12: #3b004a;
+  --md-ref-palette-purple-15: #440056;
+  --md-ref-palette-purple-17: #4b005e;
+  --md-ref-palette-purple-20: #55006a;
+  --md-ref-palette-purple-22: #5c0072;
+  --md-ref-palette-purple-24: #63007b;
+  --md-ref-palette-purple-25: #67007f;
+  --md-ref-palette-purple-30: #790095;
+  --md-ref-palette-purple-35: #8c00ac;
+  --md-ref-palette-purple-40: #9e06c1;
+  --md-ref-palette-purple-50: #bb36dd;
+  --md-ref-palette-purple-60: #d956f9;
+  --md-ref-palette-purple-70: #e983ff;
+  --md-ref-palette-purple-80: #f4aeff;
+  --md-ref-palette-purple-87: #facaff;
+  --md-ref-palette-purple-90: #fdd6ff;
+  --md-ref-palette-purple-92: #fedeff;
+  --md-ref-palette-purple-94: #ffe6fe;
+  --md-ref-palette-purple-95: #ffebfd;
+  --md-ref-palette-purple-96: #ffeffc;
+  --md-ref-palette-purple-98: #fff7fa;
+  --md-ref-palette-purple-99: #fffbff;
+  --md-ref-palette-purple-100: #ffffff;
+  --md-ref-palette-red-0: #000000;
+  --md-ref-palette-red-4: #26000a;
+  --md-ref-palette-red-5: #2c000d;
+  --md-ref-palette-red-6: #30000f;
+  --md-ref-palette-red-10: #3f0016;
+  --md-ref-palette-red-12: #47001a;
+  --md-ref-palette-red-15: #52001f;
+  --md-ref-palette-red-17: #5a0023;
+  --md-ref-palette-red-20: #660028;
+  --md-ref-palette-red-22: #6e002c;
+  --md-ref-palette-red-24: #770030;
+  --md-ref-palette-red-25: #7b0032;
+  --md-ref-palette-red-30: #90003c;
+  --md-ref-palette-red-35: #a60046;
+  --md-ref-palette-red-40: #bb0651;
+  --md-ref-palette-red-50: #de2e68;
+  --md-ref-palette-red-60: #ff4d82;
+  --md-ref-palette-red-70: #ff86a1;
+  --md-ref-palette-red-80: #ffb1c0;
+  --md-ref-palette-red-87: #ffced5;
+  --md-ref-palette-red-90: #ffd9df;
+  --md-ref-palette-red-92: #ffe1e5;
+  --md-ref-palette-red-94: #ffe9eb;
+  --md-ref-palette-red-95: #ffecee;
+  --md-ref-palette-red-96: #fff0f1;
+  --md-ref-palette-red-98: #fff8f7;
+  --md-ref-palette-red-99: #fffbff;
+  --md-ref-palette-red-100: #ffffff;
+  --md-ref-palette-orange-0: #000000;
+  --md-ref-palette-orange-4: #160c00;
+  --md-ref-palette-orange-5: #190f00;
+  --md-ref-palette-orange-6: #1d1100;
+  --md-ref-palette-orange-10: #271900;
+  --md-ref-palette-orange-12: #2c1d00;
+  --md-ref-palette-orange-15: #342300;
+  --md-ref-palette-orange-17: #392700;
+  --md-ref-palette-orange-20: #422d00;
+  --md-ref-palette-orange-22: #473100;
+  --md-ref-palette-orange-24: #4d3500;
+  --md-ref-palette-orange-25: #503700;
+  --md-ref-palette-orange-30: #5e4200;
+  --md-ref-palette-orange-35: #6d4c00;
+  --md-ref-palette-orange-40: #7c5800;
+  --md-ref-palette-orange-50: #9c6f00;
+  --md-ref-palette-orange-60: #bd8700;
+  --md-ref-palette-orange-70: #dca124;
+  --md-ref-palette-orange-80: #fabc3f;
+  --md-ref-palette-orange-87: #ffd489;
+  --md-ref-palette-orange-90: #ffdea8;
+  --md-ref-palette-orange-92: #ffe5bc;
+  --md-ref-palette-orange-94: #ffebcf;
+  --md-ref-palette-orange-95: #ffeed8;
+  --md-ref-palette-orange-96: #fff2e1;
+  --md-ref-palette-orange-98: #fff8f3;
+  --md-ref-palette-orange-99: #fffbff;
+  --md-ref-palette-orange-100: #ffffff;
+  --md-ref-palette-yellow-0: #000000;
+  --md-ref-palette-yellow-4: #0d0f00;
+  --md-ref-palette-yellow-5: #101200;
+  --md-ref-palette-yellow-6: #121500;
+  --md-ref-palette-yellow-10: #1a1d00;
+  --md-ref-palette-yellow-12: #1e2200;
+  --md-ref-palette-yellow-15: #242800;
+  --md-ref-palette-yellow-17: #282d00;
+  --md-ref-palette-yellow-20: #2e3300;
+  --md-ref-palette-yellow-22: #333800;
+  --md-ref-palette-yellow-24: #373d00;
+  --md-ref-palette-yellow-25: #393f00;
+  --md-ref-palette-yellow-30: #444b00;
+  --md-ref-palette-yellow-35: #4f5700;
+  --md-ref-palette-yellow-40: #5b6400;
+  --md-ref-palette-yellow-50: #737d00;
+  --md-ref-palette-yellow-60: #8c9800;
+  --md-ref-palette-yellow-70: #a6b400;
+  --md-ref-palette-yellow-80: #c0d100;
+  --md-ref-palette-yellow-87: #d3e500;
+  --md-ref-palette-yellow-90: #dbee00;
+  --md-ref-palette-yellow-92: #e1f400;
+  --md-ref-palette-yellow-94: #e6fa00;
+  --md-ref-palette-yellow-95: #e9fd08;
+  --md-ref-palette-yellow-96: #edff46;
+  --md-ref-palette-yellow-98: #f9ffb5;
+  --md-ref-palette-yellow-99: #fdffd8;
+  --md-ref-palette-yellow-100: #ffffff;
+}
+.dark {
+  --md-sys-color-background: var(--md-ref-palette-neutral-6);
+  --md-sys-color-error: var(--md-ref-palette-error-80);
+  --md-sys-color-error-container: var(--md-ref-palette-error-60);
+  --md-sys-color-inverse-on-surface: var(--md-ref-palette-neutral-20);
+  --md-sys-color-inverse-primary: var(--md-ref-palette-primary-40);
+  --md-sys-color-inverse-surface: var(--md-ref-palette-neutral-90);
+  --md-sys-color-on-background: var(--md-ref-palette-neutral-90);
+  --md-sys-color-on-error: var(--md-ref-palette-error-20);
+  --md-sys-color-on-error-container: #570021;
+  --md-sys-color-on-primary: var(--md-ref-palette-primary-20);
+  --md-sys-color-on-primary-container: #556d00;
+  --md-sys-color-on-secondary: var(--md-ref-palette-secondary-20);
+  --md-sys-color-on-secondary-container: #a9be6a;
+  --md-sys-color-on-surface: var(--md-ref-palette-neutral-90);
+  --md-sys-color-on-surface-variant: var(--md-ref-palette-neutral-variant-80);
+  --md-sys-color-on-tertiary: var(--md-ref-palette-tertiary-20);
+  --md-sys-color-on-tertiary-container: #00751a;
+  --md-sys-color-outline: var(--md-ref-palette-neutral-variant-60);
+  --md-sys-color-outline-variant: var(--md-ref-palette-neutral-variant-30);
+  --md-sys-color-primary: var(--md-ref-palette-primary-100);
+  --md-sys-color-primary-container: var(--md-ref-palette-primary-90);
+  --md-sys-color-secondary: var(--md-ref-palette-secondary-80);
+  --md-sys-color-secondary-container: var(--md-ref-palette-secondary-30);
+  --md-sys-color-surface: var(--md-ref-palette-neutral-6);
+  --md-sys-color-surface-bright: var(--md-ref-palette-neutral-24);
+  --md-sys-color-surface-container: var(--md-ref-palette-neutral-12);
+  --md-sys-color-surface-container-high: var(--md-ref-palette-neutral-17);
+  --md-sys-color-surface-container-highest: var(--md-ref-palette-neutral-22);
+  --md-sys-color-surface-container-low: var(--md-ref-palette-neutral-10);
+  --md-sys-color-surface-container-lowest: var(--md-ref-palette-neutral-4);
+  --md-sys-color-surface-dim: var(--md-ref-palette-neutral-6);
+  --md-sys-color-surface-tint: var(--md-ref-palette-primary-80);
+  --md-sys-color-surface-variant: var(--md-ref-palette-neutral-variant-30);
+  --md-sys-color-tertiary: var(--md-ref-palette-tertiary-100);
+  --md-sys-color-tertiary-container: var(--md-ref-palette-tertiary-90);
+  --md-sys-color-lime: var(--md-ref-palette-lime-100);
+  --md-sys-color-on-lime: var(--md-ref-palette-lime-20);
+  --md-sys-color-lime-container: var(--md-ref-palette-lime-90);
+  --md-sys-color-on-lime-container: #556d00;
+  --md-sys-color-teal: #d6ffe4;
+  --md-sys-color-on-teal: var(--md-ref-palette-teal-20);
+  --md-sys-color-cyan: #aaf0ff;
+  --md-sys-color-on-cyan: var(--md-ref-palette-cyan-20);
+  --md-sys-color-purple: var(--md-ref-palette-purple-80);
+  --md-sys-color-on-purple: var(--md-ref-palette-purple-20);
+  --md-sys-color-purple-container: var(--md-ref-palette-purple-60);
+  --md-sys-color-on-purple-container: #4a005c;
+  --md-sys-color-red: var(--md-ref-palette-red-80);
+  --md-sys-color-on-red: var(--md-ref-palette-red-20);
+  --md-sys-color-red-container: var(--md-ref-palette-red-60);
+  --md-sys-color-on-red-container: #570021;
+  --md-sys-color-orange: #ffe3b7;
+  --md-sys-color-on-orange: var(--md-ref-palette-orange-20);
+  --md-sys-color-yellow: var(--md-ref-palette-yellow-100);
+  --md-sys-color-on-yellow: var(--md-ref-palette-yellow-20);
+  --md-sys-color-yellow-container: var(--md-ref-palette-yellow-90);
+  --md-sys-color-on-yellow-container: #616a00;
+}
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-font-weight {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-tracking {
+  syntax: "*";
+  inherits: false;
+}
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *, ::before, ::after, ::backdrop {
+      --tw-border-style: solid;
+      --tw-font-weight: initial;
+      --tw-tracking: initial;
+    }
+  }
+}
+</style>
+</head>
+<body class="bg-background text-foreground">
+<header class="border-b px-6 py-4">
+<h1 class="text-xl font-semibold tracking-tight">Spacing</h1>
+<p class="text-sm text-muted-foreground">pmndrs design system · Spacing</p>
+</header>
+<main class="grid min-h-screen lg:grid-cols-2">
+<section class="flex min-w-0 flex-col gap-6 bg-background p-6 text-foreground" data-scheme="light">
+  <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground">light</p>
+  <p class="rounded-md border border-dashed px-3 py-2 text-sm text-muted-foreground" data-inherited>Inherited from Tailwind v4 defaults, not yet a pmndrs decision.</p>
+<p class="text-sm">A utility <code>n</code> is <code>n</code> times <code>--spacing: 0.25rem</code>: <code>p-4</code>, <code>gap-2</code>, <code>size-10</code>…</p>
+<div class="flex flex-col gap-1.5">
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">0</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0</span><div class="h-3 max-w-full w-0 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">px</code><span class="w-20 shrink-0 text-xs text-muted-foreground">1px</span><div class="h-3 max-w-full w-px bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">0.5</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0.125rem</span><div class="h-3 max-w-full w-0.5 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">1</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0.25rem</span><div class="h-3 max-w-full w-1 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">1.5</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0.375rem</span><div class="h-3 max-w-full w-1.5 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">2</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0.5rem</span><div class="h-3 max-w-full w-2 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">2.5</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0.625rem</span><div class="h-3 max-w-full w-2.5 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">3</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0.75rem</span><div class="h-3 max-w-full w-3 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">3.5</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0.875rem</span><div class="h-3 max-w-full w-3.5 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">4</code><span class="w-20 shrink-0 text-xs text-muted-foreground">1rem</span><div class="h-3 max-w-full w-4 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">5</code><span class="w-20 shrink-0 text-xs text-muted-foreground">1.25rem</span><div class="h-3 max-w-full w-5 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">6</code><span class="w-20 shrink-0 text-xs text-muted-foreground">1.5rem</span><div class="h-3 max-w-full w-6 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">7</code><span class="w-20 shrink-0 text-xs text-muted-foreground">1.75rem</span><div class="h-3 max-w-full w-7 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">8</code><span class="w-20 shrink-0 text-xs text-muted-foreground">2rem</span><div class="h-3 max-w-full w-8 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">9</code><span class="w-20 shrink-0 text-xs text-muted-foreground">2.25rem</span><div class="h-3 max-w-full w-9 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">10</code><span class="w-20 shrink-0 text-xs text-muted-foreground">2.5rem</span><div class="h-3 max-w-full w-10 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">11</code><span class="w-20 shrink-0 text-xs text-muted-foreground">2.75rem</span><div class="h-3 max-w-full w-11 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">12</code><span class="w-20 shrink-0 text-xs text-muted-foreground">3rem</span><div class="h-3 max-w-full w-12 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">14</code><span class="w-20 shrink-0 text-xs text-muted-foreground">3.5rem</span><div class="h-3 max-w-full w-14 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">16</code><span class="w-20 shrink-0 text-xs text-muted-foreground">4rem</span><div class="h-3 max-w-full w-16 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">20</code><span class="w-20 shrink-0 text-xs text-muted-foreground">5rem</span><div class="h-3 max-w-full w-20 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">24</code><span class="w-20 shrink-0 text-xs text-muted-foreground">6rem</span><div class="h-3 max-w-full w-24 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">28</code><span class="w-20 shrink-0 text-xs text-muted-foreground">7rem</span><div class="h-3 max-w-full w-28 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">32</code><span class="w-20 shrink-0 text-xs text-muted-foreground">8rem</span><div class="h-3 max-w-full w-32 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">36</code><span class="w-20 shrink-0 text-xs text-muted-foreground">9rem</span><div class="h-3 max-w-full w-36 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">40</code><span class="w-20 shrink-0 text-xs text-muted-foreground">10rem</span><div class="h-3 max-w-full w-40 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">44</code><span class="w-20 shrink-0 text-xs text-muted-foreground">11rem</span><div class="h-3 max-w-full w-44 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">48</code><span class="w-20 shrink-0 text-xs text-muted-foreground">12rem</span><div class="h-3 max-w-full w-48 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">52</code><span class="w-20 shrink-0 text-xs text-muted-foreground">13rem</span><div class="h-3 max-w-full w-52 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">56</code><span class="w-20 shrink-0 text-xs text-muted-foreground">14rem</span><div class="h-3 max-w-full w-56 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">60</code><span class="w-20 shrink-0 text-xs text-muted-foreground">15rem</span><div class="h-3 max-w-full w-60 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">64</code><span class="w-20 shrink-0 text-xs text-muted-foreground">16rem</span><div class="h-3 max-w-full w-64 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">72</code><span class="w-20 shrink-0 text-xs text-muted-foreground">18rem</span><div class="h-3 max-w-full w-72 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">80</code><span class="w-20 shrink-0 text-xs text-muted-foreground">20rem</span><div class="h-3 max-w-full w-80 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">96</code><span class="w-20 shrink-0 text-xs text-muted-foreground">24rem</span><div class="h-3 max-w-full w-96 bg-primary"></div></div>
+</div>
+</section>
+<section class="dark flex min-w-0 flex-col gap-6 bg-background p-6 text-foreground" data-scheme="dark">
+  <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground">dark</p>
+  <p class="rounded-md border border-dashed px-3 py-2 text-sm text-muted-foreground" data-inherited>Inherited from Tailwind v4 defaults, not yet a pmndrs decision.</p>
+<p class="text-sm">A utility <code>n</code> is <code>n</code> times <code>--spacing: 0.25rem</code>: <code>p-4</code>, <code>gap-2</code>, <code>size-10</code>…</p>
+<div class="flex flex-col gap-1.5">
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">0</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0</span><div class="h-3 max-w-full w-0 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">px</code><span class="w-20 shrink-0 text-xs text-muted-foreground">1px</span><div class="h-3 max-w-full w-px bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">0.5</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0.125rem</span><div class="h-3 max-w-full w-0.5 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">1</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0.25rem</span><div class="h-3 max-w-full w-1 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">1.5</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0.375rem</span><div class="h-3 max-w-full w-1.5 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">2</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0.5rem</span><div class="h-3 max-w-full w-2 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">2.5</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0.625rem</span><div class="h-3 max-w-full w-2.5 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">3</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0.75rem</span><div class="h-3 max-w-full w-3 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">3.5</code><span class="w-20 shrink-0 text-xs text-muted-foreground">0.875rem</span><div class="h-3 max-w-full w-3.5 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">4</code><span class="w-20 shrink-0 text-xs text-muted-foreground">1rem</span><div class="h-3 max-w-full w-4 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">5</code><span class="w-20 shrink-0 text-xs text-muted-foreground">1.25rem</span><div class="h-3 max-w-full w-5 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">6</code><span class="w-20 shrink-0 text-xs text-muted-foreground">1.5rem</span><div class="h-3 max-w-full w-6 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">7</code><span class="w-20 shrink-0 text-xs text-muted-foreground">1.75rem</span><div class="h-3 max-w-full w-7 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">8</code><span class="w-20 shrink-0 text-xs text-muted-foreground">2rem</span><div class="h-3 max-w-full w-8 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">9</code><span class="w-20 shrink-0 text-xs text-muted-foreground">2.25rem</span><div class="h-3 max-w-full w-9 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">10</code><span class="w-20 shrink-0 text-xs text-muted-foreground">2.5rem</span><div class="h-3 max-w-full w-10 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">11</code><span class="w-20 shrink-0 text-xs text-muted-foreground">2.75rem</span><div class="h-3 max-w-full w-11 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">12</code><span class="w-20 shrink-0 text-xs text-muted-foreground">3rem</span><div class="h-3 max-w-full w-12 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">14</code><span class="w-20 shrink-0 text-xs text-muted-foreground">3.5rem</span><div class="h-3 max-w-full w-14 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">16</code><span class="w-20 shrink-0 text-xs text-muted-foreground">4rem</span><div class="h-3 max-w-full w-16 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">20</code><span class="w-20 shrink-0 text-xs text-muted-foreground">5rem</span><div class="h-3 max-w-full w-20 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">24</code><span class="w-20 shrink-0 text-xs text-muted-foreground">6rem</span><div class="h-3 max-w-full w-24 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">28</code><span class="w-20 shrink-0 text-xs text-muted-foreground">7rem</span><div class="h-3 max-w-full w-28 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">32</code><span class="w-20 shrink-0 text-xs text-muted-foreground">8rem</span><div class="h-3 max-w-full w-32 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">36</code><span class="w-20 shrink-0 text-xs text-muted-foreground">9rem</span><div class="h-3 max-w-full w-36 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">40</code><span class="w-20 shrink-0 text-xs text-muted-foreground">10rem</span><div class="h-3 max-w-full w-40 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">44</code><span class="w-20 shrink-0 text-xs text-muted-foreground">11rem</span><div class="h-3 max-w-full w-44 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">48</code><span class="w-20 shrink-0 text-xs text-muted-foreground">12rem</span><div class="h-3 max-w-full w-48 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">52</code><span class="w-20 shrink-0 text-xs text-muted-foreground">13rem</span><div class="h-3 max-w-full w-52 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">56</code><span class="w-20 shrink-0 text-xs text-muted-foreground">14rem</span><div class="h-3 max-w-full w-56 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">60</code><span class="w-20 shrink-0 text-xs text-muted-foreground">15rem</span><div class="h-3 max-w-full w-60 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">64</code><span class="w-20 shrink-0 text-xs text-muted-foreground">16rem</span><div class="h-3 max-w-full w-64 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">72</code><span class="w-20 shrink-0 text-xs text-muted-foreground">18rem</span><div class="h-3 max-w-full w-72 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">80</code><span class="w-20 shrink-0 text-xs text-muted-foreground">20rem</span><div class="h-3 max-w-full w-80 bg-primary"></div></div>
+  <div class="flex items-center gap-3"><code class="w-10 shrink-0 text-xs">96</code><span class="w-20 shrink-0 text-xs text-muted-foreground">24rem</span><div class="h-3 max-w-full w-96 bg-primary"></div></div>
+</div>
+</section>
+</main>
+</body>
+</html>

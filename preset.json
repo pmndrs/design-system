@@ -1,5 +1,5 @@
 {
-  "code": "b5dwpqytk",
+  "code": "b1VlIttI",
   "version": "b",
   "values": {
     "menuColor": "default",
@@ -7,12 +7,12 @@
     "radius": "default",
     "font": "inter",
     "iconLibrary": "lucide",
-    "theme": "teal",
+    "theme": "neutral",
     "baseColor": "neutral",
     "style": "luma",
-    "chartColor": "teal",
+    "chartColor": "neutral",
     "fontHeading": "inherit"
   },
   "derived": [],
-  "url": "https://ui.shadcn.com/create?preset=b5dwpqytk"
+  "url": "https://ui.shadcn.com/create?preset=b1VlIttI"
 }

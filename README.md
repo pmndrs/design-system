@@ -9,7 +9,7 @@ Try it:
 cd /tmp && rm -rf pmndrs-foo && \
 npx -y create-next-app@latest pmndrs-foo --ts --tailwind --app --eslint --src-dir --import-alias "@/*" --no-turbopack --use-npm --yes && \
 cd pmndrs-foo && \
-npx -y shadcn@latest init --preset b5dwpqytk --yes && \
+npx -y shadcn@latest init --preset b1VlIttI --yes && \
 npx -y shadcn@latest add pmndrs/docs/keypoints#v4.20.0 --yes && \
 printf '%s' 'import { Keypoints, KeypointsItem } from "@/components/keypoints"
 

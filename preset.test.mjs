@@ -1,5 +1,5 @@
 /**
- * `preset.json` is the reviewable form of the preset; `b5dwpqytk` is the opaque
+ * `preset.json` is the reviewable form of the preset; `b1VlIttI` is the opaque
  * form the CLI takes. These assert they still say the same thing — a preset code
  * is a bit-packed enum tuple, so a one-character typo silently decodes to a
  * different, valid preset.

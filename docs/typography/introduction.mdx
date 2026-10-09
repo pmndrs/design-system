@@ -75,6 +75,27 @@ your project.
 
 Override the line height with a slash: `text-sm/6` is `0.875rem` on a `1.5rem` line.
 
+## Font weight
+
+> [!NOTE]
+> Inherited from Tailwind v4 defaults, not yet a pmndrs decision. See [Tailwind's font-weight docs](https://tailwindcss.com/docs/font-weight).
+
+`font-*` sets `font-weight` from the `--font-weight-*` theme variable. Text is `font-normal`
+unless a class says otherwise. Inter covers every step; Inconsolata starts at 200, so
+`font-thin` on code renders at 200.
+
+| Utility           | Variable                   | Value | Preview                                       |
+| ----------------- | -------------------------- | ----- | --------------------------------------------- |
+| `font-thin`       | `--font-weight-thin`       | `100` | <span className="font-thin">Aa</span>       |
+| `font-extralight` | `--font-weight-extralight` | `200` | <span className="font-extralight">Aa</span> |
+| `font-light`      | `--font-weight-light`      | `300` | <span className="font-light">Aa</span>      |
+| `font-normal`     | `--font-weight-normal`     | `400` | <span className="font-normal">Aa</span>     |
+| `font-medium`     | `--font-weight-medium`     | `500` | <span className="font-medium">Aa</span>     |
+| `font-semibold`   | `--font-weight-semibold`   | `600` | <span className="font-semibold">Aa</span>   |
+| `font-bold`       | `--font-weight-bold`       | `700` | <span className="font-bold">Aa</span>       |
+| `font-extrabold`  | `--font-weight-extrabold`  | `800` | <span className="font-extrabold">Aa</span>  |
+| `font-black`      | `--font-weight-black`      | `900` | <span className="font-black">Aa</span>      |
+
 ## Elements
 
 > [!NOTE]

@@ -30,7 +30,8 @@
  *   registry/external.json           the other repos' items in the catalog
  *   material-theme-builder           the shadcn remap
  *   docs/<page>/introduction.mdx     the type scale, the spacing, radius and
- *                                    shadow tables, the font families
+ *                                    shadow tables, the font families, read
+ *                                    through `foundations.mjs`
  *   tailwindcss                      the mono fallback stack, the one value
  *                                    no docs page lists
  *   @fontsource-variable/*           the font files and their weight ranges
@@ -39,7 +40,9 @@
  *                                    block and the few external pins
  *   artifact/                        the hand-written files (the brand book,
  *                                    the block cards, the logo notes), copied
- *                                    with their `{{placeholders}}` filled
+ *                                    with their `{{placeholders}}` filled and
+ *                                    their artifact-only markers removed (see
+ *                                    `brand-book.mjs`)
  *
  * Every version and sha in the output is one of those placeholders, filled
  * from git, `package.json`, `node_modules` and `registry/external.json`, so a
@@ -48,11 +51,13 @@
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import pkg from '../package.json' with { type: 'json' }
 import registry from '../registry.json' with { type: 'json' }
 import external from '../registry/external.json' with { type: 'json' }
 import notesSource from './artifact.notes.json' with { type: 'json' }
-import preset from '../preset.json' with { type: 'json' }
+import { fill as fillPlaceholders, placeholders as sharedPlaceholders, unmarkArtifactOnly } from './brand-book.mjs'
+import { commaRgba, readFoundations, readPage, section } from './foundations.mjs'
+import { installedVersion } from './packages.mjs'
+import { readRemap } from './remap.mjs'
 
 const root = new URL('../', import.meta.url)
 /** Where `npm run artifact` writes. */
@@ -67,51 +72,9 @@ const resolvePath = (id) => fileURLToPath(import.meta.resolve(id))
 /* Sources                                                                    */
 /* ------------------------------------------------------------------------ */
 
-/** A foundation page of the docs, cut at its `##` headings. */
-function readPage(dir) {
-  const text = readFileSync(new URL(`../docs/${dir}/introduction.mdx`, import.meta.url), 'utf8')
-  const [, ...chunks] = text.split(/^## /m)
-
-  return {
-    dir,
-    text,
-    sections: chunks.map((chunk) => ({
-      heading: chunk.slice(0, chunk.indexOf('\n')).trim(),
-      body: chunk,
-    })),
-  }
-}
-
-const section = (page, heading) => {
-  const found = page.sections.find((entry) => entry.heading === heading)
-  if (!found) throw new Error(`docs/${page.dir} has no "## ${heading}" section`)
-  return found
-}
-
-/**
- * The rows of the first markdown table in `markdown`, header and separator
- * dropped, each cell unwrapped from its backticks. Throws rather than return
- * nothing: an empty table here is a token family with nothing in it.
- */
-function tableRows(markdown) {
-  const lines = markdown.split('\n')
-  const start = lines.findIndex((line) => line.startsWith('|'))
-  const end = lines.findIndex((line, index) => index > start && !line.startsWith('|'))
-  const rows = lines
-    .slice(start + 2, end === -1 ? undefined : end)
-    .map((line) =>
-      line
-        .slice(1, -1)
-        .split('|')
-        .map((cell) => cell.trim().replace(/^`([^`]*)`$/, '$1'))
-    )
-  if (start === -1 || !rows.length) throw new Error(`no table in:\n${markdown.slice(0, 200)}`)
-  return rows
-}
-
-const pages = Object.fromEntries(
-  ['typography', 'spacing', 'radius', 'shadows'].map((dir) => [dir, readPage(dir)])
-)
+/** The foundations values of the docs pages, and the Typography page for its recipe. */
+const foundations = readFoundations()
+const typographyPage = readPage('typography')
 
 /** The baked palette, as `theme` installs it: `:root` and the `.dark` overrides. */
 const palette = item('theme').css
@@ -120,13 +83,10 @@ const dark = palette['.dark']
 
 /**
  * The shadcn remap: every shadcn variable and the MD3 role it points at, read
- * from the stylesheet `md3-base` imports.
+ * from the stylesheet `md3-base` imports, both named as the artifact names a
+ * token: `card` and `surface-container-low`.
  */
-const remapCss = readFileSync(resolvePath('material-theme-builder/shadcn.css'), 'utf8')
-const remap = [...remapCss.matchAll(/^\s*--([\w-]+):\s*var\(--md-sys-color-([\w-]+)\);/gm)].map(([, name, role]) => ({
-  name,
-  role,
-}))
+const remap = readRemap().map(({ name, role }) => ({ name: name.slice(2), role: role.slice('--md-sys-color-'.length) }))
 
 /** Every MD3 role the palette defines, `surface-dim`, `on-lime`, …, in its order. */
 const roles = Object.keys(light)
@@ -158,17 +118,7 @@ const tailwindDefaults = Object.fromEntries(
 )
 
 /** The two families, from the Typography page: `Inter` on `--font-sans`, … */
-const fonts = tableRows(section(pages.typography, 'Font family').body).map(([role, family, utility, variable]) => ({
-  role,
-  family,
-  utility,
-  variable,
-  key: variable.slice('--font-'.length),
-}))
-
-/** `x.y.z` of an installed package. */
-const installedVersion = (name) =>
-  JSON.parse(readFileSync(new URL(`../node_modules/${name}/package.json`, import.meta.url), 'utf8')).version
+const fonts = foundations.typography.fonts.map((font) => ({ ...font, key: font.variable.slice('--font-'.length) }))
 
 const git = (...args) => execFileSync('git', args, { cwd: fileURLToPath(root), encoding: 'utf8' }).trim()
 
@@ -188,32 +138,23 @@ function sourceCommit() {
 
 /**
  * The values of the `{{placeholders}}`: every version or sha the output names
- * comes from one of these. The release is `package.json`'s version, which
- * Changesets bumps and the release workflow tags. The shadcn preset, its code
- * and its style (`base-<style>`, as shadcn names it), is `preset.json`'s.
+ * comes from one of these. The shared ones are `brand-book.mjs`'s, the same
+ * the build fills the Guidelines page with; the source commit and the font
+ * package version are the artifact's own, and only artifact-only passages name
+ * them.
  */
 const fontsourceVersions = [...new Set(fonts.map(({ family }) => installedVersion(`@fontsource-variable/${family.toLowerCase()}`)))]
 if (fontsourceVersions.length !== 1) throw new Error(`the font packages disagree: ${fontsourceVersions.join(', ')}`)
 const commit = sourceCommit()
 export const placeholders = {
+  ...sharedPlaceholders,
   sha: commit.sha,
   synced: commit.date,
-  release: `v${pkg.version}`,
-  docsRef: external.find(({ repo }) => repo === 'pmndrs/docs').ref,
   fontsourceVersion: fontsourceVersions[0],
-  mtbVersion: installedVersion('material-theme-builder'),
-  presetCode: preset.code,
-  presetStyle: `base-${preset.values.style}`,
-  ...notesSource.pins,
 }
 
 /** `text` with its `{{name}}` placeholders filled. Throws on an unknown one. */
-function fill(text, where) {
-  return text.replace(/\{\{(\w+)\}\}/g, (match, name) => {
-    if (!(name in placeholders)) throw new Error(`${where}: unknown placeholder ${match}`)
-    return placeholders[name]
-  })
-}
+const fill = (text, where) => fillPlaceholders(text, where, placeholders)
 
 /** `artifact.notes.json`, its `{{placeholders}}` filled. */
 const notes = JSON.parse(fill(JSON.stringify(notesSource), 'scripts/artifact.notes.json'))
@@ -281,19 +222,14 @@ const rem = (pixels) => `${parseFloat(pixels) / 16}rem`
 const weights = { normal: 400, medium: 500, semibold: 600, bold: 700 }
 
 /**
- * The type scale, from the Typography page: `0.75rem (12px)` and
- * `calc(1 / 0.75) (16px)` become `0.75rem` and `1rem`; a unitless line
- * height, `1`, stays a number.
+ * The type scale, from the Typography page: a `calc(1 / 0.75)` line height
+ * becomes its pixels in rem, `1rem`; a unitless one, `1`, stays a number.
  */
-const typeScale = tableRows(section(pages.typography, 'Type scale').body).map(([utility, size, leading]) => {
-  const unitless = leading.match(/^`(\d+(?:\.\d+)?)`/)?.[1]
-  return {
-    name: utility,
-    fontSize: size.match(/^`([^`]+)`/)[1],
-    lineHeight: unitless ? Number(unitless) : rem(leading.match(/\((\d+)px\)/)[1]),
-    pixels: { fontSize: parseFloat(size.match(/\((\d+)px\)/)[1]), lineHeight: parseFloat(leading.match(/\((\d+)px\)/)[1]) },
-  }
-})
+const typeScale = foundations.typography.scale.map(({ utility, fontSize, lineHeight, pixels }) => ({
+  name: utility,
+  fontSize,
+  lineHeight: /^\d+(?:\.\d+)?$/.test(lineHeight) ? Number(lineHeight) : rem(pixels.lineHeight),
+}))
 
 /**
  * Inline code, the one element of shadcn's recipe with a style of its own:
@@ -301,7 +237,7 @@ const typeScale = tableRows(section(pages.typography, 'Type scale').body).map(([
  * classes on the Typography page.
  */
 function inlineCode() {
-  const recipe = section(pages.typography, 'Elements').body.split('### Inline code')[1]
+  const recipe = section(typographyPage, 'Elements').body.split('### Inline code')[1]
   const classes = recipe.match(/```tsx\n<code className="([^"]*)"/)[1].split(/\s+/)
   const step = typeScale.find(({ name }) => classes.includes(name))
   const weight = classes.map((name) => weights[name.replace(/^font-/, '')]).find(Boolean)
@@ -353,15 +289,14 @@ function typeTokens() {
 }
 
 /** The base unit and the steps of the Spacing page; `0` and `px` are not multiples of it. */
-const spacingBase = tableRows(section(pages.spacing, 'Base unit').body)[0][1]
-const spacingScale = tableRows(section(pages.spacing, 'Scale').body).map(([step, value, pixels]) => ({ step, value, pixels }))
+const { base: spacingBase, scale: spacingScale } = foundations.spacing
 
 function spacingTokens() {
   return [
     { name: 'spacing', value: spacingBase, usage: usage('spacing', 'spacing') },
     ...spacingScale
       .filter(({ step }) => Number(step) > 0)
-      .map(({ step, value, pixels }) => ({ name: `spacing-${step}`, value, usage: usage('spacing', `spacing-${step}`, { pixels }) })),
+      .map(({ step, value, pixels }) => ({ name: `spacing-${step}`, value, usage: usage('spacing', `spacing-${step}`, { pixels: `${pixels}px` }) })),
   ]
 }
 
@@ -369,13 +304,7 @@ function spacingTokens() {
  * `--radius` and the scale of the Radius page: the preset style's steps, and
  * `--radius-xs`, Tailwind's, which the page lists as inherited.
  */
-const radius = pages.radius.text.match(/^\s*--radius:\s*([^;]+);/m)[1]
-const radii = tableRows(section(pages.radius, 'Scale').body).map(([token, utility, formula, value]) => ({
-  token,
-  utility,
-  formula,
-  value,
-}))
+const { base: radius, scale: radii } = foundations.radius
 
 /** `radius`, then every step of the Radius page, in its order. */
 function radiusTokens() {
@@ -389,18 +318,18 @@ function radiusTokens() {
 }
 
 /**
- * A shadow table of the Shadows page as tokens. `rgb(0 0 0 / 0.05)` is
+ * A shadow family of the Shadows page, `box`, `inset` or `drop`, as tokens. `rgb(0 0 0 / 0.05)` is
  * written `rgba(0, 0, 0, 0.05)`: the artifact takes colour functions with
  * plain numeric arguments.
  */
-const shadowRows = (heading) =>
-  tableRows(section(pages.shadows, heading).body).map(([utility, , value]) => ({
+const shadowRows = (family) =>
+  foundations.shadows[family].map(({ utility, value }) => ({
     name: utility,
-    value: value.replace(/rgb\((\d+) (\d+) (\d+) \/ ([\d.]+)\)/g, 'rgba($1, $2, $3, $4)'),
+    value: commaRgba(value),
   }))
 
-const shadowTokens = (family, headings) =>
-  headings.flatMap(shadowRows).map(({ name, value }) => ({ name, value, usage: usage(family, name) }))
+const shadowTokens = (family, shadowFamilies) =>
+  shadowFamilies.flatMap(shadowRows).map(({ name, value }) => ({ name, value, usage: usage(family, name) }))
 
 /** tokens.json, its keys in the artifact's own order. */
 function tokens() {
@@ -419,8 +348,8 @@ function tokens() {
     meta: notes.meta,
     spacing: { tokens: spacingTokens(), note: note('spacing') },
     radius: { tokens: radiusTokens(), note: note('radius') },
-    shadow: { tokens: shadowTokens('shadow', ['Box shadow', 'Inset shadow']), note: note('shadow') },
-    dropShadow: { note: note('dropShadow'), tokens: shadowTokens('dropShadow', ['Drop shadow']) },
+    shadow: { tokens: shadowTokens('shadow', ['box', 'inset']), note: note('shadow') },
+    dropShadow: { note: note('dropShadow'), tokens: shadowTokens('dropShadow', ['drop']) },
   }
 }
 
@@ -489,7 +418,7 @@ if (problems.length) throw new Error(problems.join('\n'))
  */
 export const outputs = [
   ['tokens.json', `${JSON.stringify(tokens(), null, 2)}\n`],
-  ...sourcePaths.map((path) => [path, fill(readFileSync(new URL(path, sourceDir), 'utf8'), `artifact/${path}`)]),
+  ...sourcePaths.map((path) => [path, fill(unmarkArtifactOnly(readFileSync(new URL(path, sourceDir), 'utf8')), `artifact/${path}`)]),
   ...fontFiles.map(({ file, source }) => [file, readFileSync(source)]),
 ].sort(([a], [b]) => a.localeCompare(b))
 

@@ -21,6 +21,10 @@
  * is generated here for the same reason: one seed, or designers and engineers
  * drift.
  *
+ * The brand book, `artifact/README.md`, is generated into the docs site's
+ * Guidelines page and the `guidelines` item's `Guidelines.md` here, for the
+ * same reason again: written once, it cannot say two things.
+ *
  * The getting-started page lists these items next to the other pmndrs repos' —
  * a catalog generated here so its install refs follow the version too; how the
  * other repos' get in is `catalog.mjs`'s story.
@@ -33,7 +37,13 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { builder } from 'material-theme-builder'
 import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
+import { fill, stripArtifactOnly } from './brand-book.mjs'
 import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
+import { foundationStyles, foundationVariables } from './foundation-tokens.mjs'
+import { readFoundations } from './foundations.mjs'
+import { hostedUrl } from './hosted-registry.mjs'
+import { readRemap, tailwindColors } from './remap.mjs'
+import { sansFont, v0GlobalsCss } from './v0.mjs'
 
 /**
  * Refs are not inherited, so a cross-item dependency carries its own — and it
@@ -42,6 +52,37 @@ import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
  * (in `npm run lgtm`) fails if it didn't.
  */
 const version = `v${pkg.version}`
+
+/**
+ * The foundations pages' values: the base radius the `preset` and `v0` items
+ * carry, and the Figma foundation tokens below.
+ */
+const foundations = readFoundations()
+
+/**
+ * The `font-mono` item's font, which the `v0` stylesheet names too.
+ */
+const fontMono = {
+  /**
+   * What `@fontsource-variable/inconsolata` registers, which is what this
+   * names outside Next — shadcn's own `font-inter` writes
+   * `'Inter Variable', sans-serif` the same way. A bare `Inconsolata`
+   * renders only where the font is installed locally. `next/font` reads
+   * `import` instead, so Next is unaffected.
+   */
+  family: "'Inconsolata Variable', monospace",
+  provider: 'google',
+  import: 'Inconsolata',
+  variable: '--font-mono',
+  dependency: '@fontsource-variable/inconsolata',
+  /**
+   * Mandatory, not cosmetic: for `--font-mono` shadcn defaults a missing
+   * selector to `html`, and on Next the mono class then replaces
+   * `font-sans` on `<html>` — the whole site turns monospace.
+   * `registry.test.mjs` holds it.
+   */
+  selector: 'code, kbd, samp, pre',
+}
 
 const registry = {
   $schema: 'https://ui.shadcn.com/schema/registry.json',
@@ -109,20 +150,7 @@ const items = [
     description:
       'Inconsolata as `--font-mono`, so `font-mono` resolves to the pmndrs monospace — applied to `code, kbd, samp, pre` only. Through `next/font/google` on Next, through `@fontsource-variable/inconsolata` elsewhere.',
     author: 'pmndrs',
-    font: {
-      family: 'Inconsolata',
-      provider: 'google',
-      import: 'Inconsolata',
-      variable: '--font-mono',
-      dependency: '@fontsource-variable/inconsolata',
-      /**
-       * Mandatory, not cosmetic: for `--font-mono` shadcn defaults a missing
-       * selector to `html`, and on Next the mono class then replaces
-       * `font-sans` on `<html>` — the whole site turns monospace.
-       * `registry.test.mjs` holds it.
-       */
-      selector: 'code, kbd, samp, pre',
-    },
+    font: fontMono,
   },
   /**
    * The single documented install target: the pmndrs palette, plus everything
@@ -137,6 +165,71 @@ const items = [
     author: 'pmndrs',
     registryDependencies: [`pmndrs/design-system/md3-base#${version}`, `pmndrs/design-system/font-mono#${version}`],
     palette: true,
+  },
+  /**
+   * The poimandres preset as an item, the theme with it: what
+   * `npx shadcn@latest init <hosted url>` starts a project from, so a consumer
+   * never needs the preset code.
+   *
+   * A `registry:base`, not a `registry:style`: a style carries no preset
+   * choices, and `shadcn init` with one falls back to `new-york` (measured on
+   * 4.18). A base carries them in `config`, which init merges into
+   * `components.json`. Modelled on the item shadcn itself serves for the
+   * preset code (`ui.shadcn.com/init?…&preset=b1VlIttI`): its `config`,
+   * `dependencies`, `registryDependencies` and `css`, with `extends: 'none'`
+   * so the stock style does not install under it.
+   *
+   * What it leaves out is that item's colours: literal `cssVars` land in
+   * `:root` after the remap's `@import` and override it, so the colours stay
+   * `theme`'s. What else it has in `cssVars` stays, none of it a colour
+   * value, because shadcn writes it from there only: `radius` (and the
+   * `--radius-*` scale it derives from it), the heading font, and the
+   * `@theme inline` mapping it would have derived from the colours.
+   * `registry.test.mjs` holds both rules, and the choices to `preset.json`.
+   */
+  {
+    name: 'preset',
+    type: 'registry:base',
+    title: 'poimandres preset',
+    description:
+      'The poimandres shadcn preset and the pmndrs theme in one item, for `shadcn init`: style `base-luma`, Inter, the default radius, lucide icons, and the Material Design 3 palette with the mono font. Starts a project that already looks like pmndrs, no preset code needed.',
+    author: 'pmndrs',
+    extends: 'none',
+    config: {
+      style: 'base-luma',
+      tailwind: { baseColor: 'neutral' },
+      iconLibrary: 'lucide',
+      rtl: false,
+      menuColor: 'default',
+      menuAccent: 'subtle',
+      // The namespace, declared on the way: `shadcn add @pmndrs/logo` works next.
+      registries: { '@pmndrs': `${hostedUrl}{name}.json` },
+    },
+    dependencies: ['shadcn@latest', 'class-variance-authority', 'cn', 'tw-animate-css', '@base-ui/react', 'lucide-react'],
+    registryDependencies: ['utils', 'font-inter', `pmndrs/design-system/theme#${version}`],
+    cssVars: {
+      theme: {
+        '--font-heading': 'var(--font-sans)',
+        /**
+         * What shadcn would have derived from the colours left out: the
+         * Tailwind colour of each variable the remap sets (`bg-card`,
+         * `border-border`…). Without it the `@apply border-border` below fails
+         * the Tailwind build; the MD3 plugin maps the MD3 role names only.
+         * Here and not in `css`, which cannot put a declaration in
+         * `@theme inline`.
+         */
+        ...Object.fromEntries(tailwindColors(readRemap())),
+      },
+      light: { radius: foundations.radius.base },
+    },
+    css: {
+      '@import "tw-animate-css"': {},
+      '@import "shadcn/tailwind.css"': {},
+      '@layer base': {
+        '*': { '@apply border-border outline-ring/50': {} },
+        body: { '@apply bg-background text-foreground': {} },
+      },
+    },
   },
   /**
    * The two items below ship files rather than code: `registry:file`, which
@@ -179,7 +272,7 @@ const items = [
     type: 'registry:item',
     title: 'pmndrs Figma tokens',
     description:
-      'The pmndrs palette as DTCG design tokens, light and dark — the files a Figma variable collection imports — into `design/tokens/pmndrs/`. The same colours `theme` bakes into CSS, alias for alias.',
+      'The pmndrs design tokens for Figma, into `design/tokens/pmndrs/`: the palette, light and dark, and the type, spacing, radius and motion values, as variables Figma imports natively; the text and shadow styles, as a file Tokens Studio reads. The same values `theme` bakes into CSS and the docs pages list.',
     author: 'pmndrs',
     /**
      * The `figma/*.tokens.json` this build writes below, so `build.test.mjs`
@@ -192,11 +285,54 @@ const items = [
      * them. The file names stay the ones the README and the docs link to; the
      * mode each one is carries in the file itself (`com.figma.modeName`).
      */
-    files: ['Light', 'Dark'].map((mode) => ({
-      path: `figma/${mode}.tokens.json`,
+    files: ['Light', 'Dark', 'Foundations', 'Styles'].map((name) => ({
+      path: `figma/${name}.tokens.json`,
       type: 'registry:file',
-      target: `~/design/tokens/pmndrs/${mode}.tokens.json`,
+      target: `~/design/tokens/pmndrs/${name}.tokens.json`,
     })),
+  },
+  {
+    name: 'guidelines',
+    type: 'registry:item',
+    title: 'pmndrs guidelines',
+    description:
+      'The pmndrs brand book as `guidelines/Guidelines.md`: how to use the colour layer, type, spacing, components, the logo and the voice. The file Figma Make reads, and one to point Claude or Cursor at.',
+    author: 'pmndrs',
+    /**
+     * Generated below from the brand book, like the Guidelines page, so it
+     * cannot say something the page does not. `guidelines/Guidelines.md` at
+     * the project root is the one path Figma Make reads.
+     */
+    files: [
+      {
+        path: 'registry/guidelines/Guidelines.md',
+        type: 'registry:file',
+        target: '~/guidelines/Guidelines.md',
+      },
+    ],
+  },
+  /**
+   * What an "Open in v0" link opens. v0 drops `css`, `cssVars` and
+   * namespaces, and resolves no GitHub address, so nothing above reaches it:
+   * this item carries the theme as a file instead, the `globals.css` of v0's
+   * Next.js project, generated below with every colour resolved to a literal.
+   * The shape is shadcn's own Open in v0 payload's: a `registry:file` at
+   * `app/globals.css`, which is why its target has no `~/` (v0 reads it, not
+   * the CLI).
+   */
+  {
+    name: 'v0',
+    type: 'registry:item',
+    title: 'pmndrs theme for v0',
+    description:
+      'The pmndrs theme as one `app/globals.css`, for Open in v0: the shadcn colours resolved to the pmndrs palette, light and dark, Inter and Inconsolata, and the default radius. Overwrites the stylesheet of a v0 project; in your own project, install `theme` or `preset` instead.',
+    author: 'pmndrs',
+    dependencies: [
+      'shadcn@latest',
+      'tw-animate-css',
+      ...[sansFont(foundations), fontMono].map(({ dependency }) => `${dependency}@${pkg.devDependencies[dependency]}`),
+    ],
+    files: [{ path: 'registry/v0/globals.css', type: 'registry:file', target: 'app/globals.css' }],
   },
 ]
 
@@ -209,8 +345,11 @@ const registryUrl = new URL('../registry.json', import.meta.url)
  * the docs site. The changeset markdown is history and stays as written.
  */
 const docsDir = new URL('../docs/', import.meta.url)
+/** The Guidelines page, generated whole from the brand book below. */
+const guidelinesPageUrl = new URL('guidelines/introduction.mdx', docsDir)
 const docPages = readdirSync(docsDir, { recursive: true })
   .filter((path) => path.endsWith('.mdx'))
+  .filter((path) => new URL(path, docsDir).href !== guidelinesPageUrl.href)
   .sort()
   .map((path) => new URL(path, docsDir))
 const docs = [new URL('../README.md', import.meta.url), new URL('../.changeset/README.md', import.meta.url), ...docPages]
@@ -334,6 +473,48 @@ for (const url of docs) {
 }
 
 /**
+ * The brand book, `artifact/README.md`, as the docs site reads it: the
+ * Guidelines page, right after Getting Started (`nav` sorts numerically, so
+ * `0.5` sits between it and Colors without renumbering every page). Passages
+ * marked artifact-only are dropped, and the placeholders are filled the way
+ * `artifact.mjs` fills them, so the page, the artifact and `Guidelines.md`
+ * say the same thing at the same versions.
+ *
+ * Written whole on every build rather than bumped in place, which is why it is
+ * not one of the `docPages` above.
+ *
+ * Both copies open on `generatedFrom`, so an edit lands in the brand book and
+ * not in an output the next build overwrites. On the page it is a YAML comment
+ * in the frontmatter, which pmndrs/docs drops: an MDX comment would stay in the
+ * body, and so in `llms-full.txt`.
+ */
+const brandBookPath = 'artifact/README.md'
+const guidelines = fill(stripArtifactOnly(readFileSync(new URL(`../${brandBookPath}`, import.meta.url), 'utf8')), brandBookPath).trim()
+const generatedFrom = `Generated from ${brandBookPath} by scripts/build.mjs: do not edit.`
+
+outputs.push([
+  guidelinesPageUrl,
+  `---
+# ${generatedFrom}
+title: Guidelines
+description: The do and don't of the pmndrs design system — colour, type, spacing, components, logo, iconography and voice.
+nav: 0.5
+---
+
+${guidelines}
+`,
+])
+
+/** The same text as the `guidelines` item installs it, with a title of its own in place of the frontmatter. */
+outputs.push([
+  new URL('../registry/guidelines/Guidelines.md', import.meta.url),
+  `<!-- ${generatedFrom} -->\n\n# Poimandres design system guidelines\n\n${guidelines}\n`,
+])
+
+/** The `v0` item's stylesheet; what is in it is `v0.mjs`'s story. */
+outputs.push([new URL('../registry/v0/globals.css', import.meta.url), v0GlobalsCss(palette, foundations, fontMono)])
+
+/**
  * The palette as DTCG tokens: `Light` and `Dark` become two modes of one Figma
  * variable collection, and the roles stay aliased onto the tonal shades
  * (`"$value": "{ref.palette.Neutral.98}"`) exactly as `var()` does in the CSS.
@@ -348,6 +529,19 @@ for (const url of docs) {
  */
 for (const [name, tokens] of Object.entries(theme.toFigmaTokens())) {
   outputs.push([new URL(`../figma/${name}`, import.meta.url), JSON.stringify(tokens, null, 2) + '\n'])
+}
+
+/**
+ * The foundations beside the palette: type, spacing, radius, shadow and
+ * motion, read off the docs pages that decide them. `Foundations` is the
+ * variables file Figma imports natively, `Styles` the text and effect styles
+ * Tokens Studio creates; why two shapes is `foundation-tokens.mjs`'s story.
+ */
+for (const [name, tokens] of [
+  ['Foundations', foundationVariables(foundations)],
+  ['Styles', foundationStyles(foundations)],
+]) {
+  outputs.push([new URL(`../figma/${name}.tokens.json`, import.meta.url), JSON.stringify(tokens, null, 2) + '\n'])
 }
 
 if (import.meta.main) {

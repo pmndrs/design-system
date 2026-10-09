@@ -40,6 +40,37 @@ Add `dark` to `<html>` for the dark scheme.
 Every item, this repo's and the other pmndrs repos', linked to its source:
 [the registry catalog](https://pmndrs.github.io/design-system/getting-started/introduction#registry-items).
 
+### Namespace
+
+The docs site also serves this repo's items as static JSON, rebuilt from `registry.json`
+on every deploy of `main` (`npm run hosted-registry` writes the same files into `public/r/`).
+Declare the [namespace](https://ui.shadcn.com/docs/registry/namespace) in `components.json`:
+
+```json
+{
+  "registries": {
+    "@pmndrs": "https://pmndrs.github.io/design-system/r/{name}.json"
+  }
+}
+```
+
+then `npx shadcn@latest add @pmndrs/theme`. It serves the latest state of `main`; the git
+address at a tag (`pmndrs/design-system/theme#v0.8.0`) stays the pinned one. A branch's
+preview deployment serves its own `r/`, but `preset`'s dependency on `theme` is that tagged
+git address, so it resolves to the released tag, not to the branch. The
+[shadcn MCP server](https://ui.shadcn.com/docs/mcp) (`npx shadcn@latest mcp init --client claude`)
+reads the same namespace to list and install the items.
+
+To start a fresh project from it, init with `preset`: the poimandres preset and the theme in
+one item, no preset code, and the namespace declared on the way.
+
+```sh
+npx shadcn@latest init https://pmndrs.github.io/design-system/r/preset.json
+```
+
+To prototype in v0 with the pmndrs colours, fonts and radius already applied:
+[Open in v0](https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs).
+
 ## Reseeding (optional)
 
 For a palette other than the pmndrs one: install `md3-base` — same plumbing, no
@@ -98,7 +129,12 @@ Every file of it comes from this repo. `npm run artifact` writes them into
 - `README.md`, `assets/Logos/README.md` and `components/<Block>/*`, copied
   from `artifact/` with their `{{placeholders}}` filled: every version and sha
   in them comes from git, `package.json`, `node_modules` or
-  `registry/external.json`;
+  `registry/external.json`. `README.md` is the brand book, which
+  `npm run build` also turns into the docs site's
+  [Guidelines](https://pmndrs.github.io/design-system/guidelines/introduction)
+  page and the `guidelines` item's `Guidelines.md`: passages that only make
+  sense in the artifact sit between `<!-- artifact-only -->` and
+  `<!-- /artifact-only -->`, and stay out of those two;
 - `fonts/*`, the latin subsets of Inter and Inconsolata.
 
 `components/` mirrors the catalog's blocks (`registry:block` items of

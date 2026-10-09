@@ -85,7 +85,7 @@ block-beta
   pmndrs["pmndrs<br/>colours · Inter · Inconsolata · --radius"]:3
   shadcn["shadcn base-luma<br/>token names · radius scale · element recipe"]:2
   mtb["material-theme-builder<br/>MD3 roles"]:1
-  tailwind["Tailwind v4<br/>spacing · shadows · text-* · utilities"]:3
+  tailwind["Tailwind v4<br/>spacing · shadows · motion · text-* · utilities"]:3
 
   classDef pmndrsLayer fill:var(--md-sys-color-primary-container),stroke:var(--md-sys-color-primary),color:var(--md-sys-color-on-primary-container)
   classDef shadcnLayer fill:var(--md-sys-color-inverse-surface),stroke:var(--md-sys-color-outline),color:var(--md-sys-color-inverse-on-surface)
@@ -131,6 +131,54 @@ The CLI reads `registry.json` and the item's files at that
 a tag: an address without one follows the repo's default branch, and changes under you.
 [`npx shadcn@latest view <address>`](https://ui.shadcn.com/docs/cli#view) prints an item,
 files and all, before you [`add`](https://ui.shadcn.com/docs/cli#add) it.
+
+### Namespace
+
+This site also serves every item of this repo as static JSON, under
+`https://pmndrs.github.io/design-system/r/`. Declare it once as a
+[namespace](https://ui.shadcn.com/docs/registry/namespace) in `components.json`:
+
+```json title="components.json"
+{
+  "registries": {
+    "@pmndrs": "https://pmndrs.github.io/design-system/r/{name}.json"
+  }
+}
+```
+
+Then an item is a name, no repo and no ref:
+
+```sh
+npx shadcn@latest add @pmndrs/theme
+npx shadcn@latest search @pmndrs
+```
+
+The namespace serves the latest state of `main`, rebuilt from `registry.json` on every
+deploy of it. Pin the git address above, at a tag, where an app must not move.
+
+A branch's preview deployment serves its own `r/` too, but not all the way down: `preset`
+depends on `pmndrs/design-system/theme#v0.8.0`, so the theme it installs is the released
+tag's, not the branch's.
+
+The [shadcn MCP server](https://ui.shadcn.com/docs/mcp) reads the same namespace, so Claude,
+Cursor or VS Code can list, read and install the items from the conversation:
+
+```sh
+npx shadcn@latest mcp init --client claude
+```
+
+A fresh project can start from it too: `preset` is the poimandres preset and the theme in one
+item, so `init` with its URL does what the Quick start does, without the preset code, and
+declares the namespace in `components.json` on the way:
+
+```sh
+npx shadcn@latest init https://pmndrs.github.io/design-system/r/preset.json
+```
+
+To prototype in v0 with the pmndrs colours, fonts and radius already applied,
+[open the theme in v0](https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs).
+v0 reads no namespace, so this opens the `v0` item: one `globals.css` with the colours resolved,
+light and dark.
 
 ### Publish a block
 
@@ -186,8 +234,11 @@ Here they all are, across repos, each linked to its source, then the same list f
 | [md3-base](https://github.com/pmndrs/design-system/tree/v0.8.0/registry/md3-base) | lib | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.8.0/registry.json) |
 | [font-mono](https://github.com/pmndrs/design-system/tree/v0.8.0/registry/font-mono) | font | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.8.0/registry.json) |
 | [theme](https://github.com/pmndrs/design-system/tree/v0.8.0/registry/theme) | lib | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.8.0/registry.json) |
+| [preset](https://github.com/pmndrs/design-system/tree/v0.8.0/registry/preset) | base | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.8.0/registry.json) |
 | [logo](https://github.com/pmndrs/design-system/tree/v0.8.0/registry/logo) | item | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.8.0/registry.json) |
 | [figma-tokens](https://github.com/pmndrs/design-system/tree/v0.8.0/registry/figma-tokens) | item | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.8.0/registry.json) |
+| [guidelines](https://github.com/pmndrs/design-system/tree/v0.8.0/registry/guidelines) | item | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.8.0/registry.json) |
+| [v0](https://github.com/pmndrs/design-system/tree/v0.8.0/registry/v0) | item | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.8.0/registry.json) |
 | [keypoints](https://github.com/pmndrs/docs/tree/v4.22.0/registry/keypoints) | block | [pmndrs/docs](https://github.com/pmndrs/docs/blob/v4.22.0/registry.json) |
 | [color](https://github.com/pmndrs/docs/tree/v4.22.0/registry/color) | block | [pmndrs/docs](https://github.com/pmndrs/docs/blob/v4.22.0/registry.json) |
 

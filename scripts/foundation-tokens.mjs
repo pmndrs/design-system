@@ -16,6 +16,7 @@
  * spec-shaped styles file would load and apply nothing. The `$type` names are
  * DTCG's, which Tokens Studio maps onto its own.
  */
+import { commaRgba } from './foundations.mjs'
 
 /** `0.5` as a token name: a DTCG name cannot hold a dot, the separator of an alias path. */
 const tokenName = (step) => step.replaceAll('.', '_')
@@ -25,13 +26,15 @@ const token = ($type, $value, scopes) => ({ $type, $value, $extensions: { 'com.f
 
 const px = (value) => ({ value, unit: 'px' })
 
+/** The step a `text-*` or `font-*` utility names: `xs` of `text-xs`, `sans` of `font-sans`. */
+const step = (utility) => utility.replace(/^(text|font)-/, '')
+
 /**
  * The variables file: every foundation value a Figma variable can hold.
  *
  * @param {ReturnType<typeof import('./foundations.mjs').readFoundations>} foundations
  */
 export function foundationVariables({ typography, spacing, radius, motion }) {
-  const step = (utility) => utility.replace(/^(text|font)-/, '')
   return {
     $extensions: { 'com.figma.modeName': 'Default' },
     font: {
@@ -64,7 +67,7 @@ export function foundationVariables({ typography, spacing, radius, motion }) {
      * `size-*` as well as padding and gaps.
      */
     spacing: Object.fromEntries(
-      spacing.scale.map(({ step, pixels }) => [tokenName(step), token('dimension', px(pixels), ['GAP', 'WIDTH_HEIGHT'])])
+      spacing.scale.map(({ step: name, pixels }) => [tokenName(name), token('dimension', px(pixels), ['GAP', 'WIDTH_HEIGHT'])])
     ),
     /** `--radius-lg` as `radius.lg`: the step, at the preset's base. */
     radius: Object.fromEntries(
@@ -118,11 +121,11 @@ function motionVariables({ defaults, durations, easings }) {
  */
 function shadowLayers(css, type) {
   return css.split(/,\s*(?![^()]*\))/).map((layer) => {
-    const parts = layer.match(/^(inset )?((?:-?[\d.]+(?:px)?\s+)+)rgb\((\d+) (\d+) (\d+) \/ ([\d.]+)\)$/)
+    const parts = commaRgba(layer).match(/^(inset )?((?:-?[\d.]+(?:px)?\s+)+)(rgba\(\d+, \d+, \d+, [\d.]+\))$/)
     if (!parts) throw new Error(`not a shadow layer of the Shadows page: ${layer}`)
-    const [, inset, lengths, r, g, b, alpha] = parts
+    const [, inset, lengths, color] = parts
     const [x, y, blur = '0px', spread = '0px'] = lengths.trim().split(/\s+/).map((length) => `${parseFloat(length)}px`)
-    return { x, y, blur, spread, color: `rgba(${r}, ${g}, ${b}, ${alpha})`, type: inset ? 'innerShadow' : type }
+    return { x, y, blur, spread, color, type: inset ? 'innerShadow' : type }
   })
 }
 
@@ -144,7 +147,6 @@ function shadowLayers(css, type) {
  * @param {ReturnType<typeof import('./foundations.mjs').readFoundations>} foundations
  */
 export function foundationStyles({ typography, shadows }) {
-  const step = (utility) => utility.replace(/^(text|font)-/, '')
   const plain = ($type, $value) => ({ $type, $value })
   const shadowsOf = (rows, type) =>
     Object.fromEntries(

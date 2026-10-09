@@ -35,6 +35,9 @@ const shadcn = fileURLToPath(import.meta.resolve('shadcn'))
 /**
  * Writes the registry at `registryUrl` into `dir`, emptied first so an item
  * that is gone does not linger, and returns the file names written.
+ *
+ * @param {URL} dir
+ * @param {URL} [registryUrl]
  */
 export function writeHostedRegistry(dir, registryUrl = new URL('registry.json', root)) {
   // A namespace lists its items by fetching the one named `registry`: the index.

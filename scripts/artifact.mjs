@@ -54,8 +54,10 @@ import { fileURLToPath } from 'node:url'
 import registry from '../registry.json' with { type: 'json' }
 import external from '../registry/external.json' with { type: 'json' }
 import notesSource from './artifact.notes.json' with { type: 'json' }
-import { fill as fillPlaceholders, installedVersion, placeholders as sharedPlaceholders, unmarkArtifactOnly } from './brand-book.mjs'
-import { readFoundations, readPage, section } from './foundations.mjs'
+import { fill as fillPlaceholders, placeholders as sharedPlaceholders, unmarkArtifactOnly } from './brand-book.mjs'
+import { commaRgba, readFoundations, readPage, section } from './foundations.mjs'
+import { installedVersion } from './packages.mjs'
+import { readRemap } from './remap.mjs'
 
 const root = new URL('../', import.meta.url)
 /** Where `npm run artifact` writes. */
@@ -81,13 +83,10 @@ const dark = palette['.dark']
 
 /**
  * The shadcn remap: every shadcn variable and the MD3 role it points at, read
- * from the stylesheet `md3-base` imports.
+ * from the stylesheet `md3-base` imports, both named as the artifact names a
+ * token: `card` and `surface-container-low`.
  */
-const remapCss = readFileSync(resolvePath('material-theme-builder/shadcn.css'), 'utf8')
-const remap = [...remapCss.matchAll(/^\s*--([\w-]+):\s*var\(--md-sys-color-([\w-]+)\);/gm)].map(([, name, role]) => ({
-  name,
-  role,
-}))
+const remap = readRemap().map(({ name, role }) => ({ name: name.slice(2), role: role.slice('--md-sys-color-'.length) }))
 
 /** Every MD3 role the palette defines, `surface-dim`, `on-lime`, …, in its order. */
 const roles = Object.keys(light)
@@ -326,7 +325,7 @@ function radiusTokens() {
 const shadowRows = (family) =>
   foundations.shadows[family].map(({ utility, value }) => ({
     name: utility,
-    value: value.replace(/rgb\((\d+) (\d+) (\d+) \/ ([\d.]+)\)/g, 'rgba($1, $2, $3, $4)'),
+    value: commaRgba(value),
   }))
 
 const shadowTokens = (family, shadowFamilies) =>

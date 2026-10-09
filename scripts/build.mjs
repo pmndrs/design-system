@@ -39,6 +39,7 @@ import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
 import { fill, stripArtifactOnly } from './brand-book.mjs'
 import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
+import { readFoundations } from './foundations.mjs'
 
 /**
  * Refs are not inherited, so a cross-item dependency carries its own — and it
@@ -47,6 +48,9 @@ import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
  * (in `npm run lgtm`) fails if it didn't.
  */
 const version = `v${pkg.version}`
+
+/** The foundations pages' values, the source of the base radius. */
+const foundations = readFoundations()
 
 const registry = {
   $schema: 'https://ui.shadcn.com/schema/registry.json',
@@ -149,6 +153,57 @@ const items = [
     author: 'pmndrs',
     registryDependencies: [`pmndrs/design-system/md3-base#${version}`, `pmndrs/design-system/font-mono#${version}`],
     palette: true,
+  },
+  /**
+   * The poimandres preset as an item, the theme with it: what
+   * `npx shadcn@latest init <hosted url>` starts a project from, so a consumer
+   * never needs the preset code.
+   *
+   * A `registry:base`, not a `registry:style`: a style carries no preset
+   * choices, and `shadcn init` with one falls back to `new-york` (measured on
+   * 4.18). A base carries them in `config`, which init merges into
+   * `components.json`. Modelled on the item shadcn itself serves for the
+   * preset code (`ui.shadcn.com/init?…&preset=b1VlIttI`): its `config`,
+   * `dependencies`, `registryDependencies` and `css`, with `extends: 'none'`
+   * so the stock style does not install under it.
+   *
+   * What it leaves out is that item's colours: literal `cssVars` land in
+   * `:root` after the remap's `@import` and override it, so the colours stay
+   * `theme`'s. Its two other `cssVars` stay, because shadcn writes them from
+   * there only: `radius` (and the `--radius-*` scale it derives from it) and
+   * the heading font. `registry.test.mjs` holds both rules, and the choices to
+   * `preset.json`.
+   */
+  {
+    name: 'preset',
+    type: 'registry:base',
+    title: 'poimandres preset',
+    description:
+      'The poimandres shadcn preset and the pmndrs theme in one item, for `shadcn init`: style `base-luma`, Inter, the default radius, lucide icons, and the Material Design 3 palette with the mono font. Starts a project that already looks like pmndrs, no preset code needed.',
+    author: 'pmndrs',
+    extends: 'none',
+    config: {
+      style: 'base-luma',
+      tailwind: { baseColor: 'neutral' },
+      iconLibrary: 'lucide',
+      rtl: false,
+      menuColor: 'default',
+      menuAccent: 'subtle',
+    },
+    dependencies: ['shadcn@latest', 'class-variance-authority', 'cn', 'tw-animate-css', '@base-ui/react', 'lucide-react'],
+    registryDependencies: ['utils', 'font-inter', `pmndrs/design-system/theme#${version}`],
+    cssVars: {
+      theme: { '--font-heading': 'var(--font-sans)' },
+      light: { radius: foundations.radius.base },
+    },
+    css: {
+      '@import "tw-animate-css"': {},
+      '@import "shadcn/tailwind.css"': {},
+      '@layer base': {
+        '*': { '@apply border-border outline-ring/50': {} },
+        body: { '@apply bg-background text-foreground': {} },
+      },
+    },
   },
   /**
    * The two items below ship files rather than code: `registry:file`, which

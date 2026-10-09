@@ -17,6 +17,7 @@ import { test } from 'node:test'
 import { builder } from 'material-theme-builder'
 import registry from './registry.json' with { type: 'json' }
 import { pmndrsMtb } from './registry/md3-base/md3.ts'
+import { readFoundations } from './scripts/foundations.mjs'
 
 /** Every `--name: value` pair under an item's `css`, at any nesting depth. */
 function declarations(css, found = []) {
@@ -54,9 +55,21 @@ test('every var() reference resolves to a variable the registry declares', () =>
  * builds the reference by prefixing `--` — so an already-prefixed MD3 name lands
  * as `var(----md-ref-palette-primary-40)`, one junk Tailwind theme name per
  * variable. The palette belongs in `css`; this keeps it there.
+ *
+ * A colour in `cssVars` is worse still: it lands in `:root` after the remap's
+ * `@import`, and overrides it. The one exception is the preset's two
+ * non-colour choices, which shadcn only knows how to write from `cssVars`:
+ * `radius`, from which it derives the `--radius-*` scale, and the heading font.
  */
-test('no item declares cssVars', () => {
-  const offenders = registry.items.filter((item) => item.cssVars).map((item) => item.name)
+test('no item declares cssVars but the preset, and it no colour', () => {
+  const allowed = new Set(['preset light.radius', 'preset theme.--font-heading'])
+  const offenders = registry.items.flatMap((item) =>
+    Object.entries(item.cssVars ?? {}).flatMap(([block, vars]) =>
+      Object.keys(vars)
+        .map((name) => `${item.name} ${block}.${name}`)
+        .filter((declaration) => !allowed.has(declaration))
+    )
+  )
 
   assert.deepEqual(offenders, [])
 })
@@ -114,6 +127,47 @@ test('font-mono is a registry:font on --font-mono, scoped below html', () => {
   assert.equal(fontMono.font?.variable, '--font-mono')
   assert.ok(fontMono.font.selector, '`font-mono` has no selector, so shadcn would apply it to `html`')
   assert.notEqual(fontMono.font.selector.trim(), 'html')
+})
+
+/**
+ * `shadcn init <url>` on the hosted `preset` has to configure what
+ * `shadcn init --preset b1VlIttI` does, plus the theme: `preset.json` is the
+ * reviewable form of that preset, so the item is held to it. A `registry:style`
+ * cannot carry these choices (init falls back to `new-york`); a
+ * `registry:base` carries them in `config`, as the item shadcn serves for a
+ * preset code does.
+ */
+test('preset is a registry:base carrying the poimandres preset and the theme', () => {
+  const item = registry.items.find((entry) => entry.name === 'preset')
+  const { values } = JSON.parse(readFileSync(new URL('./preset.json', import.meta.url), 'utf8'))
+
+  assert.ok(item, 'no `preset` item')
+  assert.equal(item.type, 'registry:base')
+  // Not on top of shadcn's stock style: the preset is the whole style.
+  assert.equal(item.extends, 'none')
+  // A real shadcn style, or every later `shadcn add button` 404s.
+  assert.deepEqual(
+    {
+      style: item.config?.style,
+      iconLibrary: item.config?.iconLibrary,
+      baseColor: item.config?.tailwind?.baseColor,
+      menuColor: item.config?.menuColor,
+      menuAccent: item.config?.menuAccent,
+    },
+    {
+      style: `base-${values.style}`,
+      iconLibrary: values.iconLibrary,
+      baseColor: values.baseColor,
+      menuColor: values.menuColor,
+      menuAccent: values.menuAccent,
+    }
+  )
+  assert.ok(item.registryDependencies.includes(`font-${values.font}`), `no font-${values.font}`)
+  assert.deepEqual(ownDependencies(item), ['theme'])
+  // `radius: default`, as the Radius page gives it.
+  assert.equal(item.cssVars?.light?.radius, readFoundations().radius.base)
+  // The stylesheet lines the preset's own item writes, which `extends: none` no longer brings.
+  assert.deepEqual(Object.keys(item.css ?? {}), ['@import "tw-animate-css"', '@import "shadcn/tailwind.css"', '@layer base'])
 })
 
 /** The families a Fontsource package's stylesheet registers, by `@font-face`. */

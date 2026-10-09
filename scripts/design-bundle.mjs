@@ -5,7 +5,11 @@
  *   1. `npm run design-bundle`  this script
  *   2. the `/design-sync` converter, which reads these files through
  *      `.design-sync/config.json` and builds `ds-bundle/`
- *   3. `/design-sync`, which uploads `ds-bundle/` to the claude.ai/design
+ *   3. `npm run design-place`  this script again, with `--place ds-bundle`:
+ *      the converter files HTML cards only under `components/`, which a
+ *      tokens-only design system leaves empty, so the cards are copied into
+ *      `ds-bundle/guidelines/cards/` after its build
+ *   4. `/design-sync`, which uploads `ds-bundle/` to the claude.ai/design
  *      project
  *
  * What it writes:
@@ -40,7 +44,7 @@
  * Regenerated whole on every run and never committed. Nothing in it names a
  * version, so a build from a release tag is that release's design system.
  */
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { compile } from 'tailwindcss'
@@ -866,7 +870,32 @@ export function writeDesign(dir) {
   }
 }
 
+/**
+ * Copies the cards `writeDesign` left in `designDir` into the converter's
+ * `bundleDir`, under `guidelines/cards/`, then refreshes the `auxSha` of its
+ * `_ds_sync.json`: that hash covers `guidelines/`, and a stale one would let a
+ * re-sync's diff skip a card-only change. The hash comes from the converter's
+ * own recipe, staged in `.ds-sync/`, so it agrees with the next build's diff.
+ */
+export async function placeCards(bundleDir) {
+  const sidecar = new URL('_ds_sync.json', bundleDir)
+  const anchor = JSON.parse(readFileSync(sidecar, 'utf8'))
+  const cards = new URL('guidelines/cards/', bundleDir)
+  rmSync(cards, { recursive: true, force: true })
+  cpSync(new URL('cards/', designDir), cards, { recursive: true })
+  const { auxShaFor } = await import(new URL('.ds-sync/lib/sync-hashes.mjs', root).href)
+  anchor.auxSha = auxShaFor(fileURLToPath(bundleDir))
+  writeFileSync(sidecar, JSON.stringify(anchor, null, 2) + '\n')
+}
+
 if (import.meta.main) {
-  writeDesign(designDir)
-  console.log(`built ${outputs.length} files into ${designDir.pathname.replace(root.pathname, '')}`)
+  const place = process.argv.indexOf('--place')
+  if (place === -1) {
+    writeDesign(designDir)
+    console.log(`built ${outputs.length} files into ${designDir.pathname.replace(root.pathname, '')}`)
+  } else {
+    const bundleDir = new URL(`${process.argv[place + 1]}/`, root)
+    await placeCards(bundleDir)
+    console.log(`placed the cards into ${bundleDir.pathname.replace(root.pathname, '')}guidelines/cards/`)
+  }
 }

@@ -13,6 +13,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "design-bundle": "node scripts/design-bundle.mjs",
+    "design-place": "node scripts/design-bundle.mjs --place ds-bundle",
     "refresh-catalog": "node scripts/catalog.mjs && npm run build",
     "check-registry": "shadcn registry validate ./registry.json",
     "test": "node --test",

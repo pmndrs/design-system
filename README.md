@@ -87,7 +87,7 @@ The design system is synced by hand to a [Claude Design](https://claude.ai/desig
 project, so that the designs it generates stay on brand. A maintainer runs the
 sync from Claude Code after each release, on the release tag checked out. It
 signs in with the maintainer's claude.ai account, which is why CI cannot run
-it. Three steps:
+it. Four steps:
 
 1. `npm run design-bundle` generates the converter's inputs into
    `.design-sync/.cache/design/` (gitignored): `styles.css`, the theme compiled
@@ -98,7 +98,11 @@ it. Three steps:
    through `.design-sync/config.json`, with `.design-sync/fonts.css` for Inter
    and Inconsolata and `.design-sync/entry.mjs` as its empty entry: a tokens-only
    design system, with no components.
-3. `/design-sync` uploads `ds-bundle/` to the project.
+3. `npm run design-place` copies the cards into `ds-bundle/guidelines/cards/`,
+   which the converter does not do for a design system without components.
+4. `/design-sync` uploads `ds-bundle/` to the project.
+
+`.design-sync/NOTES.md` keeps the commands and what a re-sync must watch.
 
 Nothing of it is committed: it is regenerated from the tag's sources, and names
 no version.
@@ -109,6 +113,7 @@ no version.
 npm install
 npm run build   # regenerate registry.json, figma/*.tokens.json, the docs catalog
 npm run design-bundle  # generate the Claude Design sync inputs
+npm run design-place   # copy the cards into the converter's ds-bundle/
 npm run lgtm    # outputs are current and valid, preset code round-trips
 npm run refresh-catalog  # re-fetch the other repos' items listed in the docs catalog
 ```

@@ -1,6 +1,6 @@
 <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" width="600" height="600">
   <!--
-    Springs from the idle mark (logo_idle.png: four nested rings on the centre)
+    Springs from the idle mark (logo_idle.svg: four nested rings on the centre)
     into the complete one. Each rect's attributes are its final, complete
     position; the keyframes start from where that rect sits in the idle mark.
     `backwards` holds the idle frame through the 400ms delay. Under

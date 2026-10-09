@@ -91,8 +91,6 @@ jobs:
       # The same base path as the Pages build, which the artifact was built for: the site lives
       # one level down there too, and its pages link to each other by absolute path.
       BASE_PATH: /${{ github.event.repository.name }}
-      # Through env rather than inline: it comes from a branch name, which a PR author picks
-      GIT_BRANCH: ${{ github.head_ref || github.ref_name }}
       PRODUCTION: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
 
     # Update the Production/Preview environment with the Vercel deployed URL
@@ -142,12 +140,12 @@ jobs:
       # Vercel generates branch URLs (`<project>-git-<branch>-<scope>.vercel.app`) only for
       # deployments made by its Git integration, not for these CLI ones. So give each preview the
       # URL `version_url_template` links its branch to, and re-point it on every push. Production
-      # needs none: `main` is the site URL. The slug is the switcher's `{branch}`: lowercase, every
-      # run of characters other than `[a-z0-9]` one `-`, none at either end.
+      # needs none: `main` is the site URL. The hostname is the one the build computed from that
+      # template (`version_hostname`), so the alias and the switcher cannot disagree -- a branch
+      # too long for a 63-character hostname label included, which pmndrs/docs cuts and hashes.
       #
       # Fatal, unlike in pmndrs/docs: the alias is what the switcher needs, and a preview nobody
-      # can reach from it is not a preview. (A branch name too long for a 63-character hostname
-      # label is the one way this fails on its own: rename the branch.)
+      # can reach from it is not a preview.
       #
       # The REST API rather than `vercel alias set`, which pmndrs/docs uses: the CLI starts
       # that command by looking the user up (with or without `--scope`), and `VERCEL_TOKEN` is
@@ -157,11 +155,11 @@ jobs:
       - name: Alias the preview to its branch URL
         if: env.VERCEL == 'true' && env.PRODUCTION != 'true'
         run: |
-          slug=$(printf '%s' "$GIT_BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')
           curl --fail-with-body --silent --show-error -X POST \
             "https://api.vercel.com/v2/deployments/${DEPLOYMENT#https://}/aliases?teamId=$VERCEL_ORG_ID" \
             -H "Authorization: Bearer $VERCEL_TOKEN" \
             -H "Content-Type: application/json" \
-            -d "{\"alias\":\"design-system-git-$slug-pmndrs.vercel.app\"}"
+            -d "{\"alias\":\"$ALIAS\"}"
         env:
           DEPLOYMENT: ${{ steps.vercel-deploy.outputs.url }}
+          ALIAS: ${{ needs.build.outputs.version_hostname }}

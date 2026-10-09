@@ -68,7 +68,7 @@ say.
 
 ## Authoring a block
 
-Always pin a ref — `pmndrs/design-system/md3#v0.5.0`. Refs are **not
+Always pin a ref — `pmndrs/design-system/theme#v0.5.0`. Refs are **not
 inherited**: every entry in `registryDependencies` carries its own.
 
 - a shadcn primitive → `registryDependencies: ["button"]`

@@ -51,7 +51,7 @@
       "Color": "pmndrs/docs@{{docsRef}}:registry/color/color.tsx"
     },
     "synced": "{{synced}}",
-    "defaults": "tailwind v4: type scale, spacing, shadows (inherited, per the docs pages); radius: preset b5cR4Y50S base-nova, but xs (inherited, per the Radius page)",
+    "defaults": "tailwind v4: type scale, spacing, shadows (inherited, per the docs pages); radius: preset {{presetCode}} {{presetStyle}}, but xs (inherited, per the Radius page)",
     "docsSite": {
       "main": "https://pmndrs.github.io/design-system/"
     }
@@ -204,17 +204,17 @@
       }
     },
     "radius": {
-      "note": "A pmndrs decision: one base, `radius` (0.625rem), and the preset's base-nova scale multiplying it (the Radius page of the docs), but `radius-xs`, inherited from Tailwind. Values at a 16px root.",
+      "note": "A pmndrs decision: one base, `radius` (0.625rem), and the preset's {{presetStyle}} scale multiplying it (the Radius page of the docs), but `radius-xs`, inherited from Tailwind. Values at a 16px root.",
       "usage": {
-        "radius": "The base radius, `--radius`: a pmndrs decision, from the preset `b5cR4Y50S` (style `base-nova`, radius `default`). Every `rounded-sm` to `rounded-4xl` step is a multiple of it; change it and every corner rescales.",
-        "radius-xs": "Tailwind default `rounded-xs`, outside the base-nova scale: inherited, as the Radius page notes, a fixed value that does not follow `radius`.",
-        "radius-sm": "`rounded-sm`: `calc(var(--radius) * 0.6)`, the preset's base-nova scale.",
-        "radius-md": "`rounded-md`: `calc(var(--radius) * 0.8)`, the preset's base-nova scale.",
-        "radius-lg": "`rounded-lg`: `var(--radius)` itself, the preset's base-nova scale.",
-        "radius-xl": "`rounded-xl`: `calc(var(--radius) * 1.4)`, the preset's base-nova scale.",
-        "radius-2xl": "`rounded-2xl`: `calc(var(--radius) * 1.8)`, the preset's base-nova scale.",
-        "radius-3xl": "`rounded-3xl`: `calc(var(--radius) * 2.2)`, the preset's base-nova scale.",
-        "radius-4xl": "`rounded-4xl`: `calc(var(--radius) * 2.6)`, the preset's base-nova scale."
+        "radius": "The base radius, `--radius`: a pmndrs decision, from the preset `{{presetCode}}` (style `{{presetStyle}}`, radius `default`). Every `rounded-sm` to `rounded-4xl` step is a multiple of it; change it and every corner rescales.",
+        "radius-xs": "Tailwind default `rounded-xs`, outside the {{presetStyle}} scale: inherited, as the Radius page notes, a fixed value that does not follow `radius`.",
+        "radius-sm": "`rounded-sm`: `calc(var(--radius) * 0.6)`, the preset's {{presetStyle}} scale.",
+        "radius-md": "`rounded-md`: `calc(var(--radius) * 0.8)`, the preset's {{presetStyle}} scale.",
+        "radius-lg": "`rounded-lg`: `var(--radius)` itself, the preset's {{presetStyle}} scale.",
+        "radius-xl": "`rounded-xl`: `calc(var(--radius) * 1.4)`, the preset's {{presetStyle}} scale.",
+        "radius-2xl": "`rounded-2xl`: `calc(var(--radius) * 1.8)`, the preset's {{presetStyle}} scale.",
+        "radius-3xl": "`rounded-3xl`: `calc(var(--radius) * 2.2)`, the preset's {{presetStyle}} scale.",
+        "radius-4xl": "`rounded-4xl`: `calc(var(--radius) * 2.6)`, the preset's {{presetStyle}} scale."
       }
     },
     "shadow": {

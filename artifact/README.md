@@ -84,7 +84,7 @@ The seven brand colours are declared next to the seed as custom colours, none of
 Poimandres is shadcn-based, so outside colour, fonts and the base radius it embraces Tailwind's defaults. The repository's docs say which is which: the radius is a pmndrs decision; spacing and shadows are inherited from Tailwind v4.
 
 - Space with the Tailwind scale, multiples of `spacing` (0.25rem): `spacing-1` = 0.25rem, `spacing-4` = 1rem; never an arbitrary pixel value.
-- Every corner derives from one value, `radius` (0.625rem), from the preset. Its base-nova style multiplies it: `radius-sm` is ×0.6, `radius-lg` is `radius` itself, `radius-4xl` is ×2.6. Round with `radius-sm` to `radius-4xl`; change `radius` and every corner rescales. `radius-xs` is Tailwind's own step, outside that scale.
+- Every corner derives from one value, `radius` (0.625rem), from the preset. Its {{presetStyle}} style multiplies it: `radius-sm` is ×0.6, `radius-lg` is `radius` itself, `radius-4xl` is ×2.6. Round with `radius-sm` to `radius-4xl`; change `radius` and every corner rescales. `radius-xs` is Tailwind's own step, outside that scale.
 - Elevate with `shadow-2xs` to `shadow-2xl`, recess with `inset-shadow-2xs` to `inset-shadow-sm`, and shadow shapes that are not boxes (icons, SVGs) with `drop-shadow-xs` to `drop-shadow-2xl`. Shadows are black at low opacity in both schemes; in dark, set surfaces apart with the `md-sys-color-surface-container-*` steps instead.
 
 ## Components

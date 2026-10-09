@@ -186,6 +186,23 @@ test('a catalog block without a hand-written card, or a card without a block, is
   assert.deepEqual(componentProblems(['keypoints'], paths.slice(0, 3)), [])
 })
 
+/**
+ * The shadcn preset changes with `preset.json`: its code and style reach the
+ * output through placeholders, never typed into a source.
+ */
+test('no source names the preset code or style itself', () => {
+  const preset = JSON.parse(readFileSync(new URL('./preset.json', import.meta.url), 'utf8'))
+  const literals = [preset.code, `base-${preset.values.style}`]
+  const sources = [
+    ...walk(new URL('./artifact/', import.meta.url)).map((path) => `artifact/${path}`),
+    'scripts/artifact.notes.json',
+  ]
+  const offenders = sources.filter((path) =>
+    literals.some((literal) => readFileSync(new URL(`./${path}`, import.meta.url), 'utf8').includes(literal))
+  )
+  assert.deepEqual(offenders, [])
+})
+
 const version = /\bv?\d+\.\d+\.\d+\b/g
 
 /**

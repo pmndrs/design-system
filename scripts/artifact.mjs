@@ -51,7 +51,8 @@ import { fileURLToPath } from 'node:url'
 import pkg from '../package.json' with { type: 'json' }
 import registry from '../registry.json' with { type: 'json' }
 import external from '../registry/external.json' with { type: 'json' }
-import notes from './artifact.notes.json' with { type: 'json' }
+import notesSource from './artifact.notes.json' with { type: 'json' }
+import preset from '../preset.json' with { type: 'json' }
 
 const root = new URL('../', import.meta.url)
 /** Where `npm run artifact` writes. */
@@ -188,7 +189,8 @@ function sourceCommit() {
 /**
  * The values of the `{{placeholders}}`: every version or sha the output names
  * comes from one of these. The release is `package.json`'s version, which
- * Changesets bumps and the release workflow tags.
+ * Changesets bumps and the release workflow tags. The shadcn preset, its code
+ * and its style (`base-<style>`, as shadcn names it), is `preset.json`'s.
  */
 const fontsourceVersions = [...new Set(fonts.map(({ family }) => installedVersion(`@fontsource-variable/${family.toLowerCase()}`)))]
 if (fontsourceVersions.length !== 1) throw new Error(`the font packages disagree: ${fontsourceVersions.join(', ')}`)
@@ -200,7 +202,9 @@ export const placeholders = {
   docsRef: external.find(({ repo }) => repo === 'pmndrs/docs').ref,
   fontsourceVersion: fontsourceVersions[0],
   mtbVersion: installedVersion('material-theme-builder'),
-  ...notes.pins,
+  presetCode: preset.code,
+  presetStyle: `base-${preset.values.style}`,
+  ...notesSource.pins,
 }
 
 /** `text` with its `{{name}}` placeholders filled. Throws on an unknown one. */
@@ -210,6 +214,9 @@ function fill(text, where) {
     return placeholders[name]
   })
 }
+
+/** `artifact.notes.json`, its `{{placeholders}}` filled. */
+const notes = JSON.parse(fill(JSON.stringify(notesSource), 'scripts/artifact.notes.json'))
 
 /* ------------------------------------------------------------------------ */
 /* tokens.json                                                                */
@@ -359,7 +366,7 @@ function spacingTokens() {
 }
 
 /**
- * `--radius` and the scale of the Radius page: the base-nova steps, and
+ * `--radius` and the scale of the Radius page: the preset style's steps, and
  * `--radius-xs`, Tailwind's, which the page lists as inherited.
  */
 const radius = pages.radius.text.match(/^\s*--radius:\s*([^;]+);/m)[1]
@@ -409,7 +416,7 @@ function tokens() {
       tokens: colorTokens(),
     },
     type: typeTokens(),
-    meta: JSON.parse(fill(JSON.stringify(notes.meta), 'meta')),
+    meta: notes.meta,
     spacing: { tokens: spacingTokens(), note: note('spacing') },
     radius: { tokens: radiusTokens(), note: note('radius') },
     shadow: { tokens: shadowTokens('shadow', ['Box shadow', 'Inset shadow']), note: note('shadow') },

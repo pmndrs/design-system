@@ -1,0 +1,68 @@
+---
+title: Spacing
+description: One base unit, --spacing, and every padding, margin, gap and size utility as a multiple of it.
+nav: 3
+---
+
+<Intro>
+  Every spacing utility is a multiple of one base unit, `--spacing`. A utility
+  `n` is `n × 0.25rem`: `p-4` is `1rem`, `gap-2` is `0.5rem`.
+</Intro>
+
+> [!NOTE]
+> Inherited from Tailwind v4 defaults, not yet a pmndrs decision. See [Tailwind's padding docs](https://tailwindcss.com/docs/padding).
+
+## Base unit
+
+| Token       | Value     |
+| ----------- | --------- |
+| `--spacing` | `0.25rem` |
+
+The same scale drives padding (`p-*`), margin (`m-*`), gaps (`gap-*`, `space-*`), sizes (`w-*`,
+`h-*`, `size-*`, `min-*`, `max-*`), offsets (`inset-*`, `top-*`…) and translations
+(`translate-*`). Any multiple works, not only the steps below: `p-13` is `3.25rem`. Prefix a
+utility with `-` for a negative value (`-mt-2`), and use brackets for a one-off (`p-[5px]`).
+
+## Scale
+
+The common steps, with the value your project gets. Pixels assume the browser's default 16px
+root. The bars are live `w-*` utilities, rendered with this site's CSS: its root is 17px, so
+they draw slightly wider than in your project. The table is the source of truth.
+
+| Utility | Value      | Pixels | Preview                                  |
+| ------- | ---------- | ------ | ---------------------------------------- |
+| `0`     | `0`        | 0      | <div className="h-3 w-0 bg-primary" />   |
+| `px`    | `1px`      | 1px    | <div className="h-3 w-px bg-primary" />  |
+| `0.5`   | `0.125rem` | 2px    | <div className="h-3 w-0.5 bg-primary" /> |
+| `1`     | `0.25rem`  | 4px    | <div className="h-3 w-1 bg-primary" />   |
+| `1.5`   | `0.375rem` | 6px    | <div className="h-3 w-1.5 bg-primary" /> |
+| `2`     | `0.5rem`   | 8px    | <div className="h-3 w-2 bg-primary" />   |
+| `2.5`   | `0.625rem` | 10px   | <div className="h-3 w-2.5 bg-primary" /> |
+| `3`     | `0.75rem`  | 12px   | <div className="h-3 w-3 bg-primary" />   |
+| `3.5`   | `0.875rem` | 14px   | <div className="h-3 w-3.5 bg-primary" /> |
+| `4`     | `1rem`     | 16px   | <div className="h-3 w-4 bg-primary" />   |
+| `5`     | `1.25rem`  | 20px   | <div className="h-3 w-5 bg-primary" />   |
+| `6`     | `1.5rem`   | 24px   | <div className="h-3 w-6 bg-primary" />   |
+| `7`     | `1.75rem`  | 28px   | <div className="h-3 w-7 bg-primary" />   |
+| `8`     | `2rem`     | 32px   | <div className="h-3 w-8 bg-primary" />   |
+| `9`     | `2.25rem`  | 36px   | <div className="h-3 w-9 bg-primary" />   |
+| `10`    | `2.5rem`   | 40px   | <div className="h-3 w-10 bg-primary" />  |
+| `11`    | `2.75rem`  | 44px   | <div className="h-3 w-11 bg-primary" />  |
+| `12`    | `3rem`     | 48px   | <div className="h-3 w-12 bg-primary" />  |
+| `14`    | `3.5rem`   | 56px   | <div className="h-3 w-14 bg-primary" />  |
+| `16`    | `4rem`     | 64px   | <div className="h-3 w-16 bg-primary" />  |
+| `20`    | `5rem`     | 80px   | <div className="h-3 w-20 bg-primary" />  |
+| `24`    | `6rem`     | 96px   | <div className="h-3 w-24 bg-primary" />  |
+| `28`    | `7rem`     | 112px  | <div className="h-3 w-28 bg-primary" />  |
+| `32`    | `8rem`     | 128px  | <div className="h-3 w-32 bg-primary" />  |
+| `36`    | `9rem`     | 144px  | <div className="h-3 w-36 bg-primary" />  |
+| `40`    | `10rem`    | 160px  | <div className="h-3 w-40 bg-primary" />  |
+| `44`    | `11rem`    | 176px  | <div className="h-3 w-44 bg-primary" />  |
+| `48`    | `12rem`    | 192px  | <div className="h-3 w-48 bg-primary" />  |
+| `52`    | `13rem`    | 208px  | <div className="h-3 w-52 bg-primary" />  |
+| `56`    | `14rem`    | 224px  | <div className="h-3 w-56 bg-primary" />  |
+| `60`    | `15rem`    | 240px  | <div className="h-3 w-60 bg-primary" />  |
+| `64`    | `16rem`    | 256px  | <div className="h-3 w-64 bg-primary" />  |
+| `72`    | `18rem`    | 288px  | <div className="h-3 w-72 bg-primary" />  |
+| `80`    | `20rem`    | 320px  | <div className="h-3 w-80 bg-primary" />  |
+| `96`    | `24rem`    | 384px  | <div className="h-3 w-96 bg-primary" />  |

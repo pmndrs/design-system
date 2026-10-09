@@ -59,7 +59,7 @@ const items = [
     type: 'registry:lib',
     title: 'MD3 plumbing',
     description:
-      "The MD3 colour layer without any colours: the package's Tailwind plugin, its shadcn remap, and the pmndrs seed. Install this only if you compute the palette yourself — otherwise install `md3`, which supplies one.",
+      "The MD3 colour layer without any colours: the package's Tailwind plugin, its shadcn remap, and the pmndrs seed. Install this only if you compute the palette yourself — otherwise install `theme`, which supplies one.",
     author: 'pmndrs',
     dependencies: ['material-theme-builder@^5.2.0'],
     files: [{ path: 'registry/md3-base/md3.ts', type: 'registry:lib' }],
@@ -87,7 +87,7 @@ const items = [
      * `update-css` has a dedicated `@plugin` branch that reads the key and
      * never the value (checked on 4.18: it writes `@plugin "…";` whatever
      * object sits under it), so a `{ 'custom-colors': 'lime, teal, …' }` body
-     * would be silently dropped. The roles still land in `md3`'s bake; the body
+     * would be silently dropped. The roles still land in `theme`'s bake; the body
      * that turns them into utilities is in `docs.md`, for the consumer to add.
      */
     css: {
@@ -95,14 +95,47 @@ const items = [
       "@import 'material-theme-builder/shadcn.css'": {},
     },
   },
+  /**
+   * Named after its role, not the typeface, so a change of font is not a
+   * breaking rename.
+   *
+   * Its own item because shadcn's schema allows a `font` object on
+   * `registry:font` only — it cannot ride inside `theme`.
+   */
   {
-    name: 'md3',
-    type: 'registry:lib',
-    title: 'MD3 colours',
+    name: 'font-mono',
+    type: 'registry:font',
+    title: 'pmndrs mono font',
     description:
-      'The pmndrs Material Design 3 colour layer. Additive to the stock shadcn tokens — blocks use `bg-primary` by default and reach for `bg-surface-dim` only where shadcn has no equivalent. Nothing to mount.',
+      'Inconsolata as `--font-mono`, so `font-mono` resolves to the pmndrs monospace — applied to `code, kbd, samp, pre` only. Through `next/font/google` on Next, through `@fontsource-variable/inconsolata` elsewhere.',
     author: 'pmndrs',
-    registryDependencies: [`pmndrs/design-system/md3-base#${version}`],
+    font: {
+      family: 'Inconsolata',
+      provider: 'google',
+      import: 'Inconsolata',
+      variable: '--font-mono',
+      dependency: '@fontsource-variable/inconsolata',
+      /**
+       * Mandatory, not cosmetic: for `--font-mono` shadcn defaults a missing
+       * selector to `html`, and on Next the mono class then replaces
+       * `font-sans` on `<html>` — the whole site turns monospace.
+       * `registry.test.mjs` holds it.
+       */
+      selector: 'code, kbd, samp, pre',
+    },
+  },
+  /**
+   * The single documented install target: the pmndrs palette, plus everything
+   * it needs.
+   */
+  {
+    name: 'theme',
+    type: 'registry:lib',
+    title: 'pmndrs theme',
+    description:
+      'The pmndrs theme: the Material Design 3 palette, the colour machinery under it (`md3-base`) and the mono font (`font-mono`). Additive to the stock shadcn tokens — blocks use `bg-primary` by default and reach for `bg-surface-dim` only where shadcn has no equivalent. Nothing to mount.',
+    author: 'pmndrs',
+    registryDependencies: [`pmndrs/design-system/md3-base#${version}`, `pmndrs/design-system/font-mono#${version}`],
     palette: true,
   },
   /**
@@ -146,7 +179,7 @@ const items = [
     type: 'registry:item',
     title: 'pmndrs Figma tokens',
     description:
-      'The pmndrs palette as DTCG design tokens, light and dark — the files a Figma variable collection imports — into `design/tokens/pmndrs/`. The same colours `md3` bakes into CSS, alias for alias.',
+      'The pmndrs palette as DTCG design tokens, light and dark — the files a Figma variable collection imports — into `design/tokens/pmndrs/`. The same colours `theme` bakes into CSS, alias for alias.',
     author: 'pmndrs',
     /**
      * The `figma/*.tokens.json` this build writes below, so `build.test.mjs`

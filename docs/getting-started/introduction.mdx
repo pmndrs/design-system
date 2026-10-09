@@ -69,10 +69,10 @@ Any app shadcn can init works. With a fresh Next.js one:
 Add the `dark` class to `<html>` for the dark scheme.
 
 > [!TIP]
-> No block in mind? Add the colour layer on its own:
+> No block in mind? Add the theme on its own — the palette and the mono font:
 >
 > ```sh
-> npx shadcn@latest add pmndrs/design-system/md3#v0.5.0
+> npx shadcn@latest add pmndrs/design-system/theme#v0.5.0
 > ```
 
 ## Tokens
@@ -103,7 +103,7 @@ CLI never looks inside. A shader, a drei helper or a `SKILL.md`
 An item's address is the registry, the item and a git ref:
 
 ```sh
-npx shadcn@latest add pmndrs/design-system/md3#v0.5.0
+npx shadcn@latest add pmndrs/design-system/theme#v0.5.0
 ```
 
 The CLI reads `registry.json` and the item's files at that
@@ -136,7 +136,7 @@ shape.
       "registryDependencies": [
         "sidebar",
         "collapsible",
-        "pmndrs/design-system/md3#v0.5.0"
+        "pmndrs/design-system/theme#v0.5.0"
       ],
       "files": [{ "path": "registry/<block>/<block>.tsx", "type": "registry:block" }]
     }
@@ -144,8 +144,8 @@ shape.
 }
 ```
 
-`sidebar` and `collapsible` are stock shadcn components. `pmndrs/design-system/md3` is the
-colour layer, for a block that paints with an MD3 role; a ref is
+`sidebar` and `collapsible` are stock shadcn components. `pmndrs/design-system/theme` is the
+pmndrs theme, for a block that paints with an MD3 role; a ref is
 [not inherited](https://ui.shadcn.com/docs/registry/github#dependency-refs) by dependencies, so
 it pins its own.
 [`npx shadcn@latest registry validate`](https://ui.shadcn.com/docs/registry/github#step-3-validate-the-registry)
@@ -164,7 +164,8 @@ Here they all are, across repos, each linked to its source, then the same list f
 | Item | Type | Registry |
 | --- | --- | --- |
 | [md3-base](https://github.com/pmndrs/design-system/tree/v0.5.0/registry/md3-base) | lib | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.5.0/registry.json) |
-| [md3](https://github.com/pmndrs/design-system/tree/v0.5.0/registry/md3) | lib | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.5.0/registry.json) |
+| [font-mono](https://github.com/pmndrs/design-system/tree/v0.5.0/registry/font-mono) | font | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.5.0/registry.json) |
+| [theme](https://github.com/pmndrs/design-system/tree/v0.5.0/registry/theme) | lib | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.5.0/registry.json) |
 | [logo](https://github.com/pmndrs/design-system/tree/v0.5.0/registry/logo) | item | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.5.0/registry.json) |
 | [figma-tokens](https://github.com/pmndrs/design-system/tree/v0.5.0/registry/figma-tokens) | item | [pmndrs/design-system](https://github.com/pmndrs/design-system/blob/v0.5.0/registry.json) |
 | [keypoints](https://github.com/pmndrs/docs/tree/v4.20.0/registry/keypoints) | block | [pmndrs/docs](https://github.com/pmndrs/docs/blob/v4.20.0/registry.json) |

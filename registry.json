@@ -7,7 +7,7 @@
       "name": "md3-base",
       "type": "registry:lib",
       "title": "MD3 plumbing",
-      "description": "The MD3 colour layer without any colours: the package's Tailwind plugin, its shadcn remap, and the pmndrs seed. Install this only if you compute the palette yourself — otherwise install `md3`, which supplies one.",
+      "description": "The MD3 colour layer without any colours: the package's Tailwind plugin, its shadcn remap, and the pmndrs seed. Install this only if you compute the palette yourself — otherwise install `theme`, which supplies one.",
       "author": "pmndrs",
       "dependencies": [
         "material-theme-builder@^5.2.0"
@@ -22,16 +22,33 @@
         "@plugin 'material-theme-builder/tailwind'": {},
         "@import 'material-theme-builder/shadcn.css'": {}
       },
-      "docs": "**This item ships no colours.** It is the plumbing: two lines of CSS pointing at the package — its Tailwind plugin, and the stylesheet remapping shadcn's variables onto MD3 roles — plus `lib/md3.ts`, the pmndrs seed.\n\nInstall it alone only if you compute the palette yourself. If you just want pmndrs colours, install `md3` instead — it adds a baked palette on top of this and needs nothing mounted.\n\nNothing renders until something defines `--md-sys-color-*`, and it does not fail gracefully: the remap here overrides the *stock* shadcn variables, so an undefined palette takes `--background`, `--primary` and `--border` down with it, silently — no error from Tailwind, none from the browser.\n\nEmit it from a React Server Component. `builder` is the root export and carries no `'use client'`, so no palette code reaches the browser:\n\n```tsx\nimport { builder } from 'material-theme-builder'\nimport { pmndrsMtb } from '@/lib/md3'\n\nconst { source, ...rest } = pmndrsMtb\nconst css = builder(source, rest).toCss()\n// <style dangerouslySetInnerHTML={{ __html: css }} /> in <head>\n```\n\nThat repeats the palette in every document — around 32 kB raw, but 2 kB brotli, since it is all hex declarations. Only worth hoisting into your stylesheet with a build step if you have measured that it matters; the build step costs a generated file and an import-order rule that fails silently whenever your seed matches the baked default.\n\nComputed here, the palette is the baked `md3` one, colour for colour: both are `builder(pmndrsMtb)`.\n\n`<Mtb>` from `material-theme-builder/react` does the same as a client component. Avoid it in an app that renders on the server, but it is the right tool where there is no build to hook — a Storybook preview decorator, for instance. With `next-themes`, nest `<ThemeProvider>` inside it, not around it.\n\nThe seed ships seven custom colours, the brand ones: `lime`, `teal`, `cyan`, `purple`, `red`, `orange` and `yellow`, and `md3` bakes their roles. Their utilities are not automatic: the `@plugin` line this item added to your CSS is installed in statement form (`@plugin '...';`), and the registry cannot give it a body, so give it one yourself:\n\n```css\n@plugin \"material-theme-builder/tailwind\" {\n  custom-colors: lime, teal, cyan, purple, red, orange, yellow;\n}\n```\n\nNeed a colour M3 has no role for? Spread `pmndrsMtb` into your own config and add `customColors` there, rather than editing the installed file — `blend: true` harmonizes them against the pmndrs seed, and `...pmndrsMtb.customColors` keeps the seven above. Then add yours to the same body, `custom-colors: lime, teal, cyan, purple, red, orange, yellow, note;`.\n\nFour roles and eleven shades follow per colour — `bg-note`, `text-on-note`, `bg-note-container`, `text-on-note-container`, `bg-note-50` … `bg-note-950`. Nothing else to write."
+      "docs": "**This item ships no colours.** It is the plumbing: two lines of CSS pointing at the package — its Tailwind plugin, and the stylesheet remapping shadcn's variables onto MD3 roles — plus `lib/md3.ts`, the pmndrs seed.\n\nInstall it alone only if you compute the palette yourself. If you just want pmndrs colours, install `theme` instead — it adds a baked palette and the mono font on top of this and needs nothing mounted.\n\nNothing renders until something defines `--md-sys-color-*`, and it does not fail gracefully: the remap here overrides the *stock* shadcn variables, so an undefined palette takes `--background`, `--primary` and `--border` down with it, silently — no error from Tailwind, none from the browser.\n\nEmit it from a React Server Component. `builder` is the root export and carries no `'use client'`, so no palette code reaches the browser:\n\n```tsx\nimport { builder } from 'material-theme-builder'\nimport { pmndrsMtb } from '@/lib/md3'\n\nconst { source, ...rest } = pmndrsMtb\nconst css = builder(source, rest).toCss()\n// <style dangerouslySetInnerHTML={{ __html: css }} /> in <head>\n```\n\nThat repeats the palette in every document — around 32 kB raw, but 2 kB brotli, since it is all hex declarations. Only worth hoisting into your stylesheet with a build step if you have measured that it matters; the build step costs a generated file and an import-order rule that fails silently whenever your seed matches the baked default.\n\nComputed here, the palette is the baked `theme` one, colour for colour: both are `builder(pmndrsMtb)`.\n\n`<Mtb>` from `material-theme-builder/react` does the same as a client component. Avoid it in an app that renders on the server, but it is the right tool where there is no build to hook — a Storybook preview decorator, for instance. With `next-themes`, nest `<ThemeProvider>` inside it, not around it.\n\nThe seed ships seven custom colours, the brand ones: `lime`, `teal`, `cyan`, `purple`, `red`, `orange` and `yellow`, and `theme` bakes their roles. Their utilities are not automatic: the `@plugin` line this item added to your CSS is installed in statement form (`@plugin '...';`), and the registry cannot give it a body, so give it one yourself:\n\n```css\n@plugin \"material-theme-builder/tailwind\" {\n  custom-colors: lime, teal, cyan, purple, red, orange, yellow;\n}\n```\n\nNeed a colour M3 has no role for? Spread `pmndrsMtb` into your own config and add `customColors` there, rather than editing the installed file — `blend: true` harmonizes them against the pmndrs seed, and `...pmndrsMtb.customColors` keeps the seven above. Then add yours to the same body, `custom-colors: lime, teal, cyan, purple, red, orange, yellow, note;`.\n\nFour roles and eleven shades follow per colour — `bg-note`, `text-on-note`, `bg-note-container`, `text-on-note-container`, `bg-note-50` … `bg-note-950`. Nothing else to write."
     },
     {
-      "name": "md3",
+      "name": "font-mono",
+      "type": "registry:font",
+      "title": "pmndrs mono font",
+      "description": "Inconsolata as `--font-mono`, so `font-mono` resolves to the pmndrs monospace — applied to `code, kbd, samp, pre` only. Through `next/font/google` on Next, through `@fontsource-variable/inconsolata` elsewhere.",
+      "author": "pmndrs",
+      "font": {
+        "family": "Inconsolata",
+        "provider": "google",
+        "import": "Inconsolata",
+        "variable": "--font-mono",
+        "dependency": "@fontsource-variable/inconsolata",
+        "selector": "code, kbd, samp, pre"
+      },
+      "docs": "Inconsolata, the pmndrs monospace, as `--font-mono`: `font-mono` resolves to it, and `code`, `kbd`, `samp` and `pre` use it without a class.\n\n- **You usually get this through `theme`**, which depends on it. Install it alone only if you want the font without the palette.\n- **On Next.js** it loads through `next/font/google`. Elsewhere it installs `@fontsource-variable/inconsolata` and imports it.\n- **Scoped to `code, kbd, samp, pre`.** The rest of your UI keeps its sans font.\n- **Named after its role, not the typeface.** If pmndrs changes its mono font, this item changes with it and your install command stays the same."
+    },
+    {
+      "name": "theme",
       "type": "registry:lib",
-      "title": "MD3 colours",
-      "description": "The pmndrs Material Design 3 colour layer. Additive to the stock shadcn tokens — blocks use `bg-primary` by default and reach for `bg-surface-dim` only where shadcn has no equivalent. Nothing to mount.",
+      "title": "pmndrs theme",
+      "description": "The pmndrs theme: the Material Design 3 palette, the colour machinery under it (`md3-base`) and the mono font (`font-mono`). Additive to the stock shadcn tokens — blocks use `bg-primary` by default and reach for `bg-surface-dim` only where shadcn has no equivalent. Nothing to mount.",
       "author": "pmndrs",
       "registryDependencies": [
-        "pmndrs/design-system/md3-base#v0.5.0"
+        "pmndrs/design-system/md3-base#v0.5.0",
+        "pmndrs/design-system/font-mono#v0.5.0"
       ],
       "css": {
         ":root": {
@@ -537,7 +554,7 @@
           "--md-sys-color-on-yellow-container": "#616a00"
         }
       },
-      "docs": "The colours are already working. The pmndrs palette is baked into the CSS this item writes, so there is nothing to mount, no provider, and no client JavaScript.\n\nA few things to know:\n\n- **This is the item to depend on.** It pulls `md3-base` — the Tailwind `@theme` mapping, the shadcn remap and the seed — and adds the palette those point at.\n- **The brand colours are named.** Lime, teal, cyan, purple, red, orange and yellow are custom colours: list them in the `@plugin` line `md3-base` added (`custom-colors: lime, teal, cyan, purple, red, orange, yellow;`) for `bg-lime`, `text-on-teal`, `bg-cyan-container`, `bg-purple-500` and the rest. Their shade utilities take over Tailwind's stock palettes of the same names.\n- If you want a palette other than the pmndrs one, install **`md3-base`** instead and compute your own. See its docs. Installing both means committing a whole baked palette you immediately override.\n- **The bake is the seed's own output.** It is `builder(pmndrsMtb)` as Material Theme Builder computes it, with nothing redrawn on top, so `<Mtb>` or `builder()` at runtime with the same seed renders exactly these colours."
+      "docs": "The colours are already working. The pmndrs palette is baked into the CSS this item writes, so there is nothing to mount, no provider, and no client JavaScript.\n\nA few things to know:\n\n- **This is the item to depend on.** It pulls `md3-base` — the Tailwind `@theme` mapping, the shadcn remap and the seed — and `font-mono`, the pmndrs monospace, and adds the palette the first points at.\n- **The brand colours are named.** Lime, teal, cyan, purple, red, orange and yellow are custom colours: list them in the `@plugin` line `md3-base` added (`custom-colors: lime, teal, cyan, purple, red, orange, yellow;`) for `bg-lime`, `text-on-teal`, `bg-cyan-container`, `bg-purple-500` and the rest. Their shade utilities take over Tailwind's stock palettes of the same names.\n- If you want a palette other than the pmndrs one, install **`md3-base`** instead and compute your own. See its docs. Installing both means committing a whole baked palette you immediately override.\n- **The bake is the seed's own output.** It is `builder(pmndrsMtb)` as Material Theme Builder computes it, with nothing redrawn on top, so `<Mtb>` or `builder()` at runtime with the same seed renders exactly these colours."
     },
     {
       "name": "logo",
@@ -573,7 +590,7 @@
       "name": "figma-tokens",
       "type": "registry:item",
       "title": "pmndrs Figma tokens",
-      "description": "The pmndrs palette as DTCG design tokens, light and dark — the files a Figma variable collection imports — into `design/tokens/pmndrs/`. The same colours `md3` bakes into CSS, alias for alias.",
+      "description": "The pmndrs palette as DTCG design tokens, light and dark — the files a Figma variable collection imports — into `design/tokens/pmndrs/`. The same colours `theme` bakes into CSS, alias for alias.",
       "author": "pmndrs",
       "files": [
         {
@@ -587,7 +604,7 @@
           "target": "~/design/tokens/pmndrs/Dark.tokens.json"
         }
       ],
-      "docs": "Two files, in `design/tokens/pmndrs/` at the root of your project: `Light.tokens.json` and `Dark.tokens.json`. They are the pmndrs palette as [DTCG](https://www.designtokens.org) design tokens — the light and dark modes of one Figma variable collection.\n\n- **They are the colours `md3` bakes into CSS**, hex for hex. Roles stay aliased onto the tonal shades (`{ref.palette.Neutral.98}`), the way the CSS uses `var()`.\n- **Import them into Figma** as variables, or feed them to a token pipeline (Style Dictionary, Tokens Studio).\n- **Nothing in your app reads them.** They are not imported by any code this registry installs, and they are outside `public/`, so nothing serves them either.\n\nTo update them, add the item again at the newer tag, with `--overwrite`."
+      "docs": "Two files, in `design/tokens/pmndrs/` at the root of your project: `Light.tokens.json` and `Dark.tokens.json`. They are the pmndrs palette as [DTCG](https://www.designtokens.org) design tokens — the light and dark modes of one Figma variable collection.\n\n- **They are the colours `theme` bakes into CSS**, hex for hex. Roles stay aliased onto the tonal shades (`{ref.palette.Neutral.98}`), the way the CSS uses `var()`.\n- **Import them into Figma** as variables, or feed them to a token pipeline (Style Dictionary, Tokens Studio).\n- **Nothing in your app reads them.** They are not imported by any code this registry installs, and they are outside `public/`, so nothing serves them either.\n\nTo update them, add the item again at the newer tag, with `--overwrite`."
     }
   ]
 }

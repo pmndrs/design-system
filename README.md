@@ -83,20 +83,49 @@ it inherits the consumer's. Icons come from
 
 ## Claude Design
 
-`npm run design-bundle` generates the Claude Design inputs into
-`.design-sync/.cache/design/`: `styles.css`, the theme compiled for a bounded
-set of Tailwind classes; `guidelines.md`, the rules a design agent reads first;
-and one preview card per foundation page of the docs and per logo variant.
+The design system is published to Claude as the
+[Poimandres Design System artifact](https://claude.ai/artifact/FF46zANDT1mt2kdF9D9QAf),
+so that the designs Claude generates stay on brand: its tokens, its brand book
+(`README.md`), its fonts, the Keypoints block and one card per foundation page
+of the docs.
 
-Nothing of it is committed: it is regenerated from the tag's sources, and names
-no version.
+Every file of it comes from this repo. `npm run artifact` writes them into
+`out/artifact/project/` (gitignored), laid out as the artifact's own
+`project/`:
+
+- `tokens.json`, from the theme palette, the shadcn remap and the docs tables,
+  with the usage lines and provenance of `scripts/artifact.notes.json`;
+- `README.md`, `assets/Logos/README.md` and `components/Keypoints/*`, copied
+  from `artifact/` with their `{{placeholders}}` filled: every version and sha
+  in them comes from git, `package.json`, `node_modules` or
+  `registry/external.json`;
+- `fonts/*`, the latin subsets of Inter and Inconsolata;
+- `components/<Card>/{preview.html,README.md}`, the foundation cards, styled
+  with the artifact's own token variables.
+
+The artifact generates the rest itself (`tokens.css`, `manifest.json`, `api/`),
+and its index, `design-system.json`, which names the logo uploads, is edited
+in place.
+
+A maintainer publishes after each release, from Claude Code, signed in to
+claude.ai, which is why CI cannot do it:
+
+1. Check out `main` at the release and run `npm run artifact`.
+2. Diff `out/artifact/project/` against the artifact's files, and publish only
+   the files that changed to https://claude.ai/artifact/FF46zANDT1mt2kdF9D9QAf
+   with Claude Code's Artifact tool.
+3. Last, update `design-system.json`'s `lastChange` (`by`, `at`, `via` naming
+   the commit, `note`).
+
+Nothing of it is committed but its sources: `scripts/artifact.mjs`,
+`scripts/artifact.notes.json` and `artifact/`.
 
 ## dev
 
 ```sh
 npm install
 npm run build   # regenerate registry.json, figma/*.tokens.json, the docs catalog
-npm run design-bundle  # generate the Claude Design sync inputs
+npm run artifact  # generate the Claude Design artifact files into out/artifact/
 npm run lgtm    # outputs are current and valid, preset code round-trips
 npm run refresh-catalog  # re-fetch the other repos' items listed in the docs catalog
 ```

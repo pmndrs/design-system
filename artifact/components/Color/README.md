@@ -8,7 +8,7 @@ Color is a pmndrs block from `pmndrs/docs`, the generator behind the documentati
 npx shadcn@latest add pmndrs/docs/color#{{docsRef}}
 ```
 
-The block is released at the `{{docsRef}}` tag of `pmndrs/docs`. The add pulls `class-variance-authority` and the colour layer with it, still pinned under its name before {{themeRename}}: `{{blocksColourLayer}}`. In a new app, the pmndrs theme today is `pmndrs/design-system/theme#{{release}}`.
+The block is released at the `{{docsRef}}` tag of `pmndrs/docs`. The add pulls `class-variance-authority` and the colour layer with it, the pmndrs theme at the release that tag was built against: `{{blocksColourLayer}}`. In a new app, the pmndrs theme today is `pmndrs/design-system/theme#{{release}}`.
 
 ## Use
 
@@ -36,7 +36,7 @@ import { Color, ColorGroup } from "@/components/color"
 
 - Use it to show the theme's colours, in docs and design references; it is not a colour picker, a badge or a status chip.
 - Pair a cell with its `on` strip, as the scheme poster does: a role is shown with the role that goes on it.
-- Every swatch is painted from `md-sys-color-*`. Without the colour layer (`theme`, or `md3` before {{themeRename}}) every swatch is transparent, and nothing reports it.
+- Every swatch is painted from `md-sys-color-*`. Without the colour layer (`theme`) every swatch is transparent, and nothing reports it.
 - The block is the one rounded (`radius-lg`); its cells are a hairline apart. A group has no margin: space it from the page.
 
 The preview is a static rendition: plain markup styled with this system's tokens, hand-written from `registry/color/color.tsx` at `pmndrs/docs@{{docsRef}}`, not the built component.

@@ -1,7 +1,6 @@
 {
   "pins": {
-    "themeRename": "v0.6.0",
-    "blocksColourLayer": "pmndrs/design-system/md3#v0.5.0",
+    "blocksColourLayer": "pmndrs/design-system/theme#v0.6.0",
     "exampleBlockAddress": "pmndrs/docs/mdx-prose#v1.0.0"
   },
   "meta": {

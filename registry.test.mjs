@@ -32,7 +32,7 @@ const names = new Set(declared.map(([name]) => name))
 
 /**
  * Registry-wide rather than per item, deliberately: `md3-base` is the layer
- * without colours, so its remap points at `--md-sys-color-*` that `md3` supplies
+ * without colours, so its remap points at `--md-sys-color-*` that `theme` supplies
  * — or that a runtime `<Mtb>` injects. Only together do the references close.
  *
  * A dangling one is silent everywhere else. CSS drops the declaration, the
@@ -61,23 +61,63 @@ test('no item declares cssVars', () => {
   assert.deepEqual(offenders, [])
 })
 
+/** An item's `registryDependencies` on this registry, as bare item names. */
+function ownDependencies(item) {
+  const self = new URL(registry.homepage).pathname.slice(1)
+  return (item.registryDependencies ?? [])
+    .filter((dependency) => dependency.startsWith(`${self}/`))
+    .map((dependency) => dependency.slice(self.length + 1).split('#')[0])
+}
+
 /**
  * A ref is not inherited, so a cross-item dependency carries its own address.
  * The version half is derived from package.json at build time; the item name is
  * hand-written, and resolves to a 404 at install time if it drifts.
  */
 test('registryDependencies on this registry name items it defines', () => {
-  const self = new URL(registry.homepage).pathname.slice(1)
   const own = new Set(registry.items.map((item) => item.name))
 
-  const dangling = registry.items.flatMap((item) =>
-    (item.registryDependencies ?? [])
-      .filter((dependency) => dependency.startsWith(`${self}/`))
-      .map((dependency) => dependency.slice(self.length + 1).split('#')[0])
-      .filter((name) => !own.has(name))
-  )
+  const dangling = registry.items.flatMap((item) => ownDependencies(item).filter((name) => !own.has(name)))
 
   assert.deepEqual(dangling, [])
+})
+
+/**
+ * `theme` is the one documented install target: the palette, the colour
+ * machinery under it and the mono font. Drop a dependency and the install
+ * still succeeds — it just ships without that piece, and nothing else notices.
+ */
+test('theme is the entry item, and pulls in md3-base and font-mono', () => {
+  const theme = registry.items.find((item) => item.name === 'theme')
+
+  assert.ok(theme, 'no `theme` item')
+  assert.deepEqual(ownDependencies(theme).sort(), ['font-mono', 'md3-base'])
+})
+
+/**
+ * Renamed to `theme`, pre-1.0, with no alias: a leftover `md3` would be a
+ * second entry point the docs no longer describe.
+ */
+test('no md3 item remains', () => {
+  assert.equal(
+    registry.items.some((item) => item.name === 'md3'),
+    false
+  )
+})
+
+/**
+ * For `--font-mono`, shadcn defaults a missing `selector` to `html`, and on
+ * Next the mono class then replaces `font-sans` on `<html>` — the whole site
+ * turns monospace. So the selector is required here, and never `html`.
+ */
+test('font-mono is a registry:font on --font-mono, scoped below html', () => {
+  const fontMono = registry.items.find((item) => item.name === 'font-mono')
+
+  assert.ok(fontMono, 'no `font-mono` item')
+  assert.equal(fontMono.type, 'registry:font')
+  assert.equal(fontMono.font?.variable, '--font-mono')
+  assert.ok(fontMono.font.selector, '`font-mono` has no selector, so shadcn would apply it to `html`')
+  assert.notEqual(fontMono.font.selector.trim(), 'html')
 })
 
 /**
@@ -87,7 +127,7 @@ test('registryDependencies on this registry name items it defines', () => {
  * role in the baked CSS.
  */
 test('every Figma role resolves to the hex the baked CSS gives it', () => {
-  const css = registry.items.find((item) => item.name === 'md3').css
+  const css = registry.items.find((item) => item.name === 'theme').css
   const resolveCss = (block, name) => {
     let value = block[name] ?? css[':root'][name]
     for (let ref; (ref = value?.match(/^var\((--[\w-]+)\)$/)); ) value = block[ref[1]] ?? css[':root'][ref[1]]
@@ -118,14 +158,14 @@ test('every Figma role resolves to the hex the baked CSS gives it', () => {
  * The bake is Material Theme Builder's output as it comes, with nothing redrawn
  * on top: a site that computes the palette at runtime from `pmndrsMtb` —
  * `builder()` or `<Mtb>` — renders every role in the same colour as the baked
- * `md3`. Compared resolved, through the `var()` aliases, so this pins what a
+ * `theme`. Compared resolved, through the `var()` aliases, so this pins what a
  * page shows rather than how the build happens to write it.
  *
  * `build.test.mjs` cannot catch a departure: it compares against what `build.mjs`
  * writes, so a step redrawing the palette there would be current and pass.
  */
 test('the baked palette is what builder(pmndrsMtb) renders', () => {
-  const css = registry.items.find((item) => item.name === 'md3').css
+  const css = registry.items.find((item) => item.name === 'theme').css
   const { source, ...options } = pmndrsMtb
   const runtime = Object.fromEntries(
     [...builder(source, options).toCss().matchAll(/([^{}]+)\{([^}]*)\}/g)].map(([, selector, body]) => [

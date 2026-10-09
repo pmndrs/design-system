@@ -65,7 +65,7 @@ export function humanizeType(type) {
  * Where an item's source lives: its folder, `registry/<name>/`, on GitHub at
  * the ref to install it from. Every pmndrs registry keeps its items that way —
  * by name rather than by `files[].path`, since an item can have no files at
- * all (`md3` is CSS and docs only), and the folder is where its docs sit.
+ * all (`theme` is CSS and docs only), and the folder is where its docs sit.
  *
  * @param {string} repo
  * @param {string} ref

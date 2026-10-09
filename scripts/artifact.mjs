@@ -30,7 +30,8 @@
  *   registry/external.json           the other repos' items in the catalog
  *   material-theme-builder           the shadcn remap
  *   docs/<page>/introduction.mdx     the type scale, the spacing, radius and
- *                                    shadow tables, the font families
+ *                                    shadow tables, the font families, read
+ *                                    through `foundations.mjs`
  *   tailwindcss                      the mono fallback stack, the one value
  *                                    no docs page lists
  *   @fontsource-variable/*           the font files and their weight ranges
@@ -54,6 +55,7 @@ import registry from '../registry.json' with { type: 'json' }
 import external from '../registry/external.json' with { type: 'json' }
 import notesSource from './artifact.notes.json' with { type: 'json' }
 import { fill as fillPlaceholders, installedVersion, placeholders as sharedPlaceholders, unmarkArtifactOnly } from './brand-book.mjs'
+import { readFoundations, readPage, section } from './foundations.mjs'
 
 const root = new URL('../', import.meta.url)
 /** Where `npm run artifact` writes. */
@@ -68,51 +70,9 @@ const resolvePath = (id) => fileURLToPath(import.meta.resolve(id))
 /* Sources                                                                    */
 /* ------------------------------------------------------------------------ */
 
-/** A foundation page of the docs, cut at its `##` headings. */
-function readPage(dir) {
-  const text = readFileSync(new URL(`../docs/${dir}/introduction.mdx`, import.meta.url), 'utf8')
-  const [, ...chunks] = text.split(/^## /m)
-
-  return {
-    dir,
-    text,
-    sections: chunks.map((chunk) => ({
-      heading: chunk.slice(0, chunk.indexOf('\n')).trim(),
-      body: chunk,
-    })),
-  }
-}
-
-const section = (page, heading) => {
-  const found = page.sections.find((entry) => entry.heading === heading)
-  if (!found) throw new Error(`docs/${page.dir} has no "## ${heading}" section`)
-  return found
-}
-
-/**
- * The rows of the first markdown table in `markdown`, header and separator
- * dropped, each cell unwrapped from its backticks. Throws rather than return
- * nothing: an empty table here is a token family with nothing in it.
- */
-function tableRows(markdown) {
-  const lines = markdown.split('\n')
-  const start = lines.findIndex((line) => line.startsWith('|'))
-  const end = lines.findIndex((line, index) => index > start && !line.startsWith('|'))
-  const rows = lines
-    .slice(start + 2, end === -1 ? undefined : end)
-    .map((line) =>
-      line
-        .slice(1, -1)
-        .split('|')
-        .map((cell) => cell.trim().replace(/^`([^`]*)`$/, '$1'))
-    )
-  if (start === -1 || !rows.length) throw new Error(`no table in:\n${markdown.slice(0, 200)}`)
-  return rows
-}
-
-const pages = Object.fromEntries(
-  ['typography', 'spacing', 'radius', 'shadows'].map((dir) => [dir, readPage(dir)])
-)
+/** The foundations values of the docs pages, and the Typography page for its recipe. */
+const foundations = readFoundations()
+const typographyPage = readPage('typography')
 
 /** The baked palette, as `theme` installs it: `:root` and the `.dark` overrides. */
 const palette = item('theme').css
@@ -159,13 +119,7 @@ const tailwindDefaults = Object.fromEntries(
 )
 
 /** The two families, from the Typography page: `Inter` on `--font-sans`, … */
-const fonts = tableRows(section(pages.typography, 'Font family').body).map(([role, family, utility, variable]) => ({
-  role,
-  family,
-  utility,
-  variable,
-  key: variable.slice('--font-'.length),
-}))
+const fonts = foundations.typography.fonts.map((font) => ({ ...font, key: font.variable.slice('--font-'.length) }))
 
 const git = (...args) => execFileSync('git', args, { cwd: fileURLToPath(root), encoding: 'utf8' }).trim()
 
@@ -269,19 +223,14 @@ const rem = (pixels) => `${parseFloat(pixels) / 16}rem`
 const weights = { normal: 400, medium: 500, semibold: 600, bold: 700 }
 
 /**
- * The type scale, from the Typography page: `0.75rem (12px)` and
- * `calc(1 / 0.75) (16px)` become `0.75rem` and `1rem`; a unitless line
- * height, `1`, stays a number.
+ * The type scale, from the Typography page: a `calc(1 / 0.75)` line height
+ * becomes its pixels in rem, `1rem`; a unitless one, `1`, stays a number.
  */
-const typeScale = tableRows(section(pages.typography, 'Type scale').body).map(([utility, size, leading]) => {
-  const unitless = leading.match(/^`(\d+(?:\.\d+)?)`/)?.[1]
-  return {
-    name: utility,
-    fontSize: size.match(/^`([^`]+)`/)[1],
-    lineHeight: unitless ? Number(unitless) : rem(leading.match(/\((\d+)px\)/)[1]),
-    pixels: { fontSize: parseFloat(size.match(/\((\d+)px\)/)[1]), lineHeight: parseFloat(leading.match(/\((\d+)px\)/)[1]) },
-  }
-})
+const typeScale = foundations.typography.scale.map(({ utility, fontSize, lineHeight, pixels }) => ({
+  name: utility,
+  fontSize,
+  lineHeight: /^\d+(?:\.\d+)?$/.test(lineHeight) ? Number(lineHeight) : rem(pixels.lineHeight),
+}))
 
 /**
  * Inline code, the one element of shadcn's recipe with a style of its own:
@@ -289,7 +238,7 @@ const typeScale = tableRows(section(pages.typography, 'Type scale').body).map(([
  * classes on the Typography page.
  */
 function inlineCode() {
-  const recipe = section(pages.typography, 'Elements').body.split('### Inline code')[1]
+  const recipe = section(typographyPage, 'Elements').body.split('### Inline code')[1]
   const classes = recipe.match(/```tsx\n<code className="([^"]*)"/)[1].split(/\s+/)
   const step = typeScale.find(({ name }) => classes.includes(name))
   const weight = classes.map((name) => weights[name.replace(/^font-/, '')]).find(Boolean)
@@ -341,15 +290,14 @@ function typeTokens() {
 }
 
 /** The base unit and the steps of the Spacing page; `0` and `px` are not multiples of it. */
-const spacingBase = tableRows(section(pages.spacing, 'Base unit').body)[0][1]
-const spacingScale = tableRows(section(pages.spacing, 'Scale').body).map(([step, value, pixels]) => ({ step, value, pixels }))
+const { base: spacingBase, scale: spacingScale } = foundations.spacing
 
 function spacingTokens() {
   return [
     { name: 'spacing', value: spacingBase, usage: usage('spacing', 'spacing') },
     ...spacingScale
       .filter(({ step }) => Number(step) > 0)
-      .map(({ step, value, pixels }) => ({ name: `spacing-${step}`, value, usage: usage('spacing', `spacing-${step}`, { pixels }) })),
+      .map(({ step, value, pixels }) => ({ name: `spacing-${step}`, value, usage: usage('spacing', `spacing-${step}`, { pixels: `${pixels}px` }) })),
   ]
 }
 
@@ -357,13 +305,7 @@ function spacingTokens() {
  * `--radius` and the scale of the Radius page: the preset style's steps, and
  * `--radius-xs`, Tailwind's, which the page lists as inherited.
  */
-const radius = pages.radius.text.match(/^\s*--radius:\s*([^;]+);/m)[1]
-const radii = tableRows(section(pages.radius, 'Scale').body).map(([token, utility, formula, value]) => ({
-  token,
-  utility,
-  formula,
-  value,
-}))
+const { base: radius, scale: radii } = foundations.radius
 
 /** `radius`, then every step of the Radius page, in its order. */
 function radiusTokens() {
@@ -377,18 +319,18 @@ function radiusTokens() {
 }
 
 /**
- * A shadow table of the Shadows page as tokens. `rgb(0 0 0 / 0.05)` is
+ * A shadow family of the Shadows page, `box`, `inset` or `drop`, as tokens. `rgb(0 0 0 / 0.05)` is
  * written `rgba(0, 0, 0, 0.05)`: the artifact takes colour functions with
  * plain numeric arguments.
  */
-const shadowRows = (heading) =>
-  tableRows(section(pages.shadows, heading).body).map(([utility, , value]) => ({
+const shadowRows = (family) =>
+  foundations.shadows[family].map(({ utility, value }) => ({
     name: utility,
     value: value.replace(/rgb\((\d+) (\d+) (\d+) \/ ([\d.]+)\)/g, 'rgba($1, $2, $3, $4)'),
   }))
 
-const shadowTokens = (family, headings) =>
-  headings.flatMap(shadowRows).map(({ name, value }) => ({ name, value, usage: usage(family, name) }))
+const shadowTokens = (family, shadowFamilies) =>
+  shadowFamilies.flatMap(shadowRows).map(({ name, value }) => ({ name, value, usage: usage(family, name) }))
 
 /** tokens.json, its keys in the artifact's own order. */
 function tokens() {
@@ -407,8 +349,8 @@ function tokens() {
     meta: notes.meta,
     spacing: { tokens: spacingTokens(), note: note('spacing') },
     radius: { tokens: radiusTokens(), note: note('radius') },
-    shadow: { tokens: shadowTokens('shadow', ['Box shadow', 'Inset shadow']), note: note('shadow') },
-    dropShadow: { note: note('dropShadow'), tokens: shadowTokens('dropShadow', ['Drop shadow']) },
+    shadow: { tokens: shadowTokens('shadow', ['box', 'inset']), note: note('shadow') },
+    dropShadow: { note: note('dropShadow'), tokens: shadowTokens('dropShadow', ['drop']) },
   }
 }
 

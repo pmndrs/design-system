@@ -54,6 +54,19 @@ test('the font families are Inter on --font-sans and Inconsolata on --font-mono'
   )
 })
 
+test('the font weights are Tailwind v4 defaults, from thin to black', () => {
+  const { weights } = foundations.typography
+  assert.deepEqual(
+    weights.map(({ utility }) => utility),
+    ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'].map((name) => `font-${name}`)
+  )
+  for (const { utility, variable, value } of weights) {
+    assert.equal(variable, `--font-weight-${utility.replace('font-', '')}`)
+    assert.equal(String(value), tailwind[variable], utility)
+  }
+  assert.equal(weights.find(({ utility }) => utility === 'font-normal').value, 400)
+})
+
 test('the spacing scale is Tailwind v4 defaults: multiples of its base, in pixels as in rem', () => {
   const { base, scale } = foundations.spacing
   assert.equal(base, tailwind['--spacing'])

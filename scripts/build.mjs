@@ -39,6 +39,7 @@ import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
 import { fill, stripArtifactOnly } from './brand-book.mjs'
 import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
+import { foundationStyles, foundationVariables } from './foundation-tokens.mjs'
 import { readFoundations } from './foundations.mjs'
 import { hostedUrl } from './hosted-registry.mjs'
 
@@ -50,7 +51,10 @@ import { hostedUrl } from './hosted-registry.mjs'
  */
 const version = `v${pkg.version}`
 
-/** The foundations pages' values, the source of the base radius. */
+/**
+ * The foundations pages' values: the base radius the `preset` and `v0` items
+ * carry, and the Figma foundation tokens below.
+ */
 const foundations = readFoundations()
 
 const registry = {
@@ -261,7 +265,7 @@ const items = [
     type: 'registry:item',
     title: 'pmndrs Figma tokens',
     description:
-      'The pmndrs palette as DTCG design tokens, light and dark — the files a Figma variable collection imports — into `design/tokens/pmndrs/`. The same colours `theme` bakes into CSS, alias for alias.',
+      'The pmndrs design tokens for Figma, into `design/tokens/pmndrs/`: the palette, light and dark, and the type, spacing, radius and motion values, as variables Figma imports natively; the text and shadow styles, as a file Tokens Studio reads. The same values `theme` bakes into CSS and the docs pages list.',
     author: 'pmndrs',
     /**
      * The `figma/*.tokens.json` this build writes below, so `build.test.mjs`
@@ -274,10 +278,10 @@ const items = [
      * them. The file names stay the ones the README and the docs link to; the
      * mode each one is carries in the file itself (`com.figma.modeName`).
      */
-    files: ['Light', 'Dark'].map((mode) => ({
-      path: `figma/${mode}.tokens.json`,
+    files: ['Light', 'Dark', 'Foundations', 'Styles'].map((name) => ({
+      path: `figma/${name}.tokens.json`,
       type: 'registry:file',
-      target: `~/design/tokens/pmndrs/${mode}.tokens.json`,
+      target: `~/design/tokens/pmndrs/${name}.tokens.json`,
     })),
   },
   {
@@ -605,6 +609,19 @@ outputs.push([new URL('../registry/v0/globals.css', import.meta.url), v0GlobalsC
  */
 for (const [name, tokens] of Object.entries(theme.toFigmaTokens())) {
   outputs.push([new URL(`../figma/${name}`, import.meta.url), JSON.stringify(tokens, null, 2) + '\n'])
+}
+
+/**
+ * The foundations beside the palette: type, spacing, radius, shadow and
+ * motion, read off the docs pages that decide them. `Foundations` is the
+ * variables file Figma imports natively, `Styles` the text and effect styles
+ * Tokens Studio creates; why two shapes is `foundation-tokens.mjs`'s story.
+ */
+for (const [name, tokens] of [
+  ['Foundations', foundationVariables(foundations)],
+  ['Styles', foundationStyles(foundations)],
+]) {
+  outputs.push([new URL(`../figma/${name}.tokens.json`, import.meta.url), JSON.stringify(tokens, null, 2) + '\n'])
 }
 
 if (import.meta.main) {

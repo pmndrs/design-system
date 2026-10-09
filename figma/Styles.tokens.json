@@ -1,0 +1,536 @@
+{
+  "foundations": {
+    "font": {
+      "family": {
+        "sans": {
+          "$type": "fontFamily",
+          "$value": "Inter"
+        },
+        "mono": {
+          "$type": "fontFamily",
+          "$value": "Inconsolata"
+        }
+      },
+      "size": {
+        "xs": {
+          "$type": "dimension",
+          "$value": "12px"
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": "14px"
+        },
+        "base": {
+          "$type": "dimension",
+          "$value": "16px"
+        },
+        "lg": {
+          "$type": "dimension",
+          "$value": "18px"
+        },
+        "xl": {
+          "$type": "dimension",
+          "$value": "20px"
+        },
+        "2xl": {
+          "$type": "dimension",
+          "$value": "24px"
+        },
+        "3xl": {
+          "$type": "dimension",
+          "$value": "30px"
+        },
+        "4xl": {
+          "$type": "dimension",
+          "$value": "36px"
+        },
+        "5xl": {
+          "$type": "dimension",
+          "$value": "48px"
+        },
+        "6xl": {
+          "$type": "dimension",
+          "$value": "60px"
+        },
+        "7xl": {
+          "$type": "dimension",
+          "$value": "72px"
+        },
+        "8xl": {
+          "$type": "dimension",
+          "$value": "96px"
+        },
+        "9xl": {
+          "$type": "dimension",
+          "$value": "128px"
+        }
+      },
+      "line-height": {
+        "xs": {
+          "$type": "number",
+          "$value": 16
+        },
+        "sm": {
+          "$type": "number",
+          "$value": 20
+        },
+        "base": {
+          "$type": "number",
+          "$value": 24
+        },
+        "lg": {
+          "$type": "number",
+          "$value": 28
+        },
+        "xl": {
+          "$type": "number",
+          "$value": 28
+        },
+        "2xl": {
+          "$type": "number",
+          "$value": 32
+        },
+        "3xl": {
+          "$type": "number",
+          "$value": 36
+        },
+        "4xl": {
+          "$type": "number",
+          "$value": 40
+        },
+        "5xl": {
+          "$type": "number",
+          "$value": 48
+        },
+        "6xl": {
+          "$type": "number",
+          "$value": 60
+        },
+        "7xl": {
+          "$type": "number",
+          "$value": 72
+        },
+        "8xl": {
+          "$type": "number",
+          "$value": 96
+        },
+        "9xl": {
+          "$type": "number",
+          "$value": 128
+        }
+      },
+      "weight": {
+        "thin": {
+          "$type": "fontWeight",
+          "$value": 100
+        },
+        "extralight": {
+          "$type": "fontWeight",
+          "$value": 200
+        },
+        "light": {
+          "$type": "fontWeight",
+          "$value": 300
+        },
+        "normal": {
+          "$type": "fontWeight",
+          "$value": 400
+        },
+        "medium": {
+          "$type": "fontWeight",
+          "$value": 500
+        },
+        "semibold": {
+          "$type": "fontWeight",
+          "$value": 600
+        },
+        "bold": {
+          "$type": "fontWeight",
+          "$value": 700
+        },
+        "extrabold": {
+          "$type": "fontWeight",
+          "$value": 800
+        },
+        "black": {
+          "$type": "fontWeight",
+          "$value": 900
+        }
+      }
+    }
+  },
+  "styles": {
+    "text": {
+      "xs": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.sans}",
+          "fontSize": "{font.size.xs}",
+          "fontWeight": "{font.weight.normal}",
+          "lineHeight": "{font.line-height.xs}"
+        }
+      },
+      "sm": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.sans}",
+          "fontSize": "{font.size.sm}",
+          "fontWeight": "{font.weight.normal}",
+          "lineHeight": "{font.line-height.sm}"
+        }
+      },
+      "base": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.sans}",
+          "fontSize": "{font.size.base}",
+          "fontWeight": "{font.weight.normal}",
+          "lineHeight": "{font.line-height.base}"
+        }
+      },
+      "lg": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.sans}",
+          "fontSize": "{font.size.lg}",
+          "fontWeight": "{font.weight.normal}",
+          "lineHeight": "{font.line-height.lg}"
+        }
+      },
+      "xl": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.sans}",
+          "fontSize": "{font.size.xl}",
+          "fontWeight": "{font.weight.normal}",
+          "lineHeight": "{font.line-height.xl}"
+        }
+      },
+      "2xl": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.sans}",
+          "fontSize": "{font.size.2xl}",
+          "fontWeight": "{font.weight.normal}",
+          "lineHeight": "{font.line-height.2xl}"
+        }
+      },
+      "3xl": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.sans}",
+          "fontSize": "{font.size.3xl}",
+          "fontWeight": "{font.weight.normal}",
+          "lineHeight": "{font.line-height.3xl}"
+        }
+      },
+      "4xl": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.sans}",
+          "fontSize": "{font.size.4xl}",
+          "fontWeight": "{font.weight.normal}",
+          "lineHeight": "{font.line-height.4xl}"
+        }
+      },
+      "5xl": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.sans}",
+          "fontSize": "{font.size.5xl}",
+          "fontWeight": "{font.weight.normal}",
+          "lineHeight": "{font.line-height.5xl}"
+        }
+      },
+      "6xl": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.sans}",
+          "fontSize": "{font.size.6xl}",
+          "fontWeight": "{font.weight.normal}",
+          "lineHeight": "{font.line-height.6xl}"
+        }
+      },
+      "7xl": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.sans}",
+          "fontSize": "{font.size.7xl}",
+          "fontWeight": "{font.weight.normal}",
+          "lineHeight": "{font.line-height.7xl}"
+        }
+      },
+      "8xl": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.sans}",
+          "fontSize": "{font.size.8xl}",
+          "fontWeight": "{font.weight.normal}",
+          "lineHeight": "{font.line-height.8xl}"
+        }
+      },
+      "9xl": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.sans}",
+          "fontSize": "{font.size.9xl}",
+          "fontWeight": "{font.weight.normal}",
+          "lineHeight": "{font.line-height.9xl}"
+        }
+      }
+    },
+    "shadow": {
+      "2xs": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "1px",
+            "blur": "0px",
+            "spread": "0px",
+            "color": "rgba(0, 0, 0, 0.05)",
+            "type": "dropShadow"
+          }
+        ]
+      },
+      "xs": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "1px",
+            "blur": "2px",
+            "spread": "0px",
+            "color": "rgba(0, 0, 0, 0.05)",
+            "type": "dropShadow"
+          }
+        ]
+      },
+      "sm": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "1px",
+            "blur": "3px",
+            "spread": "0px",
+            "color": "rgba(0, 0, 0, 0.1)",
+            "type": "dropShadow"
+          },
+          {
+            "x": "0px",
+            "y": "1px",
+            "blur": "2px",
+            "spread": "-1px",
+            "color": "rgba(0, 0, 0, 0.1)",
+            "type": "dropShadow"
+          }
+        ]
+      },
+      "md": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "4px",
+            "blur": "6px",
+            "spread": "-1px",
+            "color": "rgba(0, 0, 0, 0.1)",
+            "type": "dropShadow"
+          },
+          {
+            "x": "0px",
+            "y": "2px",
+            "blur": "4px",
+            "spread": "-2px",
+            "color": "rgba(0, 0, 0, 0.1)",
+            "type": "dropShadow"
+          }
+        ]
+      },
+      "lg": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "10px",
+            "blur": "15px",
+            "spread": "-3px",
+            "color": "rgba(0, 0, 0, 0.1)",
+            "type": "dropShadow"
+          },
+          {
+            "x": "0px",
+            "y": "4px",
+            "blur": "6px",
+            "spread": "-4px",
+            "color": "rgba(0, 0, 0, 0.1)",
+            "type": "dropShadow"
+          }
+        ]
+      },
+      "xl": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "20px",
+            "blur": "25px",
+            "spread": "-5px",
+            "color": "rgba(0, 0, 0, 0.1)",
+            "type": "dropShadow"
+          },
+          {
+            "x": "0px",
+            "y": "8px",
+            "blur": "10px",
+            "spread": "-6px",
+            "color": "rgba(0, 0, 0, 0.1)",
+            "type": "dropShadow"
+          }
+        ]
+      },
+      "2xl": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "25px",
+            "blur": "50px",
+            "spread": "-12px",
+            "color": "rgba(0, 0, 0, 0.25)",
+            "type": "dropShadow"
+          }
+        ]
+      }
+    },
+    "inset-shadow": {
+      "2xs": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "1px",
+            "blur": "0px",
+            "spread": "0px",
+            "color": "rgba(0, 0, 0, 0.05)",
+            "type": "innerShadow"
+          }
+        ]
+      },
+      "xs": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "1px",
+            "blur": "1px",
+            "spread": "0px",
+            "color": "rgba(0, 0, 0, 0.05)",
+            "type": "innerShadow"
+          }
+        ]
+      },
+      "sm": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "2px",
+            "blur": "4px",
+            "spread": "0px",
+            "color": "rgba(0, 0, 0, 0.05)",
+            "type": "innerShadow"
+          }
+        ]
+      }
+    },
+    "drop-shadow": {
+      "xs": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "1px",
+            "blur": "1px",
+            "spread": "0px",
+            "color": "rgba(0, 0, 0, 0.05)",
+            "type": "dropShadow"
+          }
+        ]
+      },
+      "sm": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "1px",
+            "blur": "2px",
+            "spread": "0px",
+            "color": "rgba(0, 0, 0, 0.15)",
+            "type": "dropShadow"
+          }
+        ]
+      },
+      "md": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "3px",
+            "blur": "3px",
+            "spread": "0px",
+            "color": "rgba(0, 0, 0, 0.12)",
+            "type": "dropShadow"
+          }
+        ]
+      },
+      "lg": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "4px",
+            "blur": "4px",
+            "spread": "0px",
+            "color": "rgba(0, 0, 0, 0.15)",
+            "type": "dropShadow"
+          }
+        ]
+      },
+      "xl": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "9px",
+            "blur": "7px",
+            "spread": "0px",
+            "color": "rgba(0, 0, 0, 0.1)",
+            "type": "dropShadow"
+          }
+        ]
+      },
+      "2xl": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "25px",
+            "blur": "25px",
+            "spread": "0px",
+            "color": "rgba(0, 0, 0, 0.15)",
+            "type": "dropShadow"
+          }
+        ]
+      }
+    }
+  },
+  "$themes": [],
+  "$metadata": {
+    "tokenSetOrder": [
+      "foundations",
+      "styles"
+    ]
+  }
+}

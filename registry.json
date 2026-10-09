@@ -891,7 +891,7 @@
       "name": "v0",
       "type": "registry:item",
       "title": "pmndrs theme for v0",
-      "description": "The pmndrs theme as one `app/globals.css`, for Open in v0: the shadcn colours resolved to the pmndrs palette, light and dark, Inter and Inconsolata, and the default radius. Overwrites the stylesheet of a v0 project; in your own project, install `theme` or `preset` instead.",
+      "description": "The pmndrs theme as a v0 project, for Open in v0: an `app/globals.css` with the shadcn colours and the Material Design 3 roles resolved to the pmndrs palette, light and dark, Inter and Inconsolata, and the default radius; a layout and a starter page; the logo in `public/pmndrs/`; and the brand book as `guidelines/Guidelines.md`. In your own project, install `theme` or `preset` instead.",
       "author": "pmndrs",
       "dependencies": [
         "shadcn@latest",
@@ -902,11 +902,46 @@
       "files": [
         {
           "path": "registry/v0/globals.css",
-          "type": "registry:file",
-          "target": "app/globals.css"
+          "target": "app/globals.css",
+          "type": "registry:file"
+        },
+        {
+          "path": "registry/v0/app/layout.tsx",
+          "target": "app/layout.tsx",
+          "type": "registry:file"
+        },
+        {
+          "path": "registry/v0/app/page.tsx",
+          "target": "app/page.tsx",
+          "type": "registry:file"
+        },
+        {
+          "path": "docs/assets/logo_complete.svg",
+          "target": "public/pmndrs/logo_complete.svg",
+          "type": "registry:file"
+        },
+        {
+          "path": "docs/assets/logo_idle.svg",
+          "target": "public/pmndrs/logo_idle.svg",
+          "type": "registry:file"
+        },
+        {
+          "path": "docs/assets/logo_animated.svg",
+          "target": "public/pmndrs/logo_animated.svg",
+          "type": "registry:file"
+        },
+        {
+          "path": "docs/assets/logo_loading.svg",
+          "target": "public/pmndrs/logo_loading.svg",
+          "type": "registry:file"
+        },
+        {
+          "path": "registry/guidelines/Guidelines.md",
+          "target": "guidelines/Guidelines.md",
+          "type": "registry:file"
         }
       ],
-      "docs": "The item an \"Open in v0\" link opens: a v0 chat whose project already has the pmndrs colours, fonts and radius.\n\n- **One file, `app/globals.css`.** v0 ignores `css` and `cssVars`, so the theme travels as the stylesheet of the v0 project, overwriting the default one.\n- **shadcn's names only.** `--background`, `--primary`, `--border` and the rest are the pmndrs palette resolved to literal colours, light and dark, which is what v0 generates with. The MD3 roles (`bg-surface-dim` and the others) are not in it.\n- **Not for your own project.** There, install `theme` or `preset`: the palette stays computed from the seed, and the MD3 roles come with it."
+      "docs": "The item an \"Open in v0\" link opens: a v0 project that already has the pmndrs colours, fonts and radius, and shows them.\n\n- **Files only.** v0 ignores `css`, `cssVars` and namespaces, so everything travels as files of v0's Next.js project: `app/globals.css`, overwriting the default one, `app/layout.tsx`, `app/page.tsx`, the logo in `public/pmndrs/` and the brand book as `guidelines/Guidelines.md`.\n- **A preview from the start.** The starter page renders the logo, the brand colours, the type and a light/dark toggle (the `dark` class on `<html>`), through tokens only, so the preview is never blank and v0 has a first example of the tokens to follow.\n- **A pmndrs project's names.** shadcn's variables (`--background`, `--primary`, `--border`…) and every Material Design 3 role (`--md-sys-color-primary-container`, the `surface-container` steps, the brand and alert colours) are the pmndrs palette resolved to literal colours, light and dark. They map onto the utilities a pmndrs project gets from `theme`: `bg-primary`, `bg-primary-container`, `bg-surface-container-high`, `bg-purple-500`. The brand lime is `bg-lime-container`, with `text-on-lime-container` on it; `bg-lime` is a dark olive in light.\n- **The same logo and brand book.** They are the `logo` and `guidelines` items' own files, at the same paths.\n- **Do not edit the stylesheet.** It opens by saying so, and that it is not the Poimandres VS Code theme: v0 took it for that once.\n- **Not for your own project.** There, install `theme` or `preset`: the palette stays computed from the seed, and the same utilities follow, the brand and alert colours' once the `@plugin` line names them, as `md3-base`'s docs say."
     }
   ]
 }

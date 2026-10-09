@@ -55,7 +55,7 @@ Declare the [namespace](https://ui.shadcn.com/docs/registry/namespace) in `compo
 ```
 
 then `npx shadcn@latest add @pmndrs/theme`. It serves the latest state of `main`; the git
-address at a tag (`pmndrs/design-system/theme#v0.8.0`) stays the pinned one. A branch's
+address at a tag (`pmndrs/design-system/theme#v0.9.0`) stays the pinned one. A branch's
 preview deployment serves its own `r/`, but `preset`'s dependency on `theme` is that tagged
 git address, so it resolves to the released tag, not to the branch. The
 [shadcn MCP server](https://ui.shadcn.com/docs/mcp) (`npx shadcn@latest mcp init --client claude`)
@@ -82,7 +82,7 @@ For a palette other than the pmndrs one: install `md3-base` — same plumbing, n
 baked palette — and follow its docs.
 
 ```sh
-npx shadcn@latest add pmndrs/design-system/md3-base#v0.8.0
+npx shadcn@latest add pmndrs/design-system/md3-base#v0.9.0
 ```
 
 Nothing renders until something emits `--md-sys-color-*`: regenerate the values
@@ -104,7 +104,7 @@ say.
 
 ## Authoring a block
 
-Always pin a ref — `pmndrs/design-system/theme#v0.8.0`. Refs are **not
+Always pin a ref — `pmndrs/design-system/theme#v0.9.0`. Refs are **not
 inherited**: every entry in `registryDependencies` carries its own.
 
 - a shadcn primitive → `registryDependencies: ["button"]`

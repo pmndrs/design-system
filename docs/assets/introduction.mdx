@@ -1,12 +1,17 @@
 ---
 title: Assets
-description: The pmndrs logo — complete, idle, animated and loading — installed from the registry.
+description: pmndrs assets, installed into your app from the registry — starting with the logo.
 nav: 2
 ---
 
 <Intro>
-  The pmndrs logo, in four states. Install the four SVGs into your app with one command.
+  The pmndrs assets, each one installed into your app from the registry with one command. The
+  logo is the first.
 </Intro>
+
+## Logo
+
+The pmndrs logo, in four states, as four SVG files. Install them with one command:
 
 ```sh
 npx shadcn@latest add pmndrs/design-system/pmndrs-logo#v0.5.0
@@ -17,7 +22,7 @@ That writes them to `public/pmndrs/` at the root of your project, under the name
 Every file is 600×600 and paints its own black square background: there is no transparent
 variant yet.
 
-## Variants
+### Variants
 
 | Variant  | Preview                                                                                           | File                              | Behavior                                                                                        |
 | -------- | ------------------------------------------------------------------------------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------- |
@@ -26,7 +31,7 @@ variant yet.
 | Animated | <img src="logo_animated.svg" width="96" alt="The pmndrs logo, springing from idle to complete" /> | `public/pmndrs/logo_animated.svg` | Idle → complete, once, in 0.73 s. Under reduced motion, the complete mark shows without moving. |
 | Loading  | <img src="logo_loading.svg" width="96" alt="The pmndrs logo, looping as a loader" />              | `public/pmndrs/logo_loading.svg`  | Loops idle → each corner → idle, every 5.3 s. Under reduced motion, the mark only fades.        |
 
-## Usage
+### Usage
 
 Once installed (or copied into your app's `public/pmndrs/` by hand), each file is an image URL.
 Both animations are CSS inside the SVG, so a plain `<img>` plays them, and so does `next/image`
@@ -38,5 +43,5 @@ with `unoptimized`:
 
 ## License
 
-These files are MIT-licensed, like the rest of the repository: see
+These assets are MIT-licensed, like the rest of the repository: see
 [LICENSE](https://github.com/pmndrs/design-system/blob/main/LICENSE). No attribution required.

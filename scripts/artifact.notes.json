@@ -1,7 +1,7 @@
 {
   "pins": {
     "themeRename": "v0.6.0",
-    "keypointsColourLayer": "pmndrs/design-system/md3#v0.5.0",
+    "blocksColourLayer": "pmndrs/design-system/md3#v0.5.0",
     "exampleBlockAddress": "pmndrs/docs/mdx-prose#v1.0.0"
   },
   "meta": {
@@ -47,7 +47,8 @@
       ]
     },
     "components": {
-      "Keypoints": "pmndrs/docs@{{docsRef}}:registry/keypoints/keypoints.tsx"
+      "Keypoints": "pmndrs/docs@{{docsRef}}:registry/keypoints/keypoints.tsx",
+      "Color": "pmndrs/docs@{{docsRef}}:registry/color/color.tsx"
     },
     "synced": "{{synced}}",
     "defaults": "tailwind v4: type scale, spacing, shadows (inherited, per the docs pages); radius: preset b5cR4Y50S base-nova",

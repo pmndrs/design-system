@@ -1,6 +1,6 @@
 /**
  * What `npm run artifact` writes for the Poimandres Design System artifact:
- * `tokens.json`, the brand book, the fonts and the cards. These run the
+ * `tokens.json`, the brand book, the fonts and the block cards. These run the
  * generator into a temporary folder and assert the shape of what lands
  * there, against what the artifact reads, not how `scripts/artifact.mjs`
  * builds it.
@@ -11,7 +11,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { after, test } from 'node:test'
 import { pathToFileURL } from 'node:url'
-import { placeholders, writeArtifact } from './scripts/artifact.mjs'
+import { catalogBlocks, componentName, componentProblems, placeholders, writeArtifact } from './scripts/artifact.mjs'
 
 const out = pathToFileURL(`${mkdtempSync(join(tmpdir(), 'artifact-'))}/`)
 writeArtifact(out)
@@ -140,7 +140,7 @@ const contrast = (a, b) => {
 }
 
 /**
- * The text of a card stays readable on its band and on its page, light or
+ * The text of a card stays readable on its surfaces and on its page, light or
  * dark: every rule that sets a text colour, on the surface the same rule
  * names, or on the page's when it names none, reaches 4.5:1 in both themes.
  */
@@ -166,27 +166,24 @@ test('every text colour in a card reaches 4.5:1 on its surface, in both themes',
 })
 
 /**
- * Each foundation page of the docs has its card group — the artifact's
- * labels, hence Type for Typography and Brand for Assets. A new page under
- * `docs/` fails here until it is given a group, and that group a card.
- *
- * `getting-started` is the introduction, not a foundation.
+ * The artifact's Components section is the registry catalog's blocks, one
+ * card each, and nothing else: it draws the foundations itself, from
+ * tokens.json.
  */
-test('every docs foundation page has a card in its group', () => {
-  const groups = {
-    colors: 'Colors',
-    typography: 'Type',
-    spacing: 'Spacing',
-    radius: 'Radius',
-    shadows: 'Shadows',
-    assets: 'Brand',
-  }
-  const pages = readdirSync(new URL('./docs/', import.meta.url), { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && entry.name !== 'getting-started')
-    .map((entry) => entry.name)
+test('the components are the blocks of the registry catalog, one card each', () => {
+  assert.ok(catalogBlocks.length, 'the catalog lists no block')
+  const folders = [...new Set(paths.filter((path) => path.startsWith('components/')).map((path) => path.split('/')[1]))]
+  assert.deepEqual(folders.sort(), catalogBlocks.map(componentName).sort())
+})
 
-  const missing = pages.filter((page) => !cards.some(({ marker }) => marker.includes(`group="${groups[page]}"`)))
-  assert.deepEqual(missing, [])
+test('a catalog block without a hand-written card, or a card without a block, is reported', () => {
+  const paths = ['README.md', 'components/Keypoints/README.md', 'components/Keypoints/preview.html', 'components/Stale/README.md']
+  assert.deepEqual(componentProblems(['keypoints', 'color-group'], paths), [
+    'artifact/components/ColorGroup/README.md is missing: every block of the catalog has a hand-written card',
+    'artifact/components/ColorGroup/preview.html is missing: every block of the catalog has a hand-written card',
+    'artifact/components/Stale is no block of the catalog',
+  ])
+  assert.deepEqual(componentProblems(['keypoints'], paths.slice(0, 3)), [])
 })
 
 const version = /\bv?\d+\.\d+\.\d+\b/g

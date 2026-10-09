@@ -86,8 +86,8 @@ it inherits the consumer's. Icons come from
 The design system is published to Claude as the
 [Poimandres Design System artifact](https://claude.ai/artifact/FF46zANDT1mt2kdF9D9QAf),
 so that the designs Claude generates stay on brand: its tokens, its brand book
-(`README.md`), its fonts, the Keypoints block and one card per foundation page
-of the docs.
+(`README.md`), its fonts, and a card per pmndrs block of the registry catalog.
+The artifact draws the foundations, colours to shadows, from the tokens itself.
 
 Every file of it comes from this repo. `npm run artifact` writes them into
 `out/artifact/project/` (gitignored), laid out as the artifact's own
@@ -95,13 +95,17 @@ Every file of it comes from this repo. `npm run artifact` writes them into
 
 - `tokens.json`, from the theme palette, the shadcn remap and the docs tables,
   with the usage lines and provenance of `scripts/artifact.notes.json`;
-- `README.md`, `assets/Logos/README.md` and `components/Keypoints/*`, copied
+- `README.md`, `assets/Logos/README.md` and `components/<Block>/*`, copied
   from `artifact/` with their `{{placeholders}}` filled: every version and sha
   in them comes from git, `package.json`, `node_modules` or
   `registry/external.json`;
-- `fonts/*`, the latin subsets of Inter and Inconsolata;
-- `components/<Card>/{preview.html,README.md}`, the foundation cards, styled
-  with the artifact's own token variables.
+- `fonts/*`, the latin subsets of Inter and Inconsolata.
+
+`components/` mirrors the catalog's blocks (`registry:block` items of
+`registry.json` and `registry/external.json`): each has a hand-written
+`preview.html`, a static rendition styled with the artifact's token variables,
+and a `README.md`. A block listed without its card fails the run, and so does
+a card whose block left the catalog.
 
 The artifact generates the rest itself (`tokens.css`, `manifest.json`, `api/`),
 and its index, `design-system.json`, which names the logo uploads, is edited

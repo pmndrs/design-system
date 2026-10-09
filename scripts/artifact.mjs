@@ -8,9 +8,14 @@
  *   README.md                   the brand book a design agent reads first
  *   fonts/*.woff2               Inter and Inconsolata
  *   assets/Logos/README.md      how to use the logo assets
- *   components/Keypoints/*      the first pmndrs block
- *   components/<Card>/*         one card per foundation of the docs, a
+ *   components/<Block>/*        one card per block of the registry catalog
+ *                               (`docs/getting-started/introduction.mdx`), a
  *                               `preview.html` and a `README.md` each
+ *
+ * The artifact draws the foundations itself, colours to shadows, from
+ * tokens.json: its Components section is the catalog's blocks and nothing
+ * else. A block's card is hand-written, a static rendition of the component,
+ * and the build fails on a catalog block without one.
  *
  * The maintainer then publishes the files that changed, from Claude Code's
  * Artifact tool (see the README's "Claude Design" section). What the artifact
@@ -20,13 +25,12 @@
  *
  * Where each file comes from:
  *
- *   registry.json                    the baked palette and the logo files
- *   registry/md3-base/md3.ts         the names of the brand colours
+ *   registry.json                    the baked palette, and this repo's
+ *                                    items in the catalog
+ *   registry/external.json           the other repos' items in the catalog
  *   material-theme-builder           the shadcn remap
  *   docs/<page>/introduction.mdx     the type scale, the spacing, radius and
- *                                    shadow tables, the font families, the
- *                                    logo variants, and which of them are
- *                                    inherited
+ *                                    shadow tables, the font families
  *   tailwindcss                      the mono fallback stack and `radius-xs`,
  *                                    the two values no docs page lists
  *   @fontsource-variable/*           the font files and their weight ranges
@@ -34,8 +38,8 @@
  *                                    line, the family notes, the provenance
  *                                    block and the few external pins
  *   artifact/                        the hand-written files (the brand book,
- *                                    Keypoints, the logo notes), copied with
- *                                    their `{{placeholders}}` filled
+ *                                    the block cards, the logo notes), copied
+ *                                    with their `{{placeholders}}` filled
  *
  * Every version and sha in the output is one of those placeholders, filled
  * from git, `package.json`, `node_modules` and `registry/external.json`, so a
@@ -47,7 +51,6 @@ import { fileURLToPath } from 'node:url'
 import pkg from '../package.json' with { type: 'json' }
 import registry from '../registry.json' with { type: 'json' }
 import external from '../registry/external.json' with { type: 'json' }
-import { pmndrsMtb } from '../registry/md3-base/md3.ts'
 import notes from './artifact.notes.json' with { type: 'json' }
 
 const root = new URL('../', import.meta.url)
@@ -58,34 +61,22 @@ const sourceDir = new URL('../artifact/', import.meta.url)
 
 const item = (name) => registry.items.find((entry) => entry.name === name)
 const resolvePath = (id) => fileURLToPath(import.meta.resolve(id))
-const escape = (text) => String(text).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;')
 
 /* ------------------------------------------------------------------------ */
 /* Sources                                                                    */
 /* ------------------------------------------------------------------------ */
 
-/**
- * A foundation page of the docs, cut at its `##` headings.
- *
- * A section, or the whole page when the note sits above the first heading, is
- * inherited when it carries the docs' note for it — `> Inherited from X, not
- * yet a pmndrs decision` (#25). The note is the one place that split is
- * written, so the cards read it rather than restate it.
- */
+/** A foundation page of the docs, cut at its `##` headings. */
 function readPage(dir) {
   const text = readFileSync(new URL(`../docs/${dir}/introduction.mdx`, import.meta.url), 'utf8')
-  const [preamble, ...chunks] = text.split(/^## /m)
-  const inheritedFrom = (chunk) => chunk.match(/^> Inherited from (.+?), not yet a pmndrs decision/m)?.[1]
+  const [, ...chunks] = text.split(/^## /m)
 
   return {
     dir,
-    title: text.match(/^title: (.+)$/m)[1],
     text,
-    inherited: inheritedFrom(preamble),
     sections: chunks.map((chunk) => ({
       heading: chunk.slice(0, chunk.indexOf('\n')).trim(),
       body: chunk,
-      inherited: inheritedFrom(chunk),
     })),
   }
 }
@@ -99,7 +90,7 @@ const section = (page, heading) => {
 /**
  * The rows of the first markdown table in `markdown`, header and separator
  * dropped, each cell unwrapped from its backticks. Throws rather than return
- * nothing: an empty table here is a card with nothing on it.
+ * nothing: an empty table here is a token family with nothing in it.
  */
 function tableRows(markdown) {
   const lines = markdown.split('\n')
@@ -118,7 +109,7 @@ function tableRows(markdown) {
 }
 
 const pages = Object.fromEntries(
-  ['colors', 'typography', 'spacing', 'radius', 'shadows', 'assets'].map((dir) => [dir, readPage(dir)])
+  ['typography', 'spacing', 'radius', 'shadows'].map((dir) => [dir, readPage(dir)])
 )
 
 /** The baked palette, as `theme` installs it: `:root` and the `.dark` overrides. */
@@ -154,9 +145,6 @@ for (const name of Object.keys(light)) {
   ramps.get(ramp).push(tone)
 }
 
-const brandColors = pmndrsMtb.customColors.map(({ name }) => name)
-const brandRoles = brandColors.flatMap((name) => [name, `on-${name}`, `${name}-container`, `on-${name}-container`])
-
 /**
  * Tailwind's own defaults, from its first `@theme default` block, for the two
  * values no docs page lists: the mono fallback stack, and `--radius-xs`, the
@@ -177,13 +165,6 @@ const fonts = tableRows(section(pages.typography, 'Font family').body).map(([rol
   variable,
   key: variable.slice('--font-'.length),
 }))
-
-/** The logo variants, from the Assets page, with the files the `logo` item ships. */
-const logos = tableRows(section(pages.assets, 'Logo').body).map(([variant, preview, file, behavior]) => {
-  const shipped = item('logo').files.find((entry) => entry.target === `~/${file}`)
-  if (!shipped) throw new Error(`the logo item ships no ${file}`)
-  return { variant, alt: preview.match(/alt="([^"]+)"/)[1], file, behavior, source: shipped.path }
-})
 
 /** `x.y.z` of an installed package. */
 const installedVersion = (name) =>
@@ -441,434 +422,7 @@ function tokens() {
 }
 
 /* ------------------------------------------------------------------------ */
-/* Cards                                                                      */
-/* ------------------------------------------------------------------------ */
-
-/*
- * A card is a preview the artifact renders in a frame on its own origin,
- * with `tokens.css` and the fonts already loaded: every colour, radius and
- * shadow in a card is a `var(--<token>)` of tokens.json, never a value.
- *
- * Each card is laid out in fixed pixels, so its height is known here and
- * written on its `@dsCard` line: the artifact gives a card row that height,
- * and a card taller than `maxHeight` fails the build. Monospace labels are
- * measured at `monoAdvance` of their size, a little wider than Inconsolata's
- * half an em, so a fallback font still fits.
- */
-const maxHeight = 400
-const pad = { x: 20, y: 16 }
-const band = { height: 52, gap: 12 }
-const monoAdvance = 0.6
-
-/**
- * Every rule that sets a text colour names the surface under it too, so
- * `artifact.test.mjs` can check each pair's contrast in both themes.
- */
-const baseCss = (width, height) => `html,body{margin:0}
-*{box-sizing:border-box}
-body{width:${width}px;height:${height}px;overflow:hidden;padding:${pad.y}px ${pad.x}px;background:var(--background);color:var(--foreground);font-family:var(--font-sans, sans-serif);font-size:12px;line-height:16px}
-code{font-family:var(--font-mono, monospace)}
-.band{height:${band.height}px;margin-bottom:${band.gap}px;padding:8px 12px;border-radius:var(--radius-lg);background:var(--muted);color:var(--foreground)}
-.band h1{margin:0;font-size:15px;line-height:20px;font-weight:600;color:var(--foreground);background:var(--muted)}
-.band p{margin:0;font-size:12px;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted-foreground);background:var(--muted)}
-.label{font-size:10px;line-height:12px;color:var(--muted-foreground);background:var(--background)}`
-
-/** The theme halves of a swatch: the frame's own theme never decides which is which. */
-const swatch = (name) =>
-  `<span class="chip"><i data-theme="light" style="background:var(--${name})"></i><i data-theme="dark" style="background:var(--${name})"></i></span>`
-
-/**
- * A grid of light|dark swatches, a label under each, in `columns` columns.
- * Labels wrap; the rows are as tall as the longest label needs.
- */
-function swatchGrid(entries, columns, contentWidth) {
-  const gap = 8
-  const chip = 24
-  const columnWidth = (contentWidth - gap * (columns - 1)) / columns
-  const perLine = Math.floor(columnWidth / (10 * monoAdvance))
-  const lines = Math.max(...entries.map(({ label }) => Math.ceil(label.length / perLine)))
-  const tile = chip + 4 + lines * 12
-  const rows = Math.ceil(entries.length / columns)
-  return {
-    css: `.grid{display:grid;grid-template-columns:repeat(${columns},1fr);gap:${gap}px}
-.chip{display:flex;height:${chip}px;border-radius:var(--radius-sm);overflow:hidden;outline:1px solid var(--border);outline-offset:-1px}
-.chip i{flex:1}
-.tile code{display:block;margin-top:4px;height:${lines * 12}px;overflow:hidden;overflow-wrap:anywhere;font-size:10px;line-height:12px;color:var(--foreground);background:var(--background)}`,
-    html: `<div class="grid">
-${entries.map(({ name, label }) => `<div class="tile">${swatch(name)}<code>${escape(label)}</code></div>`).join('\n')}
-</div>`,
-    height: rows * tile + (rows - 1) * gap,
-  }
-}
-
-/** MD3 roles that are not brand roles, split into the accent families and the rest. */
-const coreRoles = roles.filter((role) => !brandRoles.includes(role))
-const isAccent = (role) => /primary|secondary|tertiary|error/.test(role)
-
-const roleEntries = (list) => list.map((role) => ({ name: `md-sys-color-${role}`, label: role }))
-
-const colorsPage = pages.colors
-
-/**
- * Every card: its folder under `components/`, its group, the docs page it
- * mirrors, its band, its README lines, and a `body(contentWidth)` returning
- * `{ css, html, height }`.
- */
-const cards = [
-  {
-    name: 'ShadcnTokens',
-    group: 'Colors',
-    page: colorsPage,
-    title: 'shadcn tokens',
-    subtitle: 'Use these first. Each swatch: light | dark.',
-    summary: 'The shadcn colour tokens, light and dark: the first names to reach for.',
-    rules: [
-      'Reach for these before any MD3 role: `bg-primary`, `text-muted-foreground`, `border-input`.',
-      'Each one aliases an MD3 role; tokens.json names it.',
-    ],
-    body: (width) => swatchGrid(remap.map(({ name }) => ({ name, label: name })), 7, width),
-  },
-  {
-    name: 'Md3SurfaceRoles',
-    group: 'Colors',
-    page: colorsPage,
-    title: 'MD3 roles: surfaces and outlines',
-    subtitle: '`md-sys-color-*`, where shadcn has no name. Each swatch: light | dark.',
-    summary: 'The Material Design 3 surface, outline and inverse roles, light and dark.',
-    rules: [
-      'Use one only where shadcn has no name for it: `md-sys-color-surface-dim`, the `surface-container-*` steps.',
-      'Put `md-sys-color-on-<role>` on `md-sys-color-<role>`.',
-    ],
-    body: (width) => swatchGrid(roleEntries(coreRoles.filter((role) => !isAccent(role))), 8, width),
-  },
-  {
-    name: 'Md3AccentRoles',
-    group: 'Colors',
-    page: colorsPage,
-    title: 'MD3 roles: primary, secondary, tertiary, error',
-    subtitle: '`md-sys-color-*`. The `fixed` roles keep one value in both schemes.',
-    summary: 'The Material Design 3 accent roles, their containers and fixed variants, light and dark.',
-    rules: [
-      'The lime seed is `md-sys-color-primary-container`; `primary` is a dark olive in light and white in dark.',
-      'Put `md-sys-color-on-<role>` on `md-sys-color-<role>`, `-on-<role>-container` on `-<role>-container`.',
-    ],
-    body: (width) => swatchGrid(roleEntries(coreRoles.filter(isAccent)), 8, width),
-  },
-  {
-    name: 'BrandColours',
-    group: 'Colors',
-    page: colorsPage,
-    title: 'Brand colours',
-    subtitle: 'Four roles per custom colour, never in place of a token. Each swatch: light | dark.',
-    summary: 'The seven pmndrs brand colours, each as its four MD3 roles, light and dark.',
-    rules: [
-      'For the brand hex as a fill, use `md-sys-color-<name>-container` with `md-sys-color-on-<name>-container` on it.',
-      'An accent, never in place of a shadcn token.',
-    ],
-    body: (width) => {
-      const head = 12
-      const row = 24
-      const gap = 6
-      const columns = ['<name>', 'on-<name>', '<name>-container', 'on-<name>-container']
-      return {
-        css: `.brand{display:grid;grid-template-columns:72px repeat(4,1fr);gap:${gap}px 8px;align-items:center}
-.brand .label{height:${head}px}
-.brand code{font-size:11px;line-height:${row}px;color:var(--foreground);background:var(--background)}
-.chip{display:flex;height:${row}px;border-radius:var(--radius-sm);overflow:hidden;outline:1px solid var(--border);outline-offset:-1px}
-.chip i{flex:1}`,
-        html: `<div class="brand">
-<span></span>${columns.map((label) => `<code class="label">${escape(label)}</code>`).join('')}
-${brandColors
-  .map((name) => `<code>${name}</code>${[name, `on-${name}`, `${name}-container`, `on-${name}-container`].map((role) => swatch(`md-sys-color-${role}`)).join('')}`)
-  .join('\n')}
-</div>`,
-        height: head + gap + brandColors.length * row + (brandColors.length - 1) * gap,
-      }
-    },
-  },
-  {
-    name: 'TonalPalettes',
-    group: 'Colors',
-    page: colorsPage,
-    title: 'Tonal palettes',
-    subtitle: '`md-ref-palette-<name>-<tone>`: the same in light and dark. Build with a role instead.',
-    summary: 'The tonal palettes every MD3 role aliases, one ramp per seed, the same in both schemes.',
-    rules: [
-      'Never build with an `md-ref-palette-*` shade directly: use the `md-sys-color-*` role that aliases it.',
-    ],
-    body: () => {
-      const head = 12
-      const row = 18
-      const gap = 3
-      const tones = [...ramps.values()][0]
-      return {
-        css: `.ramps{display:grid;grid-template-columns:104px repeat(${tones.length},1fr);gap:${gap}px 1px;align-items:center}
-.ramps .label{height:${head}px;text-align:center;font-family:var(--font-mono, monospace);font-size:9px}
-.ramps code{font-size:11px;line-height:${row}px;color:var(--foreground);background:var(--background)}
-.ramps i{display:block;height:${row}px}`,
-        html: `<div class="ramps">
-<span></span>${tones.map((tone) => `<span class="label">${tone}</span>`).join('')}
-${[...ramps]
-  .map(([ramp, rampTones]) => `<code>${ramp}</code>${rampTones.map((tone) => `<i style="background:var(--md-ref-palette-${ramp}-${tone})"></i>`).join('')}`)
-  .join('\n')}
-</div>`,
-        height: head + gap + ramps.size * row + (ramps.size - 1) * gap,
-      }
-    },
-  },
-  {
-    name: 'FontFamilies',
-    group: 'Type',
-    page: pages.typography,
-    title: 'Font families',
-    subtitle: 'Never hardcode a family: text is sans, `code` `kbd` `samp` `pre` are mono on their own.',
-    summary: 'Inter, the sans family, and Inconsolata, the mono family, with the inline code style.',
-    rules: [
-      'Never hardcode a font family. Headings inherit the sans family.',
-      'Inline code follows shadcn\'s recipe: `font-mono text-sm font-semibold` on `bg-muted`.',
-    ],
-    body: () => {
-      const specimen = 2 + 24 + 32 + 4 + 20 + 4 + 16
-      const code = inlineCode().style
-      const step = typeScale.find(({ fontSize }) => fontSize === code.fontSize)
-      return {
-        css: `.specimen{height:${specimen}px;margin-bottom:12px;padding:12px;border:1px solid var(--border);border-radius:var(--radius-lg)}
-.specimen .big{font-size:28px;line-height:32px;margin-bottom:4px}
-.specimen .line{font-size:14px;line-height:20px;margin-bottom:4px}
-.specimen .label{background:var(--background)}
-.inline{height:28px;display:flex;align-items:center;gap:8px}
-.inline code{padding:0.2rem 0.3rem;border-radius:var(--radius-sm);font-size:${code.fontSize};line-height:${step.pixels.lineHeight}px;font-weight:${code.fontWeight};color:var(--foreground);background:var(--muted)}`,
-        html: `${fonts
-          .map(
-            ({ role, family, utility, variable, key }) => `<div class="specimen" style="font-family:var(--font-${key})">
-<div class="big">${escape(family)} Aa Bb Cc 0123</div>
-<div class="line">The quick brown fox jumps over the lazy dog.</div>
-<div class="label">${escape(role)}: <code>${utility}</code>, <code>${variable}</code></div>
-</div>`
-          )
-          .join('\n')}
-<div class="inline"><span class="label">Inline code</span><code>npx shadcn@latest add</code></div>`,
-        height: fonts.length * (specimen + 12) + 28,
-      }
-    },
-  },
-  {
-    name: 'TypeScale',
-    group: 'Type',
-    page: pages.typography,
-    title: 'Type scale',
-    subtitle: `${section(pages.typography, 'Type scale').inherited ? `Inherited from ${section(pages.typography, 'Type scale').inherited}, not a pmndrs decision. ` : ''}Size / line height, px.`,
-    summary: 'The `text-xs` to `text-9xl` scale, each step at its own size.',
-    rules: [
-      'Set UI text in `text-sm` and body copy in `text-base`.',
-      'Inherited from Tailwind: never cite it as a pmndrs rule.',
-    ],
-    body: () => {
-      const split = typeScale.findIndex(({ lineHeight }) => typeof lineHeight === 'number')
-      const rows = [typeScale.slice(0, split), typeScale.slice(split)]
-      const labels = 4 + 24
-      const rowHeight = (steps) => Math.max(...steps.map(({ pixels }) => pixels.lineHeight)) + labels
-      return {
-        css: `.scale{display:flex;align-items:flex-end;gap:16px;margin-bottom:16px}
-.scale .sample{white-space:nowrap}
-.scale .label{display:block;margin-top:4px;height:24px}`,
-        html: rows
-          .map(
-            (steps) => `<div class="scale">
-${steps
-  .map(
-    ({ name, fontSize, lineHeight, pixels }) =>
-      `<div><div class="sample" style="font-size:${fontSize};line-height:${lineHeight}">Aa</div><code class="label">${name}<br />${pixels.fontSize}/${pixels.lineHeight}</code></div>`
-  )
-  .join('\n')}
-</div>`
-          )
-          .join('\n'),
-        height: rows.reduce((sum, steps) => sum + rowHeight(steps), 0) + 16 * (rows.length - 1),
-      }
-    },
-  },
-  {
-    name: 'SpacingScale',
-    group: 'Spacing',
-    page: pages.spacing,
-    title: 'Spacing',
-    subtitle: `${pages.spacing.inherited ? `Inherited from ${pages.spacing.inherited}, not a pmndrs decision. ` : ''}Step n is n × --spacing.`,
-    summary: 'The spacing scale: every padding, margin, gap and size utility as a multiple of `--spacing`.',
-    rules: [
-      `Space with multiples of \`spacing\` (${spacingBase}): never an arbitrary pixel value.`,
-      'Inherited from Tailwind: never cite it as a pmndrs rule.',
-    ],
-    width: 800,
-    body: () => {
-      const row = 12
-      const gap = 4
-      /** Three columns, by bar length: up to 1rem, up to 4rem, the rest. */
-      const length = ({ value }) => (value === '1px' ? 1 / 16 : parseFloat(value) || 0)
-      const columns = [
-        spacingScale.filter((entry) => length(entry) <= 1),
-        spacingScale.filter((entry) => length(entry) > 1 && length(entry) <= 4),
-        spacingScale.filter((entry) => length(entry) > 4),
-      ]
-      const bar = ({ step }) => (step === 'px' ? '1px' : `calc(var(--spacing) * ${step})`)
-      return {
-        css: `.base{height:16px;margin-bottom:8px}
-.steps{display:flex;gap:16px;align-items:flex-start}
-.steps .col{display:grid;grid-template-columns:28px 40px auto;gap:${gap}px 8px;align-items:center}
-.steps code{font-size:10px;line-height:${row}px;color:var(--foreground);background:var(--background)}
-.steps .label{font-family:var(--font-mono, monospace)}
-.steps i{display:block;height:${row}px;background:var(--primary)}`,
-        html: `<div class="base"><code>--spacing: ${escape(spacingBase)}</code></div>
-<div class="steps">
-${columns
-  .map(
-    (entries) => `<div class="col">
-${entries.map((entry) => `<code>${escape(entry.step)}</code><span class="label">${escape(entry.value)}</span><i style="width:${bar(entry)}"></i>`).join('\n')}
-</div>`
-  )
-  .join('\n')}
-</div>`,
-        height: 16 + 8 + Math.max(...columns.map((entries) => entries.length * row + (entries.length - 1) * gap)),
-      }
-    },
-  },
-  {
-    name: 'RadiusScale',
-    group: 'Radius',
-    page: pages.radius,
-    title: 'Radius',
-    subtitle: `A pmndrs decision: --radius: ${radius}, and the base-nova scale multiplying it.`,
-    summary: 'The base radius and the base-nova scale derived from it.',
-    rules: [
-      `Every corner derives from \`radius\` (${radius}): round with \`rounded-sm\` to \`rounded-4xl\`.`,
-      'Change `radius` and every corner rescales.',
-    ],
-    body: () => {
-      const size = 72
-      const labels = 6 + 36
-      return {
-        css: `.base{height:16px;margin-bottom:12px}
-.radii{display:flex;gap:16px}
-.radii .shape{width:${size}px;height:${size}px;background:var(--md-sys-color-primary-container);outline:2px solid var(--primary);outline-offset:-2px}
-.radii .label{display:block;margin-top:6px;height:36px}`,
-        html: `<div class="base"><code>--radius: ${escape(radius)}</code></div>
-<div class="radii">
-${radii
-  .map(
-    ({ token, utility, formula, value }) =>
-      `<div><div class="shape" style="border-radius:var(${token})"></div><code class="label">${utility}<br />${escape(value)}<br />${escape(formula.replace('var(--radius)', 'radius').replace(/^calc\((.*)\)$/, '$1'))}</code></div>`
-  )
-  .join('\n')}
-</div>`,
-        height: 16 + 12 + size + labels,
-      }
-    },
-  },
-  {
-    name: 'Shadows',
-    group: 'Shadows',
-    page: pages.shadows,
-    title: 'Shadows',
-    subtitle: `${pages.shadows.inherited ? `Inherited from ${pages.shadows.inherited}, not a pmndrs decision. ` : ''}Black at low opacity in both schemes.`,
-    summary: 'The box, inset and drop shadows: elevation, recess, and shadows for shapes that are not boxes.',
-    rules: [
-      'Elevate with `shadow-*`, recess with `inset-shadow-*`, shadow icons and SVGs with `drop-shadow-*`.',
-      'In dark, set surfaces apart with the `md-sys-color-surface-container-*` steps instead.',
-    ],
-    body: () => {
-      const label = 16
-      const stage = 10 + 40 + 10
-      const gap = 10
-      const family = (heading, render) => `<div class="family"><span class="label">${escape(heading)}</span><div class="stage">
-${shadowRows(heading).map(render).join('\n')}
-</div></div>`
-      const box = ({ name }) => `<div class="box" style="box-shadow:var(--${name})"><code>${name}</code></div>`
-      const star = ({ name }) =>
-        `<div class="drop"><svg viewBox="0 0 24 24" aria-hidden="true" style="filter:drop-shadow(var(--${name}))"><polygon points="12,2 15,9 22,9.5 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9.5 9,9" /></svg><code>${name}</code></div>`
-      return {
-        css: `.family{margin-bottom:${gap}px}
-.family .label{display:block;height:${label}px}
-.stage{display:flex;gap:10px;height:${stage}px;padding:10px;border-radius:var(--radius-lg);background:var(--md-sys-color-surface-container-low)}
-.box{flex:1;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-md);background:var(--md-sys-color-surface-container-lowest);color:var(--foreground)}
-.box code,.drop code{font-size:10px;line-height:12px}
-.drop{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-.drop svg{width:22px;height:22px;fill:var(--md-sys-color-primary-container)}
-.drop code{color:var(--foreground);background:var(--md-sys-color-surface-container-low)}`,
-        html: [family('Box shadow', box), family('Inset shadow', box), family('Drop shadow', star)].join('\n'),
-        height: 3 * (label + stage) + 2 * gap,
-      }
-    },
-  },
-  {
-    name: 'Logo',
-    group: 'Brand',
-    page: pages.assets,
-    title: 'Logo',
-    subtitle: 'Always on its own black square: never recoloured, cropped or redrawn.',
-    summary: 'The four states of the pmndrs logo, each painting its own black square.',
-    rules: [
-      'Use `logo_complete.svg` from the Logos group as the mark, as an image.',
-      'Never recolour, crop or redraw it; there is no transparent variant.',
-    ],
-    body: () => {
-      const size = 112
-      const labels = 6 + 16 + 4 + 48
-      return {
-        css: `.logos{display:grid;grid-template-columns:repeat(${logos.length},1fr);gap:16px}
-.logos img{display:block}
-.logos strong{display:block;margin-top:6px;font-size:12px;line-height:16px;font-weight:600}
-.logos .label{display:block;margin-top:4px;height:48px;overflow:hidden}`,
-        html: `<div class="logos">
-${logos
-  .map(({ variant, alt, behavior, source }) => {
-    const svg = readFileSync(new URL(`../${source}`, import.meta.url)).toString('base64')
-    return `<div><img src="data:image/svg+xml;base64,${svg}" width="${size}" height="${size}" alt="${escape(alt)}" /><strong>${escape(variant)}</strong><span class="label">${escape(behavior)}</span></div>`
-  })
-  .join('\n')}
-</div>`,
-        height: size + labels,
-      }
-    },
-  },
-]
-
-const defaultWidth = 760
-
-/** A card's `preview.html`, its `@dsCard` line first, and its height. */
-function preview(card) {
-  const width = card.width ?? defaultWidth
-  const body = card.body(width - 2 * pad.x)
-  const height = Math.ceil(2 * pad.y + band.height + band.gap + body.height)
-  if (height > maxHeight) throw new Error(`the ${card.name} card is ${height}px tall, over ${maxHeight}px`)
-  const html = `<!-- @dsCard group="${card.group}" height=${height} width=${width} -->
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<style>
-${baseCss(width, height)}
-${body.css}
-</style>
-</head>
-<body>
-<header class="band"><h1>${escape(card.title)}</h1><p>${escape(card.subtitle).replace(/`([^`]+)`/g, '<code>$1</code>')}</p></header>
-${body.html}
-</body>
-</html>
-`
-  return { html, height }
-}
-
-/** A card's `README.md`: what it shows, the rules it illustrates, the docs page behind it. */
-const cardReadme = (card) => `${card.summary}
-
-${card.rules.map((rule) => `- ${rule}`).join('\n')}
-
-Mirrors the ${card.page.title} page of the docs: ${notes.meta.docsSite.main}${card.page.dir}/introduction.
-`
-
-/* ------------------------------------------------------------------------ */
-/* Outputs                                                                    */
+/* Components                                                                 */
 /* ------------------------------------------------------------------------ */
 
 /** Every file of `dir`, relative to it, sorted. */
@@ -877,10 +431,52 @@ const walk = (dir) =>
     .filter((name) => statSync(new URL(name, dir)).isFile())
     .sort()
 
-const previews = cards.map((card) => ({ card, ...preview(card) }))
+/**
+ * The blocks of the registry catalog, by name: the `registry:block` items of
+ * this repo and of the repos `registry/external.json` lists, the same two
+ * sources `catalog.mjs` writes the docs table from.
+ */
+export const catalogBlocks = [registry, ...external].flatMap(({ items }) =>
+  items.filter(({ type }) => type === 'registry:block').map(({ name }) => name)
+)
 
-/** The height of each card, by name: the `@dsCard` line carries it too. */
-export const cardHeights = Object.fromEntries(previews.map(({ card, height }) => [card.name, height]))
+/** A block's folder under `components/`: `keypoints` is `Keypoints`, `color-group` `ColorGroup`. */
+export const componentName = (block) =>
+  block
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join('')
+
+/**
+ * What is wrong with the hand-written components, given the catalog's
+ * `blocks` and the `paths` of `artifact/`: a block without its `README.md` or
+ * `preview.html`, or a folder of `components/` that is no block of the
+ * catalog. Empty when the components mirror the catalog.
+ *
+ * @param {string[]} blocks
+ * @param {string[]} paths
+ * @returns {string[]}
+ */
+export function componentProblems(blocks, paths) {
+  const names = blocks.map(componentName)
+  const missing = names
+    .flatMap((name) => [`components/${name}/README.md`, `components/${name}/preview.html`])
+    .filter((path) => !paths.includes(path))
+    .map((path) => `artifact/${path} is missing: every block of the catalog has a hand-written card`)
+  const folders = new Set(paths.filter((path) => path.startsWith('components/')).map((path) => path.split('/')[1]))
+  const strays = [...folders]
+    .filter((folder) => !names.includes(folder))
+    .map((folder) => `artifact/components/${folder} is no block of the catalog`)
+  return [...missing, ...strays]
+}
+
+const sourcePaths = walk(sourceDir)
+const problems = componentProblems(catalogBlocks, sourcePaths)
+if (problems.length) throw new Error(problems.join('\n'))
+
+/* ------------------------------------------------------------------------ */
+/* Outputs                                                                    */
+/* ------------------------------------------------------------------------ */
 
 /**
  * Every file the script writes, as `[path, content]`, `path` relative to the
@@ -890,12 +486,8 @@ export const cardHeights = Object.fromEntries(previews.map(({ card, height }) =>
  */
 export const outputs = [
   ['tokens.json', `${JSON.stringify(tokens(), null, 2)}\n`],
-  ...walk(sourceDir).map((path) => [path, fill(readFileSync(new URL(path, sourceDir), 'utf8'), `artifact/${path}`)]),
+  ...sourcePaths.map((path) => [path, fill(readFileSync(new URL(path, sourceDir), 'utf8'), `artifact/${path}`)]),
   ...fontFiles.map(({ file, source }) => [file, readFileSync(source)]),
-  ...previews.flatMap(({ card, html }) => [
-    [`components/${card.name}/preview.html`, html],
-    [`components/${card.name}/README.md`, cardReadme(card)],
-  ]),
 ].sort(([a], [b]) => a.localeCompare(b))
 
 /** Writes `outputs` into `dir/project/`, emptied first: a file no source produces any more must not linger. */

@@ -1,0 +1,72 @@
+---
+title: Radius
+description: One base radius, and the multiplicative base-nova scale computed from it.
+nav: 4
+---
+
+<Intro>
+  Every corner in a pmndrs project derives from one value, `--radius`. The `rounded-*` utilities
+  are multiples of it, so changing that one value rescales every corner at once.
+</Intro>
+
+## Base
+
+```css
+:root {
+  --radius: 0.625rem; /* 10px at a 16px root */
+}
+```
+
+It comes from the poimandres shadcn preset (`b5cR4Y50S`, style `base-nova`, radius `default`),
+applied by `npx shadcn@latest init --preset b5cR4Y50S`.
+
+## Scale
+
+The preset's `base-nova` style derives the scale by multiplication: each step is `--radius`
+times a factor. Values below are at a 16px root.
+
+| Token          | Utility        | Value                         | rem        | px   |
+| -------------- | -------------- | ----------------------------- | ---------- | ---- |
+| `--radius-sm`  | `rounded-sm`   | `calc(var(--radius) * 0.6)`   | `0.375rem` | 6px  |
+| `--radius-md`  | `rounded-md`   | `calc(var(--radius) * 0.8)`   | `0.5rem`   | 8px  |
+| `--radius-lg`  | `rounded-lg`   | `var(--radius)`               | `0.625rem` | 10px |
+| `--radius-xl`  | `rounded-xl`   | `calc(var(--radius) * 1.4)`   | `0.875rem` | 14px |
+| `--radius-2xl` | `rounded-2xl`  | `calc(var(--radius) * 1.8)`   | `1.125rem` | 18px |
+| `--radius-3xl` | `rounded-3xl`  | `calc(var(--radius) * 2.2)`   | `1.375rem` | 22px |
+| `--radius-4xl` | `rounded-4xl`  | `calc(var(--radius) * 2.6)`   | `1.625rem` | 26px |
+
+The table is the source of truth: the previews below render this site's own radius scale, which
+can differ slightly from what your project gets.
+
+## Preview
+
+<div className="grid! grid-cols-[repeat(auto-fill,minmax(7rem,1fr))] gap-4">
+  <div className="flex flex-col items-center gap-2">
+    <div className="size-24 rounded-sm border-2 border-primary bg-primary-container" />
+    <code>rounded-sm</code>
+  </div>
+  <div className="flex flex-col items-center gap-2">
+    <div className="size-24 rounded-md border-2 border-primary bg-primary-container" />
+    <code>rounded-md</code>
+  </div>
+  <div className="flex flex-col items-center gap-2">
+    <div className="size-24 rounded-lg border-2 border-primary bg-primary-container" />
+    <code>rounded-lg</code>
+  </div>
+  <div className="flex flex-col items-center gap-2">
+    <div className="size-24 rounded-xl border-2 border-primary bg-primary-container" />
+    <code>rounded-xl</code>
+  </div>
+  <div className="flex flex-col items-center gap-2">
+    <div className="size-24 rounded-2xl border-2 border-primary bg-primary-container" />
+    <code>rounded-2xl</code>
+  </div>
+  <div className="flex flex-col items-center gap-2">
+    <div className="size-24 rounded-3xl border-2 border-primary bg-primary-container" />
+    <code>rounded-3xl</code>
+  </div>
+  <div className="flex flex-col items-center gap-2">
+    <div className="size-24 rounded-4xl border-2 border-primary bg-primary-container" />
+    <code>rounded-4xl</code>
+  </div>
+</div>

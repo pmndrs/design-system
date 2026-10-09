@@ -1,13 +1,20 @@
 ---
 title: Assets
-description: The pmndrs logo — complete, idle, animated and loading — to preview and download.
+description: The pmndrs logo — complete, idle, animated and loading — to preview, install and download.
 nav: 2
 ---
 
 <Intro>
-  The pmndrs logo, in four states. Nothing to install: preview each one here and download the
-  file you need.
+  The pmndrs logo, in four states. Install the four SVGs into your app with one command, or
+  preview each one here and download the file you need.
 </Intro>
+
+```sh
+npx shadcn@latest add pmndrs/design-system/pmndrs-logo#v0.5.0
+```
+
+That writes them to `public/pmndrs/` at the root of your project, under the names this page
+gives them. The PNGs are downloads only: a registry carries text files.
 
 Every file is 600×600 and paints its own black square background: there is no transparent
 variant yet.
@@ -50,11 +57,12 @@ mark only fades gently, so it still reads as busy.
 
 ## Usage
 
-Drop the file in your app's `public/` and use it as an image. Both animations are CSS inside the SVG, so a plain `<img>` plays them,
-and so does `next/image` with `unoptimized`:
+Installed, or dropped in your app's `public/pmndrs/` by hand, each file is an image URL. Both
+animations are CSS inside the SVG, so a plain `<img>` plays them, and so does `next/image` with
+`unoptimized`:
 
 ```tsx
-<img src="/logo_loading.svg" width={48} height={48} alt="Loading" />
+<img src="/pmndrs/logo_loading.svg" width={48} height={48} alt="Loading" />
 ```
 
 ## License

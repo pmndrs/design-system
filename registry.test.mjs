@@ -159,3 +159,69 @@ test('the baked palette is what builder(pmndrsMtb) renders', () => {
 
   assert.deepEqual(mismatches, [])
 })
+
+/** Every `registry:file` this registry ships, with the item it belongs to. */
+const shipped = registry.items.flatMap((item) =>
+  (item.files ?? []).filter((file) => file.type === 'registry:file').map((file) => ({ item: item.name, ...file }))
+)
+const read = ({ path }) => readFileSync(new URL(path, import.meta.url), 'utf8')
+
+/**
+ * A `registry:file` is copied to its `target` and nowhere else, so the target
+ * is the whole contract — and only `~/` means the project root. Anything else
+ * shadcn resolves itself, and in an app with a `src/` directory a bare
+ * `public/pmndrs/logo.svg` lands at `src/public/pmndrs/logo.svg`: installed,
+ * and served by nothing. Nothing downstream would notice — the file exists,
+ * just where no one serves it — so this is the one place that catches it.
+ */
+test('every registry:file has a target at the project root', () => {
+  const offenders = shipped
+    .filter((file) => !file.target?.startsWith('~/'))
+    .map((file) => `${file.item}: ${file.path} targets ${file.target ?? 'nothing'}`)
+
+  assert.deepEqual(offenders, [])
+})
+
+/**
+ * Shipped as text and copied byte for byte, so a broken file reaches every
+ * consumer as is — and an SVG fails quietly, as a broken image.
+ *
+ * Node has no XML parser, and one test is no reason to add a dependency, so
+ * this checks what a browser needs before it will draw a standalone file in an
+ * `<img>`: an `<svg>` root, in the SVG namespace, and closed. Without the
+ * `xmlns`, the same markup renders inline and not as a file.
+ */
+test('every shipped SVG is a standalone SVG document', () => {
+  const offenders = shipped
+    .filter((file) => file.path.endsWith('.svg'))
+    .filter((file) => {
+      const svg = read(file).trim()
+      const root = svg.replace(/^<\?xml[^>]*\?>\s*/, '').match(/^<svg\b[^>]*>/)?.[0]
+      return !root?.includes('xmlns="http://www.w3.org/2000/svg"') || !svg.endsWith('</svg>')
+    })
+    .map((file) => `${file.item}: ${file.path}`)
+
+  assert.deepEqual(offenders, [])
+})
+
+/**
+ * A token file a design tool cannot read is a silent failure too: Figma
+ * refuses the import, and nothing on the code side ever opens it. Parsed, and
+ * held to the one DTCG rule a reader relies on first — a token is a `$value`.
+ */
+test('every shipped JSON file parses, with DTCG tokens in it', () => {
+  const hasToken = (node) =>
+    typeof node === 'object' && node !== null && ('$value' in node || Object.values(node).some(hasToken))
+
+  const offenders = shipped
+    .filter((file) => file.path.endsWith('.json'))
+    .flatMap((file) => {
+      try {
+        return hasToken(JSON.parse(read(file))) ? [] : [`${file.item}: ${file.path} has no token`]
+      } catch (error) {
+        return [`${file.item}: ${file.path} does not parse: ${error.message}`]
+      }
+    })
+
+  assert.deepEqual(offenders, [])
+})

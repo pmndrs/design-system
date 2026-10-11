@@ -108,7 +108,7 @@ test('registryDependencies on this registry name items it defines', () => {
 })
 
 /**
- * `theme` is the one documented install target: the palette, the colour
+ * `theme` is the shadcn install target: the palette, the colour
  * machinery under it and the mono font. Drop a dependency and the install
  * still succeeds — it just ships without that piece, and nothing else notices.
  */

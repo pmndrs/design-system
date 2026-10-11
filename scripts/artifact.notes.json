@@ -32,6 +32,9 @@
       "docs": [
         "README.md",
         "docs/getting-started/introduction.mdx",
+        "docs/getting-started/react.mdx",
+        "docs/getting-started/vue.mdx",
+        "docs/getting-started/publishing.mdx",
         "docs/guidelines/introduction.mdx",
         "docs/colors/introduction.mdx",
         "docs/typography/introduction.mdx",
@@ -41,6 +44,7 @@
         "docs/motion/introduction.mdx",
         "docs/assets/introduction.mdx",
         "registry/theme/docs.md",
+        "registry/palette/docs.md",
         "registry/md3-base/docs.md",
         "registry/font-mono/docs.md",
         "registry/logo/docs.md",

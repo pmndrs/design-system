@@ -185,8 +185,7 @@ const items = [
     font: fontMono,
   },
   /**
-   * The single documented install target: the pmndrs palette, plus everything
-   * it needs.
+   * The shadcn install target: the pmndrs palette, plus everything it needs.
    */
   {
     name: 'theme',
@@ -197,6 +196,15 @@ const items = [
     author: 'pmndrs',
     registryDependencies: [`pmndrs/design-system/md3-base#${version}`, `pmndrs/design-system/font-mono#${version}`],
     palette: true,
+  },
+  {
+    name: 'palette',
+    type: 'registry:item',
+    title: 'pmndrs palette CSS',
+    description:
+      'The pmndrs light and dark palettes as a plain CSS file. Import it in Vue, vanilla JavaScript or any project that uses CSS variables; no framework, Tailwind plugin or runtime dependency required.',
+    author: 'pmndrs',
+    files: [{ path: 'registry/palette/palette.css', type: 'registry:file', target: '~/src/assets/pmndrs.css' }],
   },
   /**
    * The poimandres preset as an item, the theme with it: what
@@ -479,6 +487,22 @@ const root = new URL('../', import.meta.url)
  * implementation of the comparison to keep in step.
  */
 export const outputs = [[registryUrl, JSON.stringify(built, null, 2) + '\n']]
+
+/**
+ * The same declarations as `theme`, as a stylesheet for consumers that only
+ * need CSS variables. No imports or utilities: plain CSS works without a
+ * Tailwind build or a component framework.
+ */
+const paletteStylesheet = Object.entries(palette)
+  .map(([selector, declarations]) => {
+    const body = Object.entries(declarations).map(([name, value]) => `  ${name}: ${value};`).join('\n')
+    return `${selector} {\n${body}\n}`
+  })
+  .join('\n\n')
+outputs.push([
+  new URL('../registry/palette/palette.css', import.meta.url),
+  `/* Generated from registry/md3-base/md3.ts by scripts/build.mjs: do not edit. */\n\n${paletteStylesheet}\n`,
+])
 
 /**
  * The catalog of every pmndrs registry item, this repo's first — see

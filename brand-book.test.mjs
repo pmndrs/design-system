@@ -96,6 +96,8 @@ test('Guidelines.md carries the text of the Guidelines page', () => {
       .replace(/^\s*# .*\n/, '')
       .trim()
 
-  assert.equal(body(readFileSync(new URL(file.path, import.meta.url), 'utf8')), body(guidelinesPage()))
+  const markdown = guidelinesPage().match(/^```md\n([\s\S]*?)\n```\n?$/m)?.[1]
+  assert.ok(markdown, 'no Markdown block on the Guidelines page')
+  assert.equal(body(readFileSync(new URL(file.path, import.meta.url), 'utf8')), markdown.trim())
 })
 

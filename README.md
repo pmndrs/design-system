@@ -3,119 +3,73 @@
 
 # Distributed Poimandres design-system
 
-Try it:
+The shared pmndrs visual language: colours, typography, spacing, radius, shadows
+and motion, with brand guidelines and reusable assets. Use its documented values
+and exported files across design tools and implementations.
 
-```sh
-cd /tmp && rm -rf pmndrs-foo && \
-npx -y create-next-app@latest pmndrs-foo --ts --tailwind --app --eslint --src-dir --import-alias "@/*" --no-turbopack --use-npm --yes && \
-cd pmndrs-foo && \
-npx -y shadcn@latest init --preset b1VlIttI --yes && \
-npx -y shadcn@latest add pmndrs/docs/keypoints#v4.22.0 --yes && \
-printf '%s' 'import { Keypoints, KeypointsItem } from "@/components/keypoints"
+## Design resources
 
-export default function Home() {
-  return (
-    <main className="bg-background text-foreground min-h-screen p-10">
-      <h1 className="text-2xl font-bold">pmndrs design system</h1>
-      <Keypoints title="What this proves">
-        <KeypointsItem>One add pulled the block and the colour layer with it</KeypointsItem>
-        <KeypointsItem>The panel sits on bg-surface-dim, an MD3 role shadcn has none for</KeypointsItem>
-        <KeypointsItem>Nothing mounted: the palette is baked into the CSS</KeypointsItem>
-      </Keypoints>
-    </main>
-  )
-}' > src/app/page.tsx && \
-npx next dev
-```
-
-Add `dark` to `<html>` for the dark scheme.
-
-## Tokens
-
-[shadcn](https://ui.shadcn.com/docs/theming)'s are the base; MD3's `--md-*`
-[roles](https://m3.material.io/styles/color/roles) are additive
+Start with the [guidelines](https://pmndrs.github.io/design-system/guidelines/introduction)
+and [foundations](https://pmndrs.github.io/design-system/colors/introduction).
+The [SVG assets](https://pmndrs.github.io/design-system/assets/introduction) and
+[design tokens](figma/) are available directly. Light and dark colours and
+foundations use DTCG; text and shadow styles use Tokens Studio.
 
 ## Registry items
 
-Every item, this repo's and the other pmndrs repos', linked to its source:
-[the registry catalog](https://pmndrs.github.io/design-system/getting-started/introduction#registry-items).
+The registry distributes code and files. Items can target vanilla JavaScript,
+Vue, React or other environments; each item carries its own files and
+dependencies. Choose items according to your project and their setup requirements.
 
-### Namespace
-
-The docs site also serves this repo's items as static JSON, rebuilt from `registry.json`
-on every deploy of `main` (`npm run hosted-registry` writes the same files into `public/r/`).
-Declare the [namespace](https://ui.shadcn.com/docs/registry/namespace) in `components.json`:
-
-```json
-{
-  "registries": {
-    "@pmndrs": "https://pmndrs.github.io/design-system/r/{name}.json"
-  }
-}
-```
-
-then `npx shadcn@latest add @pmndrs/theme`. It serves the latest state of `main`; the git
-address at a tag (`pmndrs/design-system/theme#v0.9.0`) stays the pinned one. A branch's
-preview deployment serves its own `r/`, but `preset`'s dependency on `theme` is that tagged
-git address, so it resolves to the released tag, not to the branch. The
-[shadcn MCP server](https://ui.shadcn.com/docs/mcp) (`npx shadcn@latest mcp init --client claude`)
-reads the same namespace to list and install the items.
-
-To start a fresh project from it, init with `preset`: the poimandres preset and the theme in
-one item, no preset code, and the namespace declared on the way.
+Read the [JSON index](https://pmndrs.github.io/design-system/r/registry.json)
+or use the shadcn CLI to browse and install individual items:
 
 ```sh
-npx shadcn@latest init https://pmndrs.github.io/design-system/r/preset.json
+npx shadcn@latest registry add '@pmndrs=https://pmndrs.github.io/design-system/r/{name}.json'
+npx shadcn@latest add @pmndrs/logo @pmndrs/figma-tokens
+npx shadcn@latest search @pmndrs
 ```
 
-To prototype in v0 with the pmndrs colours, fonts and radius already applied:
+See the [registry catalog](https://pmndrs.github.io/design-system/getting-started/introduction#registry-items)
+for this repo's items and blocks from other pmndrs repos.
+
+The hosted registry follows `main`. To pin an installation, use a GitHub address
+with a tag: `pmndrs/design-system/logo#v0.9.0`. Hosted previews serve their own
+items, but their GitHub dependencies still resolve at the tags they declare.
+The [versioning section](https://pmndrs.github.io/design-system/getting-started/introduction#versioning)
+explains how item versions resolve.
+
+## Integrations
+
+- [Vanilla HTML and CSS](https://pmndrs.github.io/design-system/getting-started/vanilla): shared palette, fonts and native elements.
+- [Vue](https://pmndrs.github.io/design-system/getting-started/vue): preset, theme and components with shadcn-vue, or standard CSS.
+- [React and Tailwind](https://pmndrs.github.io/design-system/getting-started/react): preset, theme and components.
+
+<details>
+  <summary>Prototype in v0</summary>
+
+To prototype with the theme, logo and guidelines in v0:
 [Open in v0](https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs).
-Or have v0 build the brand guidelines from it, as slides:
-[brand guidelines in v0](https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs+brand+guidelines&prompt=pmndrs+brand+guidelines%2C+16%3A9+slides%2C+strict+editorial+grid%2C+layout+inspired+by+https%3A%2F%2Fmir-s3-cdn-cf.behance.net%2Fprojects%2F808%2Fbc1589229031299.Y3JvcCwxNjgzLDEzMTYsMCww.jpg%2C+not+its+colours.+Follow+guidelines%2FGuidelines.md.+app%2Fglobals.css+is+the+palette%3A+never+edit%2C+no+hex%3B+brand+lime+%3D+bg-lime-container+%2B+text-on-lime-container.+Not+the+Poimandres+VS+Code+theme.+Light%2Fdark+toggle.+Cover%3A+%2Fpmndrs%2Flogo_complete.svg.+Then%3A+foreword%2C+logo%2C+colour%2C+type%2C+spacing%2C+radius%2C+icons%2C+components%2C+voice.).
-Both open the `v0` item: a starter page, the logo, `guidelines/Guidelines.md` and a
-`globals.css` with the colours resolved, under the utility names a pmndrs project has
-(`bg-primary-container`, `bg-lime-container`), so what v0 writes runs unchanged in one.
 
-## Reseeding (optional)
+Or generate the brand guidelines as slides:
 
-For a palette other than the pmndrs one: install `md3-base` — same plumbing, no
-baked palette — and follow its docs.
+[Open the brand guidelines as slides](https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs+brand+guidelines&prompt=pmndrs+brand+guidelines%2C+16%3A9+slides%2C+strict+editorial+grid%2C+layout+inspired+by+https%3A%2F%2Fmir-s3-cdn-cf.behance.net%2Fprojects%2F808%2Fbc1589229031299.Y3JvcCwxNjgzLDEzMTYsMCww.jpg%2C+not+its+colours.+Follow+guidelines%2FGuidelines.md.+app%2Fglobals.css+is+the+palette%3A+never+edit%2C+no+hex%3B+brand+lime+%3D+bg-lime-container+%2B+text-on-lime-container.+Not+the+Poimandres+VS+Code+theme.+Light%2Fdark+toggle.+Cover%3A+%2Fpmndrs%2Flogo_complete.svg.+Then%3A+foreword%2C+logo%2C+colour%2C+type%2C+spacing%2C+radius%2C+icons%2C+components%2C+voice.).
+The starter includes the theme, logo and `guidelines/Guidelines.md`.
 
-```sh
-npx shadcn@latest add pmndrs/design-system/md3-base#v0.9.0
-```
+</details>
 
-Nothing renders until something emits `--md-sys-color-*`: regenerate the values
-from your seed with [Mtb](https://www.npmjs.com/package/material-theme-builder).
-Either side works.
 
-```tsx
-// RSC — `builder` is the root export and carries no 'use client'
-const { source, ...rest } = pmndrsMtb;
-<style dangerouslySetInnerHTML={{ __html: builder(source, rest).toCss() }} />;
+## Custom palettes
 
-// client — same output, from `material-theme-builder/react`
-<Mtb {...pmndrsMtb}>{children}</Mtb>;
-```
+The [md3-base item](registry/md3-base/docs.md) provides the colour plumbing
+without a baked palette. Follow its docs to generate a palette from your own
+seed with [Material Theme Builder](https://www.npmjs.com/package/material-theme-builder).
 
-Prefer the server one where there is a server: it keeps the palette code off the
-client. `<Mtb>` is for where there is no build to hook — a Storybook preview,
-say.
+## Publish an item
 
-## Authoring a block
-
-Always pin a ref — `pmndrs/design-system/theme#v0.9.0`. Refs are **not
-inherited**: every entry in `registryDependencies` carries its own.
-
-- a shadcn primitive → `registryDependencies: ["button"]`
-- shared across pmndrs blocks → its own item, by full pinned address
-  (`pmndrs/docs/mdx-prose#v1.0.0`) — a bare name never means a same-repo item
-- meaningful only here → another entry in the same item's `files`
-- trivial _and_ app-specific → inline it
-
-A block never hardcodes a font family (the `font-sans` / `font-mono` utilities):
-it inherits the consumer's. Icons come from
-`components.json`'s `iconLibrary`; `lucide` is the pmndrs baseline.
+[Publish code or files](https://pmndrs.github.io/design-system/getting-started/publishing)
+from the repo that owns them, then add the registry to the catalog. Each item
+declares its files and dependencies; pin every dependency to its own ref.
 
 ## Claude Design
 

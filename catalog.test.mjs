@@ -1,31 +1,35 @@
 /**
  * The catalog is a table of links, generated into a page of hand-written
  * prose. `build.test.mjs` asserts the page is current, but not that what it
- * holds is right — so this pins where each link points, the refs the `search`
- * command is pinned to, and that the prose around the markers is left alone.
+ * holds is right — so this pins the source links, install addresses and the
+ * refs the `search` command is pinned to, and preserves prose around the markers.
  */
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { endMarker, humanizeType, renderCatalog, startMarker, writeCatalog } from './scripts/catalog.mjs'
+import { endMarker, renderCatalog, startMarker, writeCatalog } from './scripts/catalog.mjs'
 
 const registries = [
   { repo: 'pmndrs/a', ref: 'v1.0.0', items: [{ name: 'x', type: 'registry:lib' }] },
   { repo: 'pmndrs/b', ref: 'main', items: [{ name: 'y', type: 'registry:block' }] },
 ]
 
-test('the type drops its `registry:` prefix', () => {
-  assert.equal(humanizeType('registry:block'), 'block')
-  assert.equal(humanizeType('registry:lib'), 'lib')
-})
-
 test('one row per item, across registries, in order', () => {
   const rows = renderCatalog(registries)
     .split('\n')
     .filter((line) => line.startsWith('| ['))
   assert.deepEqual(rows, [
-    '| [x](https://github.com/pmndrs/a/tree/v1.0.0/registry/x) | lib | [pmndrs/a](https://github.com/pmndrs/a/blob/v1.0.0/registry.json) |',
-    '| [y](https://github.com/pmndrs/b/tree/main/registry/y) | block | [pmndrs/b](https://github.com/pmndrs/b/blob/main/registry.json) |',
+    '| [x](https://github.com/pmndrs/a/tree/v1.0.0/registry/x) | `pmndrs/a/x#v1.0.0` |',
+    '| [y](https://github.com/pmndrs/b/tree/main/registry/y) | `pmndrs/b/y#main` |',
   ])
+})
+
+test('hosted items use the namespace and link to the source served by it', () => {
+  const catalog = renderCatalog([
+    { repo: 'pmndrs/design-system', ref: 'v0.9.0', items: [{ name: 'logo', type: 'registry:item' }] },
+  ])
+  assert.match(catalog, /\[logo\]\(https:\/\/github\.com\/pmndrs\/design-system\/tree\/main\/registry\/logo\)/)
+  assert.match(catalog, /`@pmndrs\/logo`/)
+  assert.match(catalog, /search pmndrs\/design-system#v0\.9\.0/)
 })
 
 test('the `search` command is pinned to each registry\'s ref', () => {

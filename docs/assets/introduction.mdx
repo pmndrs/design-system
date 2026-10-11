@@ -1,17 +1,19 @@
 ---
 title: Assets
-description: pmndrs assets, installed into your app from the registry — starting with the logo.
+description: Standalone pmndrs assets for design tools and implementations — starting with the logo.
 nav: 7
 ---
 
 <Intro>
-  The pmndrs assets, each one installed into your app from the registry with one command. The
-  logo is the first.
+  The pmndrs logo, available as standalone SVG files for your designs and
+  implementations. Use the files directly, or copy them into a web app through
+  the shadcn registry.
 </Intro>
 
 ## Logo
 
-The pmndrs logo, in four states, as four SVG files. Install them with one command:
+The pmndrs logo, in four states, as four SVG files. Download a variant below,
+or install all four in a shadcn project:
 
 ```sh
 npx shadcn@latest add pmndrs/design-system/logo#v0.9.0
@@ -24,12 +26,12 @@ variant yet.
 
 ### Variants
 
-| Variant  | Preview                                                                                           | File                              | Behavior                                                                                        |
+| Variant  | Preview                                                                                           | Download                          | Behavior                                                                                        |
 | -------- | ------------------------------------------------------------------------------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Complete | <img src="logo_complete.svg" width="96" alt="The pmndrs logo" />                                  | `public/pmndrs/logo_complete.svg` | The full mark.                                                                                  |
-| Idle     | <img src="logo_idle.svg" width="96" alt="The pmndrs logo at rest, four concentric rings" />       | `public/pmndrs/logo_idle.svg`     | The resting state: four concentric rings.                                                       |
-| Animated | <img src="logo_animated.svg" width="96" alt="The pmndrs logo, springing from idle to complete" /> | `public/pmndrs/logo_animated.svg` | Idle → complete, once, in 0.73 s. Under reduced motion, the complete mark shows without moving. |
-| Loading  | <img src="logo_loading.svg" width="96" alt="The pmndrs logo, looping as a loader" />              | `public/pmndrs/logo_loading.svg`  | Loops idle → each corner → idle, every 5.3 s. Under reduced motion, the mark only fades.        |
+| Complete | <img src="logo_complete.svg" width="96" alt="The pmndrs logo" />                                  | [logo_complete.svg](https://raw.githubusercontent.com/pmndrs/design-system/main/docs/assets/logo_complete.svg) | The full mark.                                                                                  |
+| Idle     | <img src="logo_idle.svg" width="96" alt="The pmndrs logo at rest, four concentric rings" />       | [logo_idle.svg](https://raw.githubusercontent.com/pmndrs/design-system/main/docs/assets/logo_idle.svg)     | The resting state: four concentric rings.                                                       |
+| Animated | <img src="logo_animated.svg" width="96" alt="The pmndrs logo, springing from idle to complete" /> | [logo_animated.svg](https://raw.githubusercontent.com/pmndrs/design-system/main/docs/assets/logo_animated.svg) | Idle → complete, once, in 0.73 s. Under reduced motion, the complete mark shows without moving. |
+| Loading  | <img src="logo_loading.svg" width="96" alt="The pmndrs logo, looping as a loader" />              | [logo_loading.svg](https://raw.githubusercontent.com/pmndrs/design-system/main/docs/assets/logo_loading.svg)  | Loops idle → each corner → idle, every 5.3 s. Under reduced motion, the mark only fades.        |
 
 ### Usage
 
@@ -37,8 +39,8 @@ Once installed (or copied into your app's `public/pmndrs/` by hand), each file i
 Both animations are CSS inside the SVG, so a plain `<img>` plays them, and so does `next/image`
 with `unoptimized`:
 
-```tsx
-<img src="/pmndrs/logo_loading.svg" width={48} height={48} alt="Loading" />
+```html
+<img src="/pmndrs/logo_loading.svg" width="48" height="48" alt="Loading" />
 ```
 
 ## License

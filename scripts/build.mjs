@@ -35,6 +35,7 @@
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { builder } from 'material-theme-builder'
+import { mtbColors } from 'material-theme-builder/tailwind'
 import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
 import { fill, stripArtifactOnly } from './brand-book.mjs'
@@ -185,8 +186,7 @@ const items = [
     font: fontMono,
   },
   /**
-   * The single documented install target: the pmndrs palette, plus everything
-   * it needs.
+   * The shadcn install target: the pmndrs palette, plus everything it needs.
    */
   {
     name: 'theme',
@@ -197,6 +197,15 @@ const items = [
     author: 'pmndrs',
     registryDependencies: [`pmndrs/design-system/md3-base#${version}`, `pmndrs/design-system/font-mono#${version}`],
     palette: true,
+  },
+  {
+    name: 'palette',
+    type: 'registry:item',
+    title: 'pmndrs palette CSS',
+    description:
+      'The pmndrs light and dark palettes as a plain CSS file. Import it in Vue, vanilla JavaScript or any project that uses CSS variables; no framework, Tailwind plugin or runtime dependency required.',
+    author: 'pmndrs',
+    files: [{ path: 'registry/palette/palette.css', type: 'registry:file', target: '~/src/assets/pmndrs.css' }],
   },
   /**
    * The poimandres preset as an item, the theme with it: what
@@ -260,6 +269,72 @@ const items = [
       '@layer base': {
         '*': { '@apply border-border outline-ring/50': {} },
         body: { '@apply bg-background text-foreground': {} },
+      },
+    },
+  },
+  /**
+   * Vue has its own component registry and installer. Supply the same
+   * palette, remap and foundations directly, without React's base item or
+   * font registry metadata, which shadcn-vue does not install.
+   */
+  {
+    name: 'preset-vue',
+    type: 'registry:base',
+    title: 'poimandres Vue preset',
+    description:
+      'The pmndrs palette and foundations for shadcn-vue: reka-luma, Lucide icons, Inter and Inconsolata, the default radius, and every Material Design 3 colour utility. Start a Vue project with one init command.',
+    author: 'pmndrs',
+    extends: 'none',
+    config: {
+      style: 'reka-luma',
+      tailwind: { baseColor: 'neutral' },
+      iconLibrary: 'lucide',
+      rtl: false,
+      menuColor: 'default',
+      menuAccent: 'subtle',
+      registries: { '@pmndrs': `${hostedUrl}{name}.json` },
+    },
+    dependencies: [
+      'class-variance-authority',
+      'clsx',
+      'tailwind-merge',
+      'tw-animate-css',
+      'reka-ui',
+      'lucide-vue-next',
+      sansFont(foundations).dependency,
+      fontMono.dependency,
+    ],
+    registryDependencies: ['utils'],
+    palette: true,
+    cssVars: {
+      theme: {
+        '--font-sans': sansFont(foundations).family,
+        '--font-mono': fontMono.family,
+        '--font-heading': 'var(--font-sans)',
+        ...Object.fromEntries(
+          Object.entries(mtbColors({ customColors: pmndrsMtb.customColors.map(({ name }) => name) }))
+            .map(([name, value]) => [`--color-${name}`, value])
+        ),
+        // shadcn's token mapping owns the names that overlap MD3's utilities.
+        ...Object.fromEntries(tailwindColors(readRemap())),
+        ...Object.fromEntries(
+          foundations.radius.scale.filter(({ formula }) => formula.includes('var(--radius)')).map(({ token, formula }) => [token, formula])
+        ),
+      },
+      light: { radius: foundations.radius.base },
+    },
+    css: {
+      '@import "tw-animate-css"': {},
+      [`@import "${sansFont(foundations).dependency}"`]: {},
+      [`@import "${fontMono.dependency}"`]: {},
+      ':root': Object.fromEntries(readRemap().map(({ name, role }) => [name, `var(${role})`])),
+      // Redeclare aliases here too, so a .dark ancestor updates stock tokens.
+      '.dark': Object.fromEntries(readRemap().map(({ name, role }) => [name, `var(${role})`])),
+      '@layer base': {
+        '*': { '@apply border-border outline-ring/50': {} },
+        body: { '@apply bg-background text-foreground': {} },
+        html: { '@apply font-sans': {} },
+        'code, kbd, samp, pre': { '@apply font-mono': {} },
       },
     },
   },
@@ -465,7 +540,13 @@ const built = {
   ...registry,
   items: items.map(({ palette: needsPalette, ...item }) => ({
     ...item,
-    ...(needsPalette ? { css: palette } : {}),
+    ...(needsPalette ? {
+      css: {
+        ...item.css,
+        ':root': { ...palette[':root'], ...item.css?.[':root'] },
+        '.dark': { ...palette['.dark'], ...item.css?.['.dark'] },
+      },
+    } : {}),
     docs: readFileSync(new URL(`../registry/${item.name}/docs.md`, import.meta.url), 'utf8').trimEnd(),
   })),
 }
@@ -479,6 +560,22 @@ const root = new URL('../', import.meta.url)
  * implementation of the comparison to keep in step.
  */
 export const outputs = [[registryUrl, JSON.stringify(built, null, 2) + '\n']]
+
+/**
+ * The same declarations as `theme`, as a stylesheet for consumers that only
+ * need CSS variables. No imports or utilities: plain CSS works without a
+ * Tailwind build or a component framework.
+ */
+const paletteStylesheet = Object.entries(palette)
+  .map(([selector, declarations]) => {
+    const body = Object.entries(declarations).map(([name, value]) => `  ${name}: ${value};`).join('\n')
+    return `${selector} {\n${body}\n}`
+  })
+  .join('\n\n')
+outputs.push([
+  new URL('../registry/palette/palette.css', import.meta.url),
+  `/* Generated from registry/md3-base/md3.ts by scripts/build.mjs: do not edit. */\n\n${paletteStylesheet}\n`,
+])
 
 /**
  * The catalog of every pmndrs registry item, this repo's first — see

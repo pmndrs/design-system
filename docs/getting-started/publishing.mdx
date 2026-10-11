@@ -1,0 +1,86 @@
+---
+title: Publish an item
+description: Share code, assets and other text files from the pmndrs repo that owns them, with a shadcn registry.
+nav: 0.75
+---
+
+<Intro>
+  Publish an item from the repo where you use it. A root `registry.json`
+  makes a public GitHub repo installable through shadcn.
+</Intro>
+
+An item can contain a component, a utility, a shader, an SVG or documentation.
+Keep one source of truth: promote it to the design-system when a second repo
+reuses it; until then, its original repo owns the files.
+
+## Define the item
+
+Add a [`registry.json`](https://ui.shadcn.com/docs/registry/registry-json) at the
+root of your repo. Each item lists its files, their destination and any dependencies.
+For example, put an SVG at `registry/mark/mark.svg` and publish it as an asset:
+
+```json title="registry.json"
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "pmndrs-<repo>",
+  "homepage": "https://github.com/pmndrs/<repo>",
+  "items": [
+    {
+      "name": "mark",
+      "type": "registry:item",
+      "files": [
+        {
+          "path": "registry/mark/mark.svg",
+          "type": "registry:file",
+          "target": "~/public/<repo>/mark.svg"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Replace `<repo>` with your repo name. `registry:file` copies the SVG unchanged;
+`~/` makes the target relative to the project root. This example uses `public/`
+for a project that serves assets there. Choose a target that matches the consumer.
+
+Choose the [item and file types](https://ui.shadcn.com/docs/registry/registry-item-json)
+for what you ship. Plain JavaScript, Vue files and assets can use explicit file
+targets; UI code must match the framework and tooling of the project receiving it.
+List npm packages under `dependencies` and other registry items under
+`registryDependencies`, only when your item needs them.
+
+[Refs are not inherited](https://ui.shadcn.com/docs/registry/github#dependency-refs):
+pin each GitHub registry dependency to its own tag, branch or commit.
+
+## Validate and install
+
+Validate the registry locally:
+
+```sh
+npx shadcn@latest registry validate ./registry.json
+```
+
+Push the registry and its files to GitHub, then install in a project using its
+repo, item name and ref:
+
+```sh
+npx shadcn@latest add pmndrs/<repo>/mark#v1.0.0
+```
+
+A GitHub registry needs no hosting server. Use a release tag for a reproducible
+install. See [shadcn's GitHub registry guide](https://ui.shadcn.com/docs/registry/github)
+for the full workflow.
+
+## Add it to the catalog
+
+In `pmndrs/design-system`, add your repo and ref to
+[`registry/external.json`](https://github.com/pmndrs/design-system/blob/main/registry/external.json),
+then refresh the committed snapshot:
+
+```sh
+npm run refresh-catalog
+```
+
+The [getting-started catalog](/getting-started/introduction#catalog) is generated from that
+snapshot and this repo's registry. Edit the registry sources rather than the table.

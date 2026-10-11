@@ -527,7 +527,11 @@ description: The do and don't of the pmndrs design system — colour, type, spac
 nav: 0.5
 ---
 
+These guidelines are intended for AI agents building with the pmndrs design system. They define the rules for colours, typography, spacing, components, logos, iconography and voice. Copy the Markdown below into your project’s \`AGENTS.md\` or your agent’s instructions.
+
+\`\`\`md
 ${guidelines}
+\`\`\`
 `,
 ])
 

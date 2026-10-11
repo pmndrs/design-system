@@ -491,10 +491,42 @@ const registries = [{ repo: 'pmndrs/design-system', ref: version, items: built.i
 
 const bumpInstallRefs = (text) => text.replace(installRef, `pmndrs/design-system/$1#${version}`)
 
+/**
+ * Storybook's URL args use `!hex()` for colours and dotted paths for array
+ * entries. Derive the badge from the same config as the palette, including
+ * custom colours, so reseeding cannot leave the playground on an older theme.
+ */
+const storybookUrl = new URL('https://main--695eb517cb602e59b4cc045c.chromatic.com/')
+storybookUrl.searchParams.set('path', '/story/mtb--st-1')
+storybookUrl.searchParams.set('nav', 'false')
+const { customColors, ...coreArgs } = pmndrsMtb
+function storybookValue(value) {
+  if (typeof value === 'boolean') return `!${value}`
+  if (typeof value === 'string' && value.startsWith('#')) return `!hex(${value.slice(1)})`
+  return String(value)
+}
+const storybookArgs = Object.entries(coreArgs).map(([name, value]) => `${name}:${storybookValue(value)}`)
+for (const [index, color] of customColors.entries()) {
+  for (const [name, value] of Object.entries(color)) {
+    storybookArgs.push(`customColors[${index}].${name}:${storybookValue(value)}`)
+  }
+}
+storybookUrl.searchParams.set('args', storybookArgs.join(';'))
+const storybookStart = '{/* mtb-storybook:start */}'
+const storybookEnd = '{/* mtb-storybook:end */}'
+const colorPageUrl = new URL('colors/introduction.mdx', docsDir)
+
 // The Open in v0 links are rewritten too: a prompt names tokens, and each link is written once, in `v0.mjs`.
 for (const url of docs) {
   let page = rewriteV0Links(bumpInstallRefs(readFileSync(url, 'utf8')))
   if (url.href === pageUrl.href) page = writeCatalog(page, registries)
+  if (url.href === colorPageUrl.href) {
+    const start = page.indexOf(storybookStart)
+    const end = page.indexOf(storybookEnd)
+    if (start === -1 || end < start) throw new Error('Color system page has lost its Storybook badge markers')
+    const badge = `<Badge href="${storybookUrl.href}" logo="storybook">material theme builder</Badge>`
+    page = page.slice(0, start + storybookStart.length) + '\n\n' + badge + '\n\n' + page.slice(end)
+  }
   outputs.push([url, page])
 }
 

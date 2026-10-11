@@ -2,6 +2,7 @@
 [![](https://img.shields.io/badge/figma_dark-171c23.svg?logo=figma)](figma/Dark.tokens.json)
 [![Claude artifact](https://img.shields.io/badge/Claude_artifact-171c23.svg?style=flat&logo=claude)](https://claude.ai/artifact/FF46zANDT1mt2kdF9D9QAf)
 [![shadcn directory pending](https://img.shields.io/badge/shadcn_directory_%C2%B7_pending-171c23.svg?style=flat&logo=shadcnui)](https://github.com/shadcn-ui/ui/pull/12270)
+[![Vanilla Vite](https://img.shields.io/badge/Vanilla_Vite-171c23.svg?style=flat&logo=javascript)](https://vite.new/vanilla-ts)
 [![Vue Vite](https://img.shields.io/badge/Vue_Vite-171c23.svg?style=flat&logo=vuedotjs)](https://vite.new/vue-ts)
 [![React Vite](https://img.shields.io/badge/React_Vite-171c23.svg?style=flat&logo=react)](https://vite.new/react-ts)
 
@@ -45,6 +46,7 @@ explains how item versions resolve.
 
 ## Integrations
 
+- [Vanilla HTML and CSS](https://pmndrs.github.io/design-system/getting-started/vanilla): shared palette, fonts and native elements.
 - [Vue](https://pmndrs.github.io/design-system/getting-started/vue): preset, theme and components with shadcn-vue, or standard CSS.
 - [React and Tailwind](https://pmndrs.github.io/design-system/getting-started/react): preset, theme and components.
 

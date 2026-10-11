@@ -34,6 +34,7 @@
         "docs/getting-started/introduction.mdx",
         "docs/getting-started/react.mdx",
         "docs/getting-started/vue.mdx",
+        "docs/getting-started/vanilla.mdx",
         "docs/getting-started/publishing.mdx",
         "docs/guidelines/introduction.mdx",
         "docs/colors/introduction.mdx",

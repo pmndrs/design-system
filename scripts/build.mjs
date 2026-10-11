@@ -498,6 +498,7 @@ const bumpInstallRefs = (text) => text.replace(installRef, `pmndrs/design-system
  */
 const storybookUrl = new URL('https://main--695eb517cb602e59b4cc045c.chromatic.com/')
 storybookUrl.searchParams.set('path', '/story/mtb--st-1')
+storybookUrl.searchParams.set('nav', 'false')
 const { customColors, ...coreArgs } = pmndrsMtb
 function storybookValue(value) {
   if (typeof value === 'boolean') return `!${value}`
@@ -523,7 +524,7 @@ for (const url of docs) {
     const start = page.indexOf(storybookStart)
     const end = page.indexOf(storybookEnd)
     if (start === -1 || end < start) throw new Error('Color system page has lost its Storybook badge markers')
-    const badge = `<Badge href="${storybookUrl.href}" logo="storybook">storybook</Badge>`
+    const badge = `<Badge href="${storybookUrl.href}" logo="storybook">material theme builder</Badge>`
     page = page.slice(0, start + storybookStart.length) + '\n\n' + badge + '\n\n' + page.slice(end)
   }
   outputs.push([url, page])

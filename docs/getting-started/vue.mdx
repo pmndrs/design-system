@@ -1,16 +1,87 @@
 ---
-title: Vue and CSS
-description: Use the pmndrs palette and fonts in a Vue app with plain CSS.
+title: Vue and Tailwind
+description: Start a Vue app with the pmndrs preset, theme and fonts through shadcn-vue.
 nav: 8.5
 ---
 
 <Intro>
-  Use the shared palette, fonts and foundations in a Vue app. The `palette`
-  registry item exports plain CSS variables for light and dark schemes;
-  your Vue components choose how to use them.
+  The `preset-vue` item brings the pmndrs colours, fonts and radius to Vue apps
+  using Tailwind v4. Start with the preset, then add shadcn-vue components and
+  shared resources as you need them.
 </Intro>
 
-## Create the app
+## New project
+
+Create a Vue and Vite app with the pmndrs preset:
+
+```sh
+npx shadcn-vue@latest init --preset https://pmndrs.github.io/design-system/r/preset-vue.json \
+  --template vite --name my-app
+cd my-app
+```
+
+One command sets up the app, Tailwind and shadcn-vue, installs Inter and
+Inconsolata, applies the light and dark palette, and configures `@pmndrs`.
+
+## First component
+
+Add a button:
+
+```sh
+npx shadcn-vue@latest add button
+```
+
+Replace `src/App.vue` with a card and a dark-mode toggle:
+
+```html title="src/App.vue"
+<script setup lang="ts">
+import { ref } from 'vue'
+import { Button } from '@/components/ui/button'
+
+const dark = ref(false)
+</script>
+
+<template>
+  <main :class="{ dark }" class="min-h-screen bg-background p-8 text-foreground">
+    <section class="flex flex-col items-start gap-4 rounded-lg bg-surface-dim p-6">
+      <h1 class="text-2xl font-semibold">Hello, Poimandres</h1>
+      <p class="text-on-surface-variant">Shared colours, ready to use.</p>
+      <Button type="button" :aria-pressed="dark" @click="dark = !dark">
+        Dark mode
+      </Button>
+    </section>
+  </main>
+</template>
+```
+
+The `.dark` class switches the palette for this root element and its children.
+Standard shadcn-vue classes work alongside Material Design 3 colour roles such
+as `bg-surface-dim` and `text-on-surface-variant`.
+
+## Shared resources
+
+The preset configures `@pmndrs`; add the same logo and Figma tokens used by other
+integrations:
+
+```sh
+npx shadcn-vue@latest add @pmndrs/logo @pmndrs/figma-tokens
+```
+
+Follow the [guidelines](/guidelines/introduction) and explore the
+[registry catalog](/getting-started/introduction#catalog). Each item has its own
+environment and dependencies.
+
+The hosted URLs follow `main`. `preset-vue` and `palette` are new items;
+older releases may not include them. See
+[Versioning](/getting-started/introduction#versioning) before pinning resources.
+
+<details>
+  <summary>Use Vue with standard CSS</summary>
+
+Use the plain CSS palette and fonts in a Vue app whose components manage their
+own styles:
+
+### Create the app
 
 Start with [Vue's official Vite scaffold](https://vuejs.org/guide/quick-start.html):
 
@@ -21,19 +92,17 @@ npm install
 npm install @fontsource-variable/inter @fontsource-variable/inconsolata
 ```
 
-## Add the palette
+### Add the palette
 
-Copy the [palette item](https://github.com/pmndrs/design-system/blob/main/registry/palette/docs.md)
+Install the [palette item](https://github.com/pmndrs/design-system/blob/main/registry/palette/docs.md)
 into the app's assets:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/pmndrs/design-system/main/registry/palette/palette.css \
-  -o src/assets/pmndrs.css
+npx shadcn-vue@latest add https://pmndrs.github.io/design-system/r/palette.json
 ```
 
 The file contains `--md-sys-color-*` variables under `:root` and `.dark`.
-It has no framework dependency. This URL follows `main`; use a release tag
-that includes `palette` when you need a fixed version.
+It has no framework dependency. The hosted item follows `main`.
 
 Replace the starter `./assets/main.css` import in `src/main.ts` with the
 fonts and palette:
@@ -49,7 +118,7 @@ import App from './App.vue'
 createApp(App).mount('#app')
 ```
 
-## Use the colour roles
+### Use the colour roles
 
 Replace `src/App.vue` with a card and a dark-mode toggle:
 
@@ -112,9 +181,4 @@ inherit the selected scheme. The spacing and radius follow the shared
 [foundations](/spacing/introduction), with [Inter and Inconsolata](/typography/introduction).
 Run `npm run dev` to see it.
 
-## Shared resources
-
-Use the same [guidelines, SVG assets and Figma tokens](/getting-started/introduction#use-the-foundations)
-in this project. The [registry catalog](/getting-started/introduction#catalog)
-also lists code items; check each item's environment and dependencies before
-using it in a Vue app.
+</details>

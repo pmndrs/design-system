@@ -41,7 +41,7 @@ explains how item versions resolve.
 
 ## Integrations
 
-- [Vue](https://pmndrs.github.io/design-system/getting-started/vue): shared palette and fonts with standard CSS.
+- [Vue](https://pmndrs.github.io/design-system/getting-started/vue): preset, theme and components with shadcn-vue, or standard CSS.
 - [React and Tailwind](https://pmndrs.github.io/design-system/getting-started/react): preset, theme and components.
 
 <details>

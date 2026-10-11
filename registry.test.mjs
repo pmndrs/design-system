@@ -69,13 +69,14 @@ test('every var() reference resolves to a variable the registry declares', () =>
  * `radius`, from which it derives the `--radius-*` scale, and in `@theme
  * inline` the heading font and the Tailwind colour of each remapped variable.
  */
-test('no item declares cssVars but the preset, and it no colour', () => {
+test('only the presets declare cssVars, and the React preset no colour', () => {
   const allowed = new Set([
     'preset light.radius',
     'preset theme.--font-heading: var(--font-sans)',
     ...remapped.map((name) => `preset theme.--color-${name.slice(2)}: var(${name})`),
   ])
-  const offenders = registry.items.flatMap((item) =>
+  // Vue owns its complete theme mapping; vue-preset.test.mjs checks that contract.
+  const offenders = registry.items.filter((item) => item.name !== 'preset-vue').flatMap((item) =>
     Object.entries(item.cssVars ?? {}).flatMap(([block, vars]) =>
       Object.entries(vars)
         .map(([name, value]) => (block === 'theme' ? `${item.name} ${block}.${name}: ${value}` : `${item.name} ${block}.${name}`))

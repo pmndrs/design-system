@@ -60,7 +60,7 @@ import { installedVersion } from './packages.mjs'
 import { readRemap } from './remap.mjs'
 
 const root = new URL('../', import.meta.url)
-/** Where `npm run artifact` writes. */
+/** Where `pnpm run artifact` writes. */
 export const outDir = new URL('../out/artifact/', import.meta.url)
 /** The hand-written files, laid out as they are published. */
 const sourceDir = new URL('../artifact/', import.meta.url)

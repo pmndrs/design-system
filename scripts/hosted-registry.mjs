@@ -23,7 +23,7 @@ const root = new URL('../', import.meta.url)
 /** Where the docs site serves the hosted registry: `{name}` of a namespace is `<hostedUrl><name>.json`. */
 export const hostedUrl = 'https://pmndrs.github.io/design-system/r/'
 
-/** Where `npm run hosted-registry` writes without an argument: shadcn's own default, gitignored. */
+/** Where `pnpm run hosted-registry` writes without an argument: shadcn's own default, gitignored. */
 export const outDir = new URL('../public/r/', import.meta.url)
 
 const shadcn = fileURLToPath(import.meta.resolve('shadcn'))

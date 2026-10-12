@@ -1,6 +1,6 @@
 /**
  * What the scripts read off the installed packages rather than restate: a
- * version a generated file names follows `npm ci`, not a copy kept by hand.
+ * version a generated file names follows `pnpm install --frozen-lockfile`, not a copy kept by hand.
  */
 import { readFileSync } from 'node:fs'
 

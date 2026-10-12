@@ -1,5 +1,5 @@
 /**
- * What `npm run artifact` writes for the Poimandres Design System artifact:
+ * What `pnpm run artifact` writes for the Poimandres Design System artifact:
  * `tokens.json`, the brand book, the fonts and the block cards. These run the
  * generator into a temporary folder and assert the shape of what lands
  * there, against what the artifact reads, not how `scripts/artifact.mjs`

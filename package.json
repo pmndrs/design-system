@@ -17,21 +17,27 @@
     "refresh-catalog": "node scripts/catalog.mjs && npm run build",
     "check-registry": "shadcn registry validate ./registry.json",
     "test": "node --test",
-    "lgtm": "npm run check-registry && npm test",
+    "lgtm": "npm run check-registry && npm test && npm run check-storybook",
     "changeset": "changeset",
     "version": "changeset version && npm install --package-lock-only && npm run build",
-    "release": "changeset publish"
+    "release": "changeset publish",
+    "storybook": "storybook dev -p 6006 --no-open",
+    "build-storybook": "storybook build -o out/storybook",
+    "check-storybook": "tsc -p .storybook/tsconfig.json && npm run build-storybook"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.0",
     "@changesets/cli": "^3.0.0",
     "@fontsource-variable/inconsolata": "^5.3.0",
     "@fontsource-variable/inter": "^5.3.0",
+    "@storybook/addon-docs": "^10.6.1",
+    "@storybook/react-vite": "^10.6.1",
     "@types/node": "^26.2.0",
     "material-theme-builder": "^5.2.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "shadcn": "^4.18.0",
+    "storybook": "^10.6.1",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3"
   }

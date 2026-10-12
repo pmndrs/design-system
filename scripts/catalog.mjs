@@ -121,13 +121,14 @@ async function refreshExternal() {
   const registries = JSON.parse(readFileSync(externalUrl, 'utf8'))
 
   const refreshed = []
-  for (const { repo, ref } of registries) {
+  for (const registry of registries) {
+    const { repo, ref } = registry
     const url = `https://raw.githubusercontent.com/${repo}/${ref}/registry.json`
     const response = await fetch(url)
     if (!response.ok) throw new Error(`${url}: ${response.status} ${response.statusText}`)
 
     const { items } = await response.json()
-    refreshed.push({ repo, ref, items: items.map(summarize) })
+    refreshed.push({ ...registry, items: items.map(summarize) })
     console.log(`✔ ${repo}#${ref}: ${items.map((item) => item.name).join(', ')}`)
   }
 

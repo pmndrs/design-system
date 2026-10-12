@@ -2,6 +2,11 @@
   {
     "repo": "pmndrs/docs",
     "ref": "v4.22.0",
+    "storybook": {
+      "ref": "v4.22.0",
+      "commit": "6c724f76b926ad9147f56816cda38594708662bc",
+      "url": "https://6977e41687a50b30c4349650-bwzztcicax.chromatic.com/"
+    },
     "items": [
       {
         "name": "keypoints",

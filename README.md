@@ -119,6 +119,34 @@ claude.ai, which is why CI cannot do it:
 Nothing of it is committed but its sources: `scripts/artifact.mjs`,
 `scripts/artifact.notes.json` and `artifact/`.
 
+## Storybook
+
+Browse the supported registry components and links to the design system documentation:
+
+```sh
+npm run storybook        # http://localhost:6006
+npm run build-storybook  # static output in out/storybook/
+```
+
+The documentation deployment includes Storybook at
+[storybook/](https://pmndrs.github.io/design-system/storybook/). Each Vercel PR preview
+serves the same build under `/design-system/storybook/`; its link is in the deployment
+job summary and the PR description.
+
+[Storybook composition](https://storybook.js.org/docs/sharing/storybook-composition)
+is configured through `refs` in `.storybook/main.ts`. The `pmndrs/docs` reference
+loads the remote catalog; the sidebar filter in `.storybook/manager.ts` only displays
+components listed for that repository in `registry/external.json` (Color and Keypoints).
+Remote stories keep their own theme, and some addons have composition limitations.
+This filters sidebar navigation; remote search results and direct links can still
+reach other entries in the source Storybook.
+
+`registry/external.json` records each published Storybook's release ref, source commit
+and immutable build URL. The `pmndrs/docs` preview matches `v4.22.0`. Updating a registry
+ref without updating its Storybook mapping fails the build. `refresh-catalog` preserves
+this metadata. Verify the published build's commit against the new release when updating
+the mapping; no external build or component code is imported by the DS.
+
 ## dev
 
 ```sh

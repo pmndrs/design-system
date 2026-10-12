@@ -8,12 +8,13 @@
  *   registry.json              this repo's items, as `build.mjs` builds them
  *   registry/external.json     a snapshot of the other repos' items
  *
- * The catalog is a table of links and nothing more: each item to its source,
- * each registry to its `registry.json`. Descriptions, dependencies and files
- * stay in the repo that owns them, so the catalog never repeats — and never
- * contradicts — what that repo says.
+ * The catalog links each item to its source and shows its install address:
+ * local items use the hosted `@pmndrs` namespace, other repos use a pinned
+ * GitHub address. Descriptions, dependencies and files stay in the repo that
+ * owns them, so the catalog never repeats — and never contradicts — what that
+ * repo says.
  *
- * The snapshot is committed, and only what the table shows — name and type —
+ * The snapshot is committed and holds only item names and types,
  * so `npm run build` and `npm test` stay offline and deterministic: a test that
  * fetched would fail on a plane, and would turn red the moment another repo
  * pushed, on a branch that changed nothing. Refreshing is an explicit step
@@ -51,17 +52,6 @@ function summarize({ name, type }) {
 }
 
 /**
- * `registry:block` reads `block`: in a table where every type has the prefix,
- * it is noise.
- *
- * @param {string} type
- * @returns {string}
- */
-export function humanizeType(type) {
-  return type.replace(/^registry:/, '')
-}
-
-/**
  * Where an item's source lives: its folder, `registry/<name>/`, on GitHub at
  * the ref to install it from. Every pmndrs registry keeps its items that way —
  * by name rather than by `files[].path`, since an item can have no files at
@@ -77,19 +67,7 @@ export function itemSourceUrl(repo, ref, name) {
 }
 
 /**
- * Where a registry's items are defined: its `registry.json` on GitHub, at the
- * ref to install them from.
- *
- * @param {string} repo
- * @param {string} ref
- * @returns {string}
- */
-export function registrySourceUrl(repo, ref) {
-  return `https://github.com/${repo}/blob/${ref}/registry.json`
-}
-
-/**
- * The catalog as MDX: a table of every item across registries, then the
+ * The catalog as MDX: a source link and install address for every item, then the
  * `search` command that lists them all from the terminal.
  *
  * @param {{ repo: string, ref: string, items: { name: string, type: string }[] }[]} registries
@@ -99,20 +77,21 @@ export function registrySourceUrl(repo, ref) {
  */
 export function renderCatalog(registries) {
   const rows = registries.flatMap(({ repo, ref, items }) =>
-    items.map(({ name, type }) => {
-      const item = `[${name}](${itemSourceUrl(repo, ref, name)})`
-      const registry = `[${repo}](${registrySourceUrl(repo, ref)})`
-      return `| ${item} | ${humanizeType(type)} | ${registry} |`
+    items.map(({ name }) => {
+      const hosted = repo === 'pmndrs/design-system'
+      const item = `[${name}](${itemSourceUrl(repo, hosted ? 'main' : ref, name)})`
+      const address = hosted ? `@pmndrs/${name}` : `${repo}/${name}#${ref}`
+      return `| ${item} | \`${address}\` |`
     }),
   )
-  const table = ['| Item | Type | Registry |', '| --- | --- | --- |', ...rows].join('\n')
+  const table = ['| Item | Install address |', '| --- | --- |', ...rows].join('\n')
 
   // Pinned like an install command: `search` prints each item's address with
   // the ref it was given, so an unpinned search hands out unpinned addresses.
   const addresses = registries.map(({ repo, ref }) => `${repo}#${ref}`).join(' ')
   const search = ['```sh', `npx shadcn@latest search ${addresses}`, '```'].join('\n')
 
-  return [table, 'The CLI lists the same items, read live from each repo at the ref to pin:', search].join('\n\n')
+  return [table, 'To browse a specific release across repos:', search].join('\n\n')
 }
 
 /**

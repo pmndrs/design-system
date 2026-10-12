@@ -1,0 +1,184 @@
+---
+title: Vue and Tailwind
+description: Start a Vue app with the pmndrs preset, theme and fonts through shadcn-vue.
+nav: 8.5
+---
+
+<Intro>
+  The `preset-vue` item brings the pmndrs colours, fonts and radius to Vue apps
+  using Tailwind v4. Start with the preset, then add shadcn-vue components and
+  shared resources as you need them.
+</Intro>
+
+## New project
+
+Create a Vue and Vite app with the pmndrs preset:
+
+```sh
+npx shadcn-vue@latest init --preset https://pmndrs.github.io/design-system/r/preset-vue.json \
+  --template vite --name my-app
+cd my-app
+```
+
+One command sets up the app, Tailwind and shadcn-vue, installs Inter and
+Inconsolata, applies the light and dark palette, and configures `@pmndrs`.
+
+## First component
+
+Add a button:
+
+```sh
+npx shadcn-vue@latest add button
+```
+
+Replace `src/App.vue` with a card and a dark-mode toggle:
+
+```html title="src/App.vue"
+<script setup lang="ts">
+import { ref } from 'vue'
+import { Button } from '@/components/ui/button'
+
+const dark = ref(false)
+</script>
+
+<template>
+  <main :class="{ dark }" class="min-h-screen bg-background p-8 text-foreground">
+    <section class="flex flex-col items-start gap-4 rounded-lg bg-surface-dim p-6">
+      <h1 class="text-2xl font-semibold">Hello, Poimandres</h1>
+      <p class="text-on-surface-variant">Shared colours, ready to use.</p>
+      <Button type="button" :aria-pressed="dark" @click="dark = !dark">
+        Dark mode
+      </Button>
+    </section>
+  </main>
+</template>
+```
+
+The `.dark` class switches the palette for this root element and its children.
+Standard shadcn-vue classes work alongside Material Design 3 colour roles such
+as `bg-surface-dim` and `text-on-surface-variant`.
+
+## Shared resources
+
+The preset configures `@pmndrs`; add the same logo and Figma tokens used by other
+integrations:
+
+```sh
+npx shadcn-vue@latest add @pmndrs/logo @pmndrs/figma-tokens
+```
+
+Follow the [guidelines](/guidelines/introduction) and explore the
+[registry catalog](/getting-started/introduction#catalog). Each item has its own
+environment and dependencies.
+
+The hosted URLs follow `main`. `preset-vue` and `palette` are new items;
+older releases may not include them. See
+[Versioning](/getting-started/introduction#versioning) before pinning resources.
+
+<details>
+  <summary>Use Vue with standard CSS</summary>
+
+Use the plain CSS palette and fonts in a Vue app whose components manage their
+own styles:
+
+### Create the app
+
+Start with [Vue's official Vite scaffold](https://vuejs.org/guide/quick-start.html):
+
+```sh
+npm create vue@latest my-app -- --typescript
+cd my-app
+npm install
+npm install @fontsource-variable/inter @fontsource-variable/inconsolata
+```
+
+### Add the palette
+
+Install the [palette item](https://github.com/pmndrs/design-system/blob/main/registry/palette/docs.md)
+into the app's assets:
+
+```sh
+npx shadcn-vue@latest add https://pmndrs.github.io/design-system/r/palette.json
+```
+
+The file contains `--md-sys-color-*` variables under `:root` and `.dark`.
+It has no framework dependency. The hosted item follows `main`.
+
+Replace the starter `./assets/main.css` import in `src/main.ts` with the
+fonts and palette:
+
+```ts title="src/main.ts"
+import '@fontsource-variable/inter'
+import '@fontsource-variable/inconsolata'
+import './assets/pmndrs.css'
+
+import { createApp } from 'vue'
+import App from './App.vue'
+
+createApp(App).mount('#app')
+```
+
+### Use the colour roles
+
+Replace `src/App.vue` with a card and a dark-mode toggle:
+
+```html title="src/App.vue"
+<script setup lang="ts">
+import { ref } from 'vue'
+const dark = ref(false)
+</script>
+
+<template>
+  <main :class="{ dark }">
+    <section class="card">
+      <h1>Hello, Poimandres</h1>
+      <p>Shared colours, used through <code>CSS variables</code>.</p>
+      <button type="button" :aria-pressed="dark" @click="dark = !dark">
+        Dark mode
+      </button>
+    </section>
+  </main>
+</template>
+
+<style>
+body { margin: 0; }
+main {
+  --radius: 0.625rem;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  padding: 2rem;
+  font-family: 'Inter Variable', sans-serif;
+  background: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  background: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface);
+}
+h1, p { margin: 0; }
+h1 { font-size: 1.5rem; font-weight: 600; }
+button {
+  padding: 0.5rem 1rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--md-sys-color-lime-container);
+  color: var(--md-sys-color-on-lime-container);
+  font: inherit;
+  cursor: pointer;
+}
+code { font-family: 'Inconsolata Variable', monospace; }
+</style>
+```
+
+The `.dark` class switches the variables on the app's root element; its children
+inherit the selected scheme. The spacing and radius follow the shared
+[foundations](/spacing/introduction), with [Inter and Inconsolata](/typography/introduction).
+Run `npm run dev` to see it.
+
+</details>

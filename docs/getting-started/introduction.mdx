@@ -57,8 +57,12 @@ Choose items that fit your project's environment. Browse the
 [JSON index](https://pmndrs.github.io/design-system/r/registry.json) or read an
 item directly, such as [`logo.json`](https://pmndrs.github.io/design-system/r/logo.json).
 
-The `@pmndrs` namespace is built into the shadcn CLI. Browse, inspect or install
-resources directly:
+The registry is listed in the
+[official shadcn registry directory](https://ui.shadcn.com/docs/directory?q=pmndrs).
+The shadcn CLI automatically resolves `@pmndrs/<name>` to
+`https://pmndrs.github.io/design-system/r/{name}.json`. The namespace is an
+implicit alias: no `registry add` command or `registries` declaration in
+`components.json` is needed. Browse, inspect or install resources directly:
 
 ```sh
 npx shadcn@latest search @pmndrs
@@ -67,6 +71,9 @@ npx shadcn@latest add @pmndrs/logo @pmndrs/figma-tokens
 ```
 
 The SVGs go in `public/pmndrs/`; the tokens go in `design/tokens/pmndrs/`.
+
+For shadcn-vue, follow the [Vue setup](/getting-started/vue); its preset
+configures the namespace.
 
 ### Catalog
 

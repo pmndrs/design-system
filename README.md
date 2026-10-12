@@ -21,6 +21,9 @@ The registry distributes code and files. Items can target vanilla JavaScript,
 Vue, React or other environments; each item carries its own files and
 dependencies. Choose items according to your project and their setup requirements.
 
+The [official shadcn registry directory](https://ui.shadcn.com/docs/directory?q=pmndrs)
+lets the CLI resolve `@pmndrs` automatically, without manual registration.
+
 Read the [JSON index](https://pmndrs.github.io/design-system/r/registry.json)
 or use the shadcn CLI to browse and install individual items:
 

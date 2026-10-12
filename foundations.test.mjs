@@ -1,6 +1,6 @@
 /**
  * The foundations pages of the docs are the source of the type, spacing,
- * radius, shadow and motion values: the artifact reads them through
+ * radius, shadow and motion values: the build reads them through
  * `scripts/foundations.mjs`, and so will the Figma foundation tokens. These
  * hold the values it returns against what they claim to be: Tailwind v4's own
  * defaults where a page says it inherits them, and the pixel column of a

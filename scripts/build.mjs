@@ -21,9 +21,8 @@
  * is generated here for the same reason: one seed, or designers and engineers
  * drift.
  *
- * The brand book, `artifact/README.md`, is generated into the docs site's
- * Guidelines page and the `guidelines` item's `Guidelines.md` here, for the
- * same reason again: written once, it cannot say two things.
+ * The authored Guidelines page supplies the `guidelines` item's Markdown,
+ * so the site and the installed brand book cannot say two things.
  *
  * The getting-started page lists these items next to the other pmndrs repos' —
  * a catalog generated here so its install refs follow the version too; how the
@@ -39,7 +38,6 @@ import { mtbColors } from 'material-theme-builder/tailwind'
 import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
 import { themePresets } from '../registry/md3-base/presets.ts'
-import { fill, stripArtifactOnly } from './brand-book.mjs'
 import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
 import { foundationStyles, foundationVariables } from './foundation-tokens.mjs'
 import { readFoundations } from './foundations.mjs'
@@ -456,7 +454,7 @@ const registryUrl = new URL('../registry.json', import.meta.url)
  * the docs site. The changeset markdown is history and stays as written.
  */
 const docsDir = new URL('../docs/', import.meta.url)
-/** The Guidelines page, generated whole from the brand book below. */
+/** The authored brand book is read below without rewriting its source. */
 const guidelinesPageUrl = new URL('guidelines/introduction.mdx', docsDir)
 const docPages = readdirSync(docsDir, { recursive: true })
   .filter((path) => path.endsWith('.mdx'))
@@ -652,43 +650,12 @@ for (const url of docs) {
   outputs.push([url, page])
 }
 
-/**
- * The brand book, `artifact/README.md`, as the docs site reads it: the
- * Guidelines page, last in the navigation (`nav` sorts numerically). Passages
- * marked artifact-only are dropped, and the placeholders are filled the way
- * `artifact.mjs` fills them, so the page, the artifact and `Guidelines.md`
- * say the same thing at the same versions.
- *
- * Written whole on every build rather than bumped in place, which is why it is
- * not one of the `docPages` above.
- *
- * Both copies open on `generatedFrom`, so an edit lands in the brand book and
- * not in an output the next build overwrites. On the page it is a YAML comment
- * in the frontmatter, which pmndrs/docs drops: an MDX comment would stay in the
- * body, and so in `llms-full.txt`.
- */
-const brandBookPath = 'artifact/README.md'
-const guidelines = fill(stripArtifactOnly(readFileSync(new URL(`../${brandBookPath}`, import.meta.url), 'utf8')), brandBookPath).trim()
+/** The authored Guidelines page supplies installable prose, without its site frontmatter. */
+const brandBookPath = 'docs/guidelines/introduction.mdx'
+const guidelines = readFileSync(guidelinesPageUrl, 'utf8')
+  .replace(/^---\r?\n[\s\S]*?\r?\n---(?:\r?\n|$)/, '')
+  .trim()
 const generatedFrom = `Generated from ${brandBookPath} by scripts/build.mjs: do not edit.`
-
-outputs.push([
-  guidelinesPageUrl,
-  `---
-# ${generatedFrom}
-title: Guidelines
-description: The do and don't of the pmndrs design system — colour, type, spacing, components, logo, iconography and voice.
-nav: 4
----
-
-These guidelines are intended for AI agents building with the pmndrs design system. They define the rules for colours, typography, spacing, components, logos, iconography and voice. Copy the Markdown below into your project’s \`AGENTS.md\` or your agent’s instructions.
-
-\`\`\`md
-${guidelines}
-\`\`\`
-`,
-])
-
-/** The same text as the `guidelines` item installs it, with a title of its own in place of the frontmatter. */
 outputs.push([
   new URL('../registry/guidelines/Guidelines.md', import.meta.url),
   `<!-- ${generatedFrom} -->\n\n# Poimandres design system guidelines\n\n${guidelines}\n`,

@@ -12,5 +12,6 @@ A few things to know:
   ```
 
   The brand colours' shade utilities take over Tailwind's stock palettes of the same names. Style alerts, hints and badges with the alert roles, not with a brand colour. The [Colors page](https://pmndrs.github.io/design-system/tokens/colors#custom-colours) lists their seeds.
-- If you want a palette other than the pmndrs one, install **`md3-base`** instead and compute your own. See its docs. Installing both means committing a whole baked palette you immediately override.
-- **The bake is the seed's own output.** It is `builder(pmndrsMtb)` as Material Theme Builder computes it, with nothing redrawn on top, so `<Mtb>` or `builder()` at runtime with the same seed renders exactly these colours.
+- **Named source seeds are available.** Install `@pmndrs/theme-lime`, `@pmndrs/theme-teal`, `@pmndrs/theme-cyan`, `@pmndrs/theme-purple`, `@pmndrs/theme-red`, `@pmndrs/theme-orange` or `@pmndrs/theme-yellow`. Lime keeps the designer-selected neutral seeds; the other presets let MD3 derive their neutrals from `source`. Presets do not set contrast: static palettes use the generator's standard contrast, and the docs preview preserves the reader's preference. Install `@pmndrs/theme` to restore the default palette.
+- If you want a configuration beyond these presets, install **`md3-base`** instead and compute your own. See its docs. Installing both means committing a whole baked palette you immediately override.
+- **The bake is the seed's own output.** It is Material Theme Builder's `builder()` with the pmndrs options and the selected source, with nothing redrawn on top, so `<Mtb>` or `builder()` at runtime with the same configuration renders exactly these colours.

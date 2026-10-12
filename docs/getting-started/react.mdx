@@ -15,7 +15,7 @@ nav: 8
 Create a Next.js app with the poimandres preset:
 
 ```sh
-npx shadcn@latest init https://pmndrs.github.io/design-system/r/preset.json \
+npx shadcn@latest init @pmndrs/preset \
   --template next --name my-app --no-monorepo
 cd my-app
 ```
@@ -29,7 +29,7 @@ palette, and declares the `@pmndrs` registry. You can also use another
 From an app already configured with shadcn and Tailwind v4, add the theme:
 
 ```sh
-npx shadcn@latest add https://pmndrs.github.io/design-system/r/theme.json
+npx shadcn@latest add @pmndrs/theme
 ```
 
 This adds the pmndrs palette and mono font to your current setup. To add
@@ -68,8 +68,8 @@ Add the `dark` class to `<html>` to switch the entire palette to its dark scheme
 
 ## Versioning
 
-The hosted URLs follow `main`. For a fresh app with a released theme,
-configure the preset by code, then add the pinned theme:
+The `@pmndrs` namespace and hosted URLs follow `main`. For a fresh app with a
+released theme, configure the preset by code, then add the pinned theme:
 
 ```sh
 npx shadcn@latest init --preset b1VlIttI \

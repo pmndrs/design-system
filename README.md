@@ -25,7 +25,6 @@ Read the [JSON index](https://pmndrs.github.io/design-system/r/registry.json)
 or use the shadcn CLI to browse and install individual items:
 
 ```sh
-npx shadcn@latest registry add '@pmndrs=https://pmndrs.github.io/design-system/r/{name}.json'
 npx shadcn@latest add @pmndrs/logo @pmndrs/figma-tokens
 npx shadcn@latest search @pmndrs
 ```

@@ -174,6 +174,11 @@ npm run storybook        # http://localhost:6006
 npm run build-storybook  # static output in out/storybook/
 ```
 
+The documentation deployment includes Storybook at
+[storybook/](https://pmndrs.github.io/design-system/storybook/). Each Vercel PR preview
+serves the same build under `/design-system/storybook/`; its link is in the deployment
+job summary and the PR description.
+
 [Storybook composition](https://storybook.js.org/docs/sharing/storybook-composition)
 is configured through `refs` in `.storybook/main.ts`. The `pmndrs/docs` reference
 loads the remote catalog; the sidebar filter in `.storybook/manager.ts` only displays

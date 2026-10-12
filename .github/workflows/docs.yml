@@ -57,7 +57,7 @@ jobs:
   # `<name>.json` per item plus the index, so `https://pmndrs.github.io/design-system/r/{name}.json`
   # is a shadcn namespace (see `scripts/hosted-registry.mjs`). The reusable workflow above has
   # no input for extra static files, so its `github-pages` artifact is unpacked here, gets
-  # `r/` at its root (which both Pages and the Vercel job below serve under the base path), and
+  # `r/` and the composed Storybook at its root (served under the same base path), and
   # is uploaded again as `site`: the one artifact both deployments take, so they serve the same
   # files. A new name rather than `github-pages` overwritten, which the Vercel job may be
   # downloading meanwhile.
@@ -72,6 +72,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Build composed Storybook
+        run: npm run build-storybook
       - uses: actions/download-artifact@v8
         with:
           name: github-pages
@@ -80,6 +82,8 @@ jobs:
           mkdir -p "$SITE"
           tar -xf "$RUNNER_TEMP/github-pages/artifact.tar" -C "$SITE"
           npm run hosted-registry -- "$SITE/r"
+          mkdir -p "$SITE/storybook"
+          cp -R out/storybook/. "$SITE/storybook/"
         env:
           SITE: ${{ runner.temp }}/site
       - uses: actions/upload-pages-artifact@v5
@@ -167,14 +171,17 @@ jobs:
           # https://vercel.com/docs/build-output-api/configuration#routes
           #
           # shellcheck disable=SC2016 # `$1` is the route's capture, not the shell's
-          printf '{"version":3,"cleanUrls":true,"routes":[{"src":"^/$","status":308,"headers":{"Location":"%s"}},{"handle":"filesystem"},{"src":"^%s/(.+?)/?$","dest":"%s/$1.html","check":true}]}' \
-            "$BASE_PATH" "$BASE_PATH" "$BASE_PATH" > .vercel/output/config.json
+          # Storybook uses relative assets, so its directory URL needs a trailing slash.
+          printf '{"version":3,"cleanUrls":true,"routes":[{"src":"^/$","status":308,"headers":{"Location":"%s"}},{"src":"^%s/storybook$","status":308,"headers":{"Location":"%s/storybook/"}},{"handle":"filesystem"},{"src":"^%s/(.+?)/?$","dest":"%s/$1.html","check":true}]}' \
+            "$BASE_PATH" "$BASE_PATH" "$BASE_PATH" "$BASE_PATH" "$BASE_PATH" > .vercel/output/config.json
           # `--archive`: one tarball, not one upload per file
           url=$(npx -y vercel deploy --prebuilt --archive=tgz --token="$VERCEL_TOKEN" \
             --target="$([ "$PRODUCTION" = 'true' ] && echo production || echo preview)")
 
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "deployment_url=$url$BASE_PATH" >> "$GITHUB_OUTPUT"
+          printf '### Storybook\n\n[Open composed Storybook](%s/storybook/)\n' \
+            "$url$BASE_PATH" >> "$GITHUB_STEP_SUMMARY"
 
       # Vercel generates branch URLs (`<project>-git-<branch>-<scope>.vercel.app`) only for
       # deployments made by its Git integration, not for these CLI ones. So give each preview the

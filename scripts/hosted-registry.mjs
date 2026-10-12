@@ -2,15 +2,11 @@
  * Writes the hosted registry: `registry.json` as static files, one
  * `<name>.json` per item plus the index, the way a shadcn namespace reads them.
  *
- * The docs site serves them at `hostedUrl` (see `.github/workflows/docs.yml`),
- * so a consumer declares the namespace once in `components.json`,
- *
- *   "registries": { "@pmndrs": "https://pmndrs.github.io/design-system/r/{name}.json" }
- *
- * and gets `npx shadcn add @pmndrs/theme`, and the shadcn MCP server can list
- * and install the items. The deploy runs this from `main`, so the hosted files
- * are always the latest merged state; the git tag stays the pinned install
- * address.
+ * The docs site serves them at `hostedUrl` (see `.github/workflows/docs.yml`).
+ * The official shadcn registry directory lets the CLI discover `@pmndrs`
+ * automatically, so `npx shadcn@latest add @pmndrs/theme` works directly.
+ * The deploy runs this from `main`, so the hosted files are always the latest
+ * merged state; the git tag stays the pinned install address.
  *
  * The per-item format is `shadcn build`'s: it copies each item as it is and
  * inlines every file's `content`, and copies `registry.json` itself as the

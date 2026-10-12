@@ -26,12 +26,12 @@ npm install @fontsource-variable/inter @fontsource-variable/inconsolata
 Install the framework-independent palette as `src/assets/pmndrs.css`:
 
 ```sh
-npx shadcn@latest add https://pmndrs.github.io/design-system/r/palette.json
+npx shadcn@latest add @pmndrs/palette
 ```
 
 This item copies one CSS file. It installs no components, Tailwind setup or
-JavaScript runtime. The hosted URL follows `main`; older release tags may not
-include `palette`.
+JavaScript runtime. The `@pmndrs` namespace follows `main`; older release tags
+may not include `palette`.
 
 ## Use the colour roles
 
@@ -126,9 +126,7 @@ Add the [SVG assets and Figma tokens](/getting-started/introduction#use-the-foun
 with the same CLI:
 
 ```sh
-npx shadcn@latest add \
-  https://pmndrs.github.io/design-system/r/logo.json \
-  https://pmndrs.github.io/design-system/r/figma-tokens.json
+npx shadcn@latest add @pmndrs/logo @pmndrs/figma-tokens
 ```
 
 The SVGs go in `public/pmndrs/`; the tokens go in `design/tokens/pmndrs/`.

@@ -6,37 +6,42 @@ export const composedStorybooks = Object.values(storybookRefs(externalRegistries
 
 <Meta title="Introduction" />
 
-# Poimandres design system
+# Poimandres component Storybook
 
-The shared pmndrs colour layer, typography and shadcn preset.
+Explore the examples and APIs of components supported by the pmndrs design system
+in one place.
 
-The [design system documentation](https://pmndrs.github.io/design-system/getting-started/introduction)
-remains the reference for installation, tokens and usage:
+## How composition works
 
-- [Brand guidelines](https://pmndrs.github.io/design-system/guidelines/introduction)
-- [Colors](https://pmndrs.github.io/design-system/colors/introduction)
-- [Typography](https://pmndrs.github.io/design-system/typography/introduction)
-- [Spacing](https://pmndrs.github.io/design-system/spacing/introduction)
-- [Radius](https://pmndrs.github.io/design-system/radius/introduction)
-- [Shadows](https://pmndrs.github.io/design-system/shadows/introduction)
-- [Motion](https://pmndrs.github.io/design-system/motion/introduction)
+Each versioned section in the sidebar comes from a Storybook published by the
+repository that owns those components. Composition brings its stories into this
+navigation and displays their original previews. Examples stay maintained in their
+source repository; they are not copied or recreated here.
 
-## External components
+Expand a section, then choose **Docs** for a component's API or a story for an
+example. Controls, when available, let you try different props.
 
-Expand the versioned reference in the sidebar for the supported registry blocks.
-These stories run in their own preview with their own theme.
+The sidebar selects the components supported by the DS registry catalog. Remote
+search results can include other components from the source Storybook; appearing
+in search does not mean a component is supported.
 
-The sidebar only displays components supported by the DS, listed in
-`registry/external.json`. Check the
-[registry catalog](https://pmndrs.github.io/design-system/getting-started/introduction#registry-items)
-for supported items and pinned installation versions.
+## Which version am I seeing?
 
-Each composed Storybook is pinned to a published build from the catalog's release.
-Some addons behave differently in composition; use the original Storybook when you
-need its full tooling:
+The version in the section's name is the release pinned by the DS catalog. Its
+stories come from a fixed published build of that release, rather than the source
+repository's latest branch. New upstream stories appear here when the catalog and
+its Storybook reference are updated together.
+
+## Original Storybooks
+
+Remote previews keep their own theme and dependencies. Some addons behave
+differently under composition; open the original Storybook for its full tooling:
 
 <ul>
   {composedStorybooks.map(({ title, url }) => (
     <li key={url}><a href={url}>{title}</a></li>
   ))}
 </ul>
+
+For installation, design guidelines and tokens, see the
+[DS documentation](https://pmndrs.github.io/design-system/getting-started/introduction).

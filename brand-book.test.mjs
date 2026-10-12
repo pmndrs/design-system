@@ -1,24 +1,16 @@
-/**
- * The brand book, `artifact/README.md`, as the docs site and the `guidelines`
- * item read it: the Guidelines page and `Guidelines.md`, both written by
- * `build.mjs` through `scripts/brand-book.mjs`. `build.test.mjs` holds them
- * current; these hold what being current cannot: that the text reads right
- * where it lands.
- */
+/** The authored Guidelines page and the brand book installed through the registry. */
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { cpSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { test } from 'node:test'
 import registry from './registry.json' with { type: 'json' }
 
-/**
- * The brand book is written once, in `artifact/README.md`, and the docs site
- * gets it as the Guidelines page. A passage that only makes sense inside the
- * Claude Design artifact stays out of the page: "Not synced" lists what the
- * artifact does not store, which means nothing on the site.
- */
 const guidelinesPage = () => readFileSync(new URL('./docs/guidelines/introduction.mdx', import.meta.url), 'utf8')
 
-test('the Guidelines page carries every brand-book section but the artifact-only ones', () => {
+test('the Guidelines page carries every shared brand-book section', () => {
   const headings = [...guidelinesPage().matchAll(/^## (.+)$/gm)].map(([, heading]) => heading)
 
   assert.deepEqual(headings, ['Colour', 'Type', 'Spacing, radii and shadows', 'Components', 'Logo', 'Iconography', 'Voice'])
@@ -40,12 +32,12 @@ test('the Guidelines page has no placeholder, marker or bare brace or tag left',
 })
 
 /**
- * The artifact names its tokens bare (`md-sys-color-surface-dim`, `spacing-4`,
- * `radius-sm`), and no stylesheet of a site reader's has those names. The page
+ * Bare token names (`md-sys-color-surface-dim`, `spacing-4`,
+ * `radius-sm`) do not exist in a reader's stylesheet. The page
  * names the CSS custom property (`--md-sys-color-surface-dim`) or the Tailwind
  * class (`p-4`, `rounded-sm`) instead.
  */
-test('the Guidelines page names no token the way only the artifact does', () => {
+test('the Guidelines page uses CSS custom properties and Tailwind utilities', () => {
   const code = [...guidelinesPage().matchAll(/`([^`\n]+)`/g)].map(([, span]) => span)
   const offenders = code.filter((span) => /(^|[\s(,])(md-|spacing\b|spacing-|radius\b|radius-)/.test(span))
 
@@ -69,35 +61,32 @@ test('the guidelines item writes Guidelines.md where Figma Make reads it', () =>
 
 const guidelinesFile = () => readFileSync(new URL('./registry/guidelines/Guidelines.md', import.meta.url), 'utf8')
 
-/**
- * Both copies are generated, so each says so at the top, where someone about
- * to edit it looks first, and names the source to edit instead. Out of what a
- * reader sees: an HTML comment in `Guidelines.md`, and in the page a YAML
- * comment in the frontmatter, which pmndrs/docs drops along with the rest of
- * it, where an MDX comment would reach `llms-full.txt` with the body.
- */
-test('the Guidelines page and Guidelines.md say they are generated, and from what', () => {
-  const marker = /generated from artifact\/README\.md by scripts\/build\.mjs: do not edit/i
-  const frontmatter = guidelinesPage().match(/^---\n([\s\S]*?)\n---\n/)?.[1] ?? ''
-  const file = guidelinesFile()
-
-  assert.ok(frontmatter.split('\n').some((line) => line.startsWith('#') && marker.test(line)), 'no marker in the page frontmatter')
-  assert.ok(marker.test(file.match(/^<!--([\s\S]*?)-->\n/)?.[1] ?? ''), 'Guidelines.md does not open on the marker')
+test('the Guidelines page is authored prose and only the registry file is generated', () => {
+  assert.doesNotMatch(guidelinesPage(), /Generated from|```md|intended for AI agents/)
+  assert.match(guidelinesFile(), /^<!-- Generated from docs\/guidelines\/introduction\.mdx by scripts\/build\.mjs: do not edit\. -->/)
+  assert.doesNotMatch(guidelinesFile(), /^---/)
 })
 
-/** One brand book: what the item installs says what the Guidelines page says. */
-test('Guidelines.md carries the text of the Guidelines page', () => {
-  const [file] = registry.items.find((item) => item.name === 'guidelines').files
-  // Each with its own title and marker: frontmatter on the page, a comment and a `#` heading in the file.
-  const body = (text) =>
-    text
-      .replace(/^---\n[\s\S]*?\n---\n/, '')
-      .replace(/^<!--[\s\S]*?-->\n/, '')
-      .replace(/^\s*# .*\n/, '')
-      .trim()
-
-  const markdown = guidelinesPage().match(/^```md\n([\s\S]*?)\n```\n?$/m)?.[1]
-  assert.ok(markdown, 'no Markdown block on the Guidelines page')
-  assert.equal(body(readFileSync(new URL(file.path, import.meta.url), 'utf8')), markdown.trim())
+test('an author edit reaches the installed Guidelines without rewriting its source', () => {
+  const fixture = mkdtempSync(join(tmpdir(), 'guidelines-build-'))
+  const root = fileURLToPath(new URL('./', import.meta.url))
+  try {
+    cpSync(root, fixture, {
+      recursive: true,
+      filter: (path) => !['.git', 'node_modules', 'out'].includes(path.slice(root.length).split('/')[0]),
+    })
+    symlinkSync(join(root, 'node_modules'), join(fixture, 'node_modules'))
+    const source = join(fixture, 'docs/guidelines/introduction.mdx')
+    const authored = guidelinesPage() + '\nUse accessible labels on every brand control.\n'
+    writeFileSync(source, authored)
+    execFileSync(process.execPath, ['scripts/build.mjs'], { cwd: fixture, stdio: 'pipe' })
+    assert.equal(readFileSync(source, 'utf8'), authored)
+    const installed = readFileSync(join(fixture, 'registry/guidelines/Guidelines.md'), 'utf8')
+    assert.match(installed, /Use accessible labels on every brand control\./)
+    assert.doesNotMatch(installed, /^title:|^nav:|^description:|^---$/m)
+    assert.match(installed, /pmndrs\/design-system\/theme#v0\.6\.0/)
+    assert.match(installed, /pmndrs\/docs\/mdx-prose#v1\.0\.0/)
+  } finally {
+    rmSync(fixture, { recursive: true, force: true })
+  }
 })
-

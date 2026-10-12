@@ -209,7 +209,7 @@ const items = [
   },
   /**
    * The poimandres preset as an item, the theme with it: what
-   * `pnpm dlx shadcn@latest init @pmndrs/preset` starts a project from, so a consumer
+   * `npx shadcn@latest init @pmndrs/preset` starts a project from, so a consumer
    * never needs the preset code.
    *
    * A `registry:base`, not a `registry:style`: a style carries no preset

@@ -15,10 +15,10 @@ nav: 0.3
 Start with [Vite's vanilla TypeScript template](https://vite.dev/guide/):
 
 ```sh
-pnpm create vite@latest my-app --template vanilla-ts --no-interactive
+npm create vite@latest my-app -- --template vanilla-ts --no-interactive
 cd my-app
-pnpm install
-pnpm add @fontsource-variable/inter @fontsource-variable/inconsolata
+npm install
+npm install @fontsource-variable/inter @fontsource-variable/inconsolata
 ```
 
 ## Add the palette
@@ -26,7 +26,7 @@ pnpm add @fontsource-variable/inter @fontsource-variable/inconsolata
 Install the framework-independent palette as `src/assets/pmndrs.css`:
 
 ```sh
-pnpm dlx shadcn@latest add @pmndrs/palette
+npx shadcn@latest add @pmndrs/palette
 ```
 
 This item copies one CSS file. It installs no components, Tailwind setup or
@@ -118,7 +118,7 @@ code { font-family: 'Inconsolata Variable', monospace; }
 ```
 
 The `dark` class on `<html>` switches the variables for the whole page.
-Run `pnpm run dev` to see it.
+Run `npm run dev` to see it.
 
 ## Shared resources
 
@@ -126,7 +126,7 @@ Add the [SVG assets and Figma tokens](/getting-started/introduction#use-the-foun
 with the same CLI:
 
 ```sh
-pnpm dlx shadcn@latest add @pmndrs/logo @pmndrs/figma-tokens
+npx shadcn@latest add @pmndrs/logo @pmndrs/figma-tokens
 ```
 
 The SVGs go in `public/pmndrs/`; the tokens go in `design/tokens/pmndrs/`.

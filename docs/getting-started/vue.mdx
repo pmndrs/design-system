@@ -15,7 +15,7 @@ nav: 0.2
 Create a Vue and Vite app with the pmndrs preset:
 
 ```sh
-pnpm dlx shadcn-vue@latest init --preset https://pmndrs.github.io/design-system/r/preset-vue.json \
+npx shadcn-vue@latest init --preset https://pmndrs.github.io/design-system/r/preset-vue.json \
   --template vite --name my-app
 cd my-app
 ```
@@ -31,7 +31,7 @@ Inconsolata, applies the light and dark palette, and configures `@pmndrs`.
 Add a button:
 
 ```sh
-pnpm dlx shadcn-vue@latest add button
+npx shadcn-vue@latest add button
 ```
 
 Replace `src/App.vue` with a card and a dark-mode toggle:
@@ -67,7 +67,7 @@ The preset configures `@pmndrs`; add the same logo and Figma tokens used by othe
 integrations:
 
 ```sh
-pnpm dlx shadcn-vue@latest add @pmndrs/logo @pmndrs/figma-tokens
+npx shadcn-vue@latest add @pmndrs/logo @pmndrs/figma-tokens
 ```
 
 Follow the [guidelines](/guidelines/introduction) and explore the
@@ -89,10 +89,10 @@ own styles:
 Start with [Vue's official Vite scaffold](https://vuejs.org/guide/quick-start.html):
 
 ```sh
-pnpm create vue@latest my-app --typescript
+npm create vue@latest my-app -- --typescript
 cd my-app
-pnpm install
-pnpm add @fontsource-variable/inter @fontsource-variable/inconsolata
+npm install
+npm install @fontsource-variable/inter @fontsource-variable/inconsolata
 ```
 
 ### Add the palette
@@ -101,7 +101,7 @@ Install the [palette item](https://github.com/pmndrs/design-system/blob/main/reg
 into the app's assets:
 
 ```sh
-pnpm dlx shadcn-vue@latest add https://pmndrs.github.io/design-system/r/palette.json
+npx shadcn-vue@latest add https://pmndrs.github.io/design-system/r/palette.json
 ```
 
 The file contains `--md-sys-color-*` variables under `:root` and `.dark`.
@@ -182,6 +182,6 @@ code { font-family: 'Inconsolata Variable', monospace; }
 The `.dark` class switches the variables on the app's root element; its children
 inherit the selected scheme. The spacing and radius follow the shared
 [foundations](/tokens/spacing), with [Inter and Inconsolata](/tokens/typography).
-Run `pnpm run dev` to see it.
+Run `npm run dev` to see it.
 
 </details>

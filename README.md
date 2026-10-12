@@ -28,8 +28,8 @@ Read the [JSON index](https://pmndrs.github.io/design-system/r/registry.json)
 or use the shadcn CLI to browse and install individual items:
 
 ```sh
-pnpm dlx shadcn@latest add @pmndrs/logo @pmndrs/figma-tokens
-pnpm dlx shadcn@latest search @pmndrs
+npx shadcn@latest add @pmndrs/logo @pmndrs/figma-tokens
+npx shadcn@latest search @pmndrs
 ```
 
 See the [registry catalog](https://pmndrs.github.io/design-system/getting-started/introduction#registry-items)

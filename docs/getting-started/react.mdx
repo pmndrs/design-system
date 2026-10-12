@@ -15,7 +15,7 @@ nav: 0.1
 Create a Next.js app with the poimandres preset:
 
 ```sh
-pnpm dlx shadcn@latest init @pmndrs/preset \
+npx shadcn@latest init @pmndrs/preset \
   --template next --name my-app --no-monorepo
 cd my-app
 ```
@@ -29,7 +29,7 @@ palette, and declares the `@pmndrs` registry. You can also use another
 From an app already configured with shadcn and Tailwind v4, add the theme:
 
 ```sh
-pnpm dlx shadcn@latest add @pmndrs/theme
+npx shadcn@latest add @pmndrs/theme
 ```
 
 This adds the pmndrs palette and mono font to your current setup. To add
@@ -40,7 +40,7 @@ shared resources by name, [use the `@pmndrs` namespace](/getting-started/introdu
 Add a [shadcn button](https://ui.shadcn.com/docs/components/base/button):
 
 ```sh
-pnpm dlx shadcn@latest add button
+npx shadcn@latest add button
 ```
 
 It uses the theme automatically. Standard shadcn classes such as `bg-background`
@@ -72,10 +72,10 @@ The `@pmndrs` namespace and hosted URLs follow `main`. For a fresh app with a
 released theme, configure the preset by code, then add the pinned theme:
 
 ```sh
-pnpm dlx shadcn@latest init --preset b1VlIttI \
+npx shadcn@latest init --preset b1VlIttI \
   --template next --name my-app --no-monorepo
 cd my-app
-pnpm dlx shadcn@latest add pmndrs/design-system/theme#v0.9.0
+npx shadcn@latest add pmndrs/design-system/theme#v0.9.0
 ```
 
 See [Versioning](/getting-started/introduction#versioning) for item refs and

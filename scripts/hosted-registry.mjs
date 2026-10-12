@@ -4,7 +4,7 @@
  *
  * The docs site serves them at `hostedUrl` (see `.github/workflows/docs.yml`).
  * The official shadcn registry directory lets the CLI discover `@pmndrs`
- * automatically, so `pnpm dlx shadcn@latest add @pmndrs/theme` works directly.
+ * automatically, so `npx shadcn@latest add @pmndrs/theme` works directly.
  * The deploy runs this from `main`, so the hosted files are always the latest
  * merged state; the git tag stays the pinned install address.
  *

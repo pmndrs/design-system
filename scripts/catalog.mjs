@@ -89,7 +89,7 @@ export function renderCatalog(registries) {
   // Pinned like an install command: `search` prints each item's address with
   // the ref it was given, so an unpinned search hands out unpinned addresses.
   const addresses = registries.map(({ repo, ref }) => `${repo}#${ref}`).join(' ')
-  const search = ['```sh', `pnpm dlx shadcn@latest search ${addresses}`, '```'].join('\n')
+  const search = ['```sh', `npx shadcn@latest search ${addresses}`, '```'].join('\n')
 
   return [table, 'To browse a specific release across repos:', search].join('\n\n')
 }

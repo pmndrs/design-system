@@ -58,14 +58,14 @@ pin each GitHub registry dependency to its own tag, branch or commit.
 Validate the registry locally:
 
 ```sh
-pnpm dlx shadcn@latest registry validate ./registry.json
+npx shadcn@latest registry validate ./registry.json
 ```
 
 Push the registry and its files to GitHub, then install in a project using its
 repo, item name and ref:
 
 ```sh
-pnpm dlx shadcn@latest add pmndrs/<repo>/mark#v1.0.0
+npx shadcn@latest add pmndrs/<repo>/mark#v1.0.0
 ```
 
 A GitHub registry needs no hosting server. Use a release tag for a reproducible

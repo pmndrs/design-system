@@ -1,7 +1,7 @@
 Start a Vue project with the pmndrs colours, fonts and radius already configured:
 
 ```sh
-pnpm dlx shadcn-vue@latest init --preset https://pmndrs.github.io/design-system/r/preset-vue.json --template vite --name my-app
+npx shadcn-vue@latest init --preset https://pmndrs.github.io/design-system/r/preset-vue.json --template vite --name my-app
 ```
 
 Use `--preset` with this URL so shadcn-vue applies the item's configuration.
@@ -18,7 +18,7 @@ Add Vue components through shadcn-vue:
 
 ```sh
 cd my-app
-pnpm dlx shadcn-vue@latest add button
+npx shadcn-vue@latest add button
 ```
 
 This preset is for a fresh project. It installs no React components or palette

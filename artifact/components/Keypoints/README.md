@@ -5,7 +5,7 @@ Keypoints is the first pmndrs block, born in `pmndrs/docs`, the generator behind
 ## Install
 
 ```sh
-pnpm dlx shadcn@latest add pmndrs/docs/keypoints#{{docsRef}}
+npx shadcn@latest add pmndrs/docs/keypoints#{{docsRef}}
 ```
 
 The block is released at the `{{docsRef}}` tag of `pmndrs/docs`. The add pulls the colour layer with it, the pmndrs theme at the release that tag was built against: `{{blocksColourLayer}}`. In a new app, the pmndrs theme today is `pmndrs/design-system/theme#{{release}}`.

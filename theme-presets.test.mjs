@@ -22,7 +22,7 @@ function runtimePalette(config) {
 test('seven brand presets leave contrast unset and use explicit neutral seeds only for Lime', () => {
   const expected = ['lime', 'teal', 'cyan', 'purple', 'red', 'orange', 'yellow']
   assert.deepEqual(themePresets.map(({ name }) => name), expected)
-  const defaultItem = registry.items.find(({ name }) => name === 'theme')
+  const defaultItem = registry.items.find(({ name }) => name === 'theme-lime')
   for (const { name, config } of themePresets) {
     const item = registry.items.find((item) => item.name === `theme-${name}`)
     assert.ok(item, `missing theme-${name}`)
@@ -48,9 +48,12 @@ test('successive installations replace every light and dark declaration, includi
   const installed = { ':root': {}, '.dark': {} }
   const themes = themePresets.map(({ name }) => registry.items.find((item) => item.name === `theme-${name}`))
   themes.push(registry.items.find(({ name }) => name === 'theme'))
-  for (const item of themes) {
+  for (const installedItem of themes) {
+    const item = installedItem.name === 'theme'
+      ? registry.items.find((item) => item.name === installedItem.registryDependencies[0].split('/').at(-1).split('#')[0])
+      : installedItem
     for (const mode of [':root', '.dark']) Object.assign(installed[mode], item.css[mode])
-    const config = item.name === 'theme' ? pmndrsMtb : themePresets.find(({ name }) => item.name === `theme-${name}`).config
-    assert.deepEqual(installed, runtimePalette(config), `stale declarations after ${item.name}`)
+    const config = themePresets.find(({ name }) => item.name === `theme-${name}`).config
+    assert.deepEqual(installed, runtimePalette(config), `stale declarations after ${installedItem.name}`)
   }
 })

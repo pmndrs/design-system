@@ -77,7 +77,7 @@ const foundations = readFoundations()
 const typographyPage = readPage('typography')
 
 /** The baked palette, as `theme` installs it: `:root` and the `.dark` overrides. */
-const palette = item('theme').css
+const palette = item('theme-lime').css
 const light = palette[':root']
 const dark = palette['.dark']
 

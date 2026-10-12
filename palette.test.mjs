@@ -23,7 +23,7 @@ test('the standalone palette declares the same light and dark variables as theme
       Object.fromEntries([...body.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)].map(([, name, value]) => [name, value.trim()])),
     ])
   )
-  const theme = registry.items.find(({ name }) => name === 'theme').css
+  const theme = registry.items.find(({ name }) => name === 'theme-lime').css
   assert.deepEqual(parsed, theme)
 
   for (const block of Object.values(parsed)) {

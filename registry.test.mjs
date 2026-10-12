@@ -113,11 +113,14 @@ test('registryDependencies on this registry name items it defines', () => {
  * machinery under it and the mono font. Drop a dependency and the install
  * still succeeds — it just ships without that piece, and nothing else notices.
  */
-test('theme is the entry item, and pulls in md3-base and font-mono', () => {
+test('theme delegates to Lime, which pulls in md3-base and font-mono', () => {
   const theme = registry.items.find((item) => item.name === 'theme')
 
   assert.ok(theme, 'no `theme` item')
-  assert.deepEqual(ownDependencies(theme).sort(), ['font-mono', 'md3-base'])
+  assert.deepEqual(ownDependencies(theme), ['theme-lime'])
+  assert.equal(theme.css, undefined)
+  const lime = registry.items.find((item) => item.name === 'theme-lime')
+  assert.deepEqual(ownDependencies(lime).sort(), ['font-mono', 'md3-base'])
 })
 
 /**
@@ -229,7 +232,7 @@ test('font-mono names the family its dependency registers', () => {
  * role in the baked CSS.
  */
 test('every Figma role resolves to the hex the baked CSS gives it', () => {
-  const css = registry.items.find((item) => item.name === 'theme').css
+  const css = registry.items.find((item) => item.name === 'theme-lime').css
   const resolveCss = (block, name) => {
     let value = block[name] ?? css[':root'][name]
     for (let ref; (ref = value?.match(/^var\((--[\w-]+)\)$/)); ) value = block[ref[1]] ?? css[':root'][ref[1]]
@@ -267,7 +270,7 @@ test('every Figma role resolves to the hex the baked CSS gives it', () => {
  * writes, so a step redrawing the palette there would be current and pass.
  */
 test('the baked palette is what builder(pmndrsMtb) renders', () => {
-  const css = registry.items.find((item) => item.name === 'theme').css
+  const css = registry.items.find((item) => item.name === 'theme-lime').css
   const { source, ...options } = pmndrsMtb
   const runtime = Object.fromEntries(
     [...builder(source, options).toCss().matchAll(/([^{}]+)\{([^}]*)\}/g)].map(([, selector, body]) => [
@@ -311,7 +314,7 @@ test('the baked palette is what builder(pmndrsMtb) renders', () => {
  * `.dark` matches alongside `:root`, so dark is `:root` with `.dark` on top.
  */
 test('the baked theme declares every alert role, light and dark', () => {
-  const css = registry.items.find((item) => item.name === 'theme').css
+  const css = registry.items.find((item) => item.name === 'theme-lime').css
   const modes = { light: css[':root'], dark: { ...css[':root'], ...css['.dark'] } }
   const missing = []
   for (const alert of ['note', 'tip', 'important', 'warning', 'caution']) {

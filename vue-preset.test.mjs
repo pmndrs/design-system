@@ -23,7 +23,7 @@ test('the Vue preset selects Vue components and installs its fonts without React
 })
 
 test('the Vue preset has the same palette and stock token roles as theme in both schemes', () => {
-  const theme = registry.items.find(({ name }) => name === 'theme').css
+  const theme = registry.items.find(({ name }) => name === 'theme-lime').css
   for (const selector of [':root', '.dark']) {
     const colours = Object.fromEntries(Object.entries(preset.css[selector]).filter(([name]) => name.startsWith('--md-')))
     assert.deepEqual(colours, theme[selector])
@@ -36,7 +36,7 @@ test('the Vue preset has the same palette and stock token roles as theme in both
 
 test('Vue utilities cover MD3 roles, custom colours and the shared foundations', () => {
   const { theme, light } = preset.cssVars
-  const palette = registry.items.find(({ name }) => name === 'theme').css[':root']
+  const palette = registry.items.find(({ name }) => name === 'theme-lime').css[':root']
   for (const name of Object.keys(palette).filter((name) => name.startsWith('--md-sys-color-'))) {
     const role = name.slice('--md-sys-color-'.length)
     if (['background', 'primary', 'secondary'].includes(role)) continue

@@ -57,7 +57,7 @@ const catalogDescriptions = {
   palette: 'The light and dark palettes as plain CSS for any framework.',
   'preset-vue': 'Initialise shadcn-vue with the pmndrs palette, fonts and radius.',
   'font-mono': 'Inconsolata for code and monospace text.',
-  theme: 'The default pmndrs palette, MD3 plumbing and mono font.',
+  theme: 'Alias for theme-lime, the default pmndrs palette.',
   preset: 'Initialise shadcn with pmndrs colours, fonts, radius and icons.',
   logo: 'Static and animated pmndrs logos as SVG files.',
   'figma-tokens': 'Colour and foundation tokens for Figma and Tokens Studio.',
@@ -75,7 +75,7 @@ function descriptionCell(repo, { name, description = '' }) {
  * Where an item's source lives: its folder, `registry/<name>/`, on GitHub at
  * the ref to install it from. Every pmndrs registry keeps its items that way —
  * by name rather than by `files[].path`, since an item can have no files at
- * all (`theme` is CSS and docs only), and the folder is where its docs sit.
+ * all (`theme` is an alias with docs only), and the folder is where its docs sit.
  *
  * @param {string} repo
  * @param {string} ref

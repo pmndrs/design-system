@@ -187,17 +187,16 @@ const items = [
     font: fontMono,
   },
   /**
-   * The shadcn install target: the pmndrs palette, plus everything it needs.
+   * The default install target delegates to the named Lime theme.
    */
   {
     name: 'theme',
     type: 'registry:lib',
     title: 'pmndrs theme',
     description:
-      'The pmndrs theme: the Material Design 3 palette, the colour machinery under it (`md3-base`) and the mono font (`font-mono`). Additive to the stock shadcn tokens — blocks use `bg-primary` by default and reach for `bg-surface-dim` only where shadcn has no equivalent. Nothing to mount.',
+      'The default pmndrs theme: an alias for `theme-lime`, which supplies the Material Design 3 palette, colour machinery and mono font. Nothing to mount.',
     author: 'pmndrs',
-    registryDependencies: [`pmndrs/design-system/md3-base#${version}`, `pmndrs/design-system/font-mono#${version}`],
-    palette: true,
+    registryDependencies: [`pmndrs/design-system/theme-lime#${version}`],
   },
   ...themePresets.map(({ name, label, config }) => ({
     name: `theme-${name}`,
@@ -207,7 +206,7 @@ const items = [
     author: 'pmndrs',
     registryDependencies: [`pmndrs/design-system/md3-base#${version}`, `pmndrs/design-system/font-mono#${version}`],
     palette: config,
-    docs: `The ${label} palette is already working, light and dark, with ${config.source} as its source seed. ${name === 'lime' ? 'Lime keeps the designer-selected neutral seeds.' : 'Its neutral seeds are omitted so MD3 derives them automatically.'}\n\nInstall another \`@pmndrs/theme-<colour>\` item to switch the seed, or \`@pmndrs/theme\` to restore the default palette. No provider or client JavaScript is needed.\n\n${readFileSync(new URL('../registry/theme/docs.md', import.meta.url), 'utf8').trimEnd()}`,
+    docs: `The ${label} palette is already working, light and dark, with ${config.source} as its source seed. ${name === 'lime' ? 'Lime keeps the designer-selected neutral seeds.' : 'Its neutral seeds are omitted so MD3 derives them automatically.'}\n\nInstall another \`@pmndrs/theme-<colour>\` item to switch the seed, or \`@pmndrs/theme\` to restore the default palette. No provider or client JavaScript is needed.\n\n${readFileSync(new URL('../registry/theme-lime/docs.md', import.meta.url), 'utf8').trimEnd()}`,
   })),
   {
     name: 'palette',

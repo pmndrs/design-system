@@ -10,11 +10,13 @@
     "items": [
       {
         "name": "keypoints",
-        "type": "registry:block"
+        "type": "registry:block",
+        "description": "A titled panel listing the main points an article covers — one bullet per `KeypointsItem`. Usually sits right after the intro."
       },
       {
         "name": "color",
-        "type": "registry:block"
+        "type": "registry:block",
+        "description": "Swatches of the theme's Material 3 color roles, as Material's scheme poster shows them. `Color` is a disc inline in text, or a cell with the role's name on it in the ink Material pairs with it; `ColorGroup` fuses cells into one rounded block, horizontal or vertical, nesting as rows. Takes any role in kebab-case (`primary`, `on-tertiary-fixed-variant`, a custom color), or any CSS color."
       }
     ]
   }

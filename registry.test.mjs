@@ -308,8 +308,7 @@ test('the baked palette is what builder(pmndrsMtb) renders', () => {
  * and faithful — `build.test.mjs` and the builder test above both pass — while
  * the sites lose the colour silently: `var()` falls back to nothing.
  *
- * `.dark` only carries what differs from `:root` (Color match keeps a
- * container the same in both modes), so dark is `:root` with `.dark` on top.
+ * `.dark` matches alongside `:root`, so dark is `:root` with `.dark` on top.
  */
 test('the baked theme declares every alert role, light and dark', () => {
   const css = registry.items.find((item) => item.name === 'theme').css

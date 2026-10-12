@@ -23,25 +23,533 @@ See [Tokens](/tokens/introduction#token-layers) for how the token layers fit tog
 
 ## Seeds
 
-Everything on this page derives from these, in
-[`md3.ts`](https://github.com/pmndrs/design-system/blob/main/registry/md3-base/md3.ts):
+Choose a preset from the seven brand colours. Lime keeps the designer-selected neutral seeds;
+the other presets let Material Design 3 derive their neutrals from `source`. The remaining defaults come from
+[`md3.ts`](https://github.com/pmndrs/design-system/blob/main/registry/md3-base/md3.ts).
+The preview and the installable `theme-lime`, `theme-teal`, `theme-cyan`, `theme-purple`,
+`theme-red`, `theme-orange` and `theme-yellow` items share the same
+[`presets.ts`](https://github.com/pmndrs/design-system/blob/main/registry/md3-base/presets.ts).
 
-| Option | Value |
-| --- | --- |
-| `source` | <Color color="#CAF543" /> `#CAF543` |
-| `colorMatch` | `true` |
-| `contrast` | `0` |
-| `neutral` | <Color color="#c1b793" /> `#c1b793` |
-| `neutralVariant` | <Color color="#495720" /> `#495720` |
-| `error` | <Color color="#FF4980" /> `#FF4980` |
+{/* theme-presets:start */}
+
+<ThemeSeeds presets={[
+  {
+    "name": "theme-lime",
+    "label": "Lime",
+    "config": {
+      "source": "#CAF543",
+      "colorMatch": true,
+      "error": "#FF4980",
+      "customColors": [
+        {
+          "name": "lime",
+          "hex": "#CAF543",
+          "blend": false
+        },
+        {
+          "name": "teal",
+          "hex": "#00F7A3",
+          "blend": false
+        },
+        {
+          "name": "cyan",
+          "hex": "#2BDCF6",
+          "blend": false
+        },
+        {
+          "name": "purple",
+          "hex": "#D855F9",
+          "blend": false
+        },
+        {
+          "name": "red",
+          "hex": "#FF4980",
+          "blend": false
+        },
+        {
+          "name": "orange",
+          "hex": "#FFC043",
+          "blend": false
+        },
+        {
+          "name": "yellow",
+          "hex": "#EBFF0F",
+          "blend": false
+        },
+        {
+          "name": "note",
+          "hex": "#1F6FEB",
+          "blend": true
+        },
+        {
+          "name": "tip",
+          "hex": "#238636",
+          "blend": true
+        },
+        {
+          "name": "important",
+          "hex": "#8957E5",
+          "blend": true
+        },
+        {
+          "name": "warning",
+          "hex": "#D29922",
+          "blend": true
+        },
+        {
+          "name": "caution",
+          "hex": "#DA3633",
+          "blend": true
+        }
+      ],
+      "neutral": "#c1b793",
+      "neutralVariant": "#495720"
+    }
+  },
+  {
+    "name": "theme-teal",
+    "label": "Teal",
+    "config": {
+      "source": "#00F7A3",
+      "colorMatch": true,
+      "error": "#FF4980",
+      "customColors": [
+        {
+          "name": "lime",
+          "hex": "#CAF543",
+          "blend": false
+        },
+        {
+          "name": "teal",
+          "hex": "#00F7A3",
+          "blend": false
+        },
+        {
+          "name": "cyan",
+          "hex": "#2BDCF6",
+          "blend": false
+        },
+        {
+          "name": "purple",
+          "hex": "#D855F9",
+          "blend": false
+        },
+        {
+          "name": "red",
+          "hex": "#FF4980",
+          "blend": false
+        },
+        {
+          "name": "orange",
+          "hex": "#FFC043",
+          "blend": false
+        },
+        {
+          "name": "yellow",
+          "hex": "#EBFF0F",
+          "blend": false
+        },
+        {
+          "name": "note",
+          "hex": "#1F6FEB",
+          "blend": true
+        },
+        {
+          "name": "tip",
+          "hex": "#238636",
+          "blend": true
+        },
+        {
+          "name": "important",
+          "hex": "#8957E5",
+          "blend": true
+        },
+        {
+          "name": "warning",
+          "hex": "#D29922",
+          "blend": true
+        },
+        {
+          "name": "caution",
+          "hex": "#DA3633",
+          "blend": true
+        }
+      ]
+    }
+  },
+  {
+    "name": "theme-cyan",
+    "label": "Cyan",
+    "config": {
+      "source": "#2BDCF6",
+      "colorMatch": true,
+      "error": "#FF4980",
+      "customColors": [
+        {
+          "name": "lime",
+          "hex": "#CAF543",
+          "blend": false
+        },
+        {
+          "name": "teal",
+          "hex": "#00F7A3",
+          "blend": false
+        },
+        {
+          "name": "cyan",
+          "hex": "#2BDCF6",
+          "blend": false
+        },
+        {
+          "name": "purple",
+          "hex": "#D855F9",
+          "blend": false
+        },
+        {
+          "name": "red",
+          "hex": "#FF4980",
+          "blend": false
+        },
+        {
+          "name": "orange",
+          "hex": "#FFC043",
+          "blend": false
+        },
+        {
+          "name": "yellow",
+          "hex": "#EBFF0F",
+          "blend": false
+        },
+        {
+          "name": "note",
+          "hex": "#1F6FEB",
+          "blend": true
+        },
+        {
+          "name": "tip",
+          "hex": "#238636",
+          "blend": true
+        },
+        {
+          "name": "important",
+          "hex": "#8957E5",
+          "blend": true
+        },
+        {
+          "name": "warning",
+          "hex": "#D29922",
+          "blend": true
+        },
+        {
+          "name": "caution",
+          "hex": "#DA3633",
+          "blend": true
+        }
+      ]
+    }
+  },
+  {
+    "name": "theme-purple",
+    "label": "Purple",
+    "config": {
+      "source": "#D855F9",
+      "colorMatch": true,
+      "error": "#FF4980",
+      "customColors": [
+        {
+          "name": "lime",
+          "hex": "#CAF543",
+          "blend": false
+        },
+        {
+          "name": "teal",
+          "hex": "#00F7A3",
+          "blend": false
+        },
+        {
+          "name": "cyan",
+          "hex": "#2BDCF6",
+          "blend": false
+        },
+        {
+          "name": "purple",
+          "hex": "#D855F9",
+          "blend": false
+        },
+        {
+          "name": "red",
+          "hex": "#FF4980",
+          "blend": false
+        },
+        {
+          "name": "orange",
+          "hex": "#FFC043",
+          "blend": false
+        },
+        {
+          "name": "yellow",
+          "hex": "#EBFF0F",
+          "blend": false
+        },
+        {
+          "name": "note",
+          "hex": "#1F6FEB",
+          "blend": true
+        },
+        {
+          "name": "tip",
+          "hex": "#238636",
+          "blend": true
+        },
+        {
+          "name": "important",
+          "hex": "#8957E5",
+          "blend": true
+        },
+        {
+          "name": "warning",
+          "hex": "#D29922",
+          "blend": true
+        },
+        {
+          "name": "caution",
+          "hex": "#DA3633",
+          "blend": true
+        }
+      ]
+    }
+  },
+  {
+    "name": "theme-red",
+    "label": "Red",
+    "config": {
+      "source": "#FF4980",
+      "colorMatch": true,
+      "error": "#FF4980",
+      "customColors": [
+        {
+          "name": "lime",
+          "hex": "#CAF543",
+          "blend": false
+        },
+        {
+          "name": "teal",
+          "hex": "#00F7A3",
+          "blend": false
+        },
+        {
+          "name": "cyan",
+          "hex": "#2BDCF6",
+          "blend": false
+        },
+        {
+          "name": "purple",
+          "hex": "#D855F9",
+          "blend": false
+        },
+        {
+          "name": "red",
+          "hex": "#FF4980",
+          "blend": false
+        },
+        {
+          "name": "orange",
+          "hex": "#FFC043",
+          "blend": false
+        },
+        {
+          "name": "yellow",
+          "hex": "#EBFF0F",
+          "blend": false
+        },
+        {
+          "name": "note",
+          "hex": "#1F6FEB",
+          "blend": true
+        },
+        {
+          "name": "tip",
+          "hex": "#238636",
+          "blend": true
+        },
+        {
+          "name": "important",
+          "hex": "#8957E5",
+          "blend": true
+        },
+        {
+          "name": "warning",
+          "hex": "#D29922",
+          "blend": true
+        },
+        {
+          "name": "caution",
+          "hex": "#DA3633",
+          "blend": true
+        }
+      ]
+    }
+  },
+  {
+    "name": "theme-orange",
+    "label": "Orange",
+    "config": {
+      "source": "#FFC043",
+      "colorMatch": true,
+      "error": "#FF4980",
+      "customColors": [
+        {
+          "name": "lime",
+          "hex": "#CAF543",
+          "blend": false
+        },
+        {
+          "name": "teal",
+          "hex": "#00F7A3",
+          "blend": false
+        },
+        {
+          "name": "cyan",
+          "hex": "#2BDCF6",
+          "blend": false
+        },
+        {
+          "name": "purple",
+          "hex": "#D855F9",
+          "blend": false
+        },
+        {
+          "name": "red",
+          "hex": "#FF4980",
+          "blend": false
+        },
+        {
+          "name": "orange",
+          "hex": "#FFC043",
+          "blend": false
+        },
+        {
+          "name": "yellow",
+          "hex": "#EBFF0F",
+          "blend": false
+        },
+        {
+          "name": "note",
+          "hex": "#1F6FEB",
+          "blend": true
+        },
+        {
+          "name": "tip",
+          "hex": "#238636",
+          "blend": true
+        },
+        {
+          "name": "important",
+          "hex": "#8957E5",
+          "blend": true
+        },
+        {
+          "name": "warning",
+          "hex": "#D29922",
+          "blend": true
+        },
+        {
+          "name": "caution",
+          "hex": "#DA3633",
+          "blend": true
+        }
+      ]
+    }
+  },
+  {
+    "name": "theme-yellow",
+    "label": "Yellow",
+    "config": {
+      "source": "#EBFF0F",
+      "colorMatch": true,
+      "error": "#FF4980",
+      "customColors": [
+        {
+          "name": "lime",
+          "hex": "#CAF543",
+          "blend": false
+        },
+        {
+          "name": "teal",
+          "hex": "#00F7A3",
+          "blend": false
+        },
+        {
+          "name": "cyan",
+          "hex": "#2BDCF6",
+          "blend": false
+        },
+        {
+          "name": "purple",
+          "hex": "#D855F9",
+          "blend": false
+        },
+        {
+          "name": "red",
+          "hex": "#FF4980",
+          "blend": false
+        },
+        {
+          "name": "orange",
+          "hex": "#FFC043",
+          "blend": false
+        },
+        {
+          "name": "yellow",
+          "hex": "#EBFF0F",
+          "blend": false
+        },
+        {
+          "name": "note",
+          "hex": "#1F6FEB",
+          "blend": true
+        },
+        {
+          "name": "tip",
+          "hex": "#238636",
+          "blend": true
+        },
+        {
+          "name": "important",
+          "hex": "#8957E5",
+          "blend": true
+        },
+        {
+          "name": "warning",
+          "hex": "#D29922",
+          "blend": true
+        },
+        {
+          "name": "caution",
+          "hex": "#DA3633",
+          "blend": true
+        }
+      ]
+    }
+  }
+]} />
+
+{/* theme-presets:end */}
+
+For example, install the Purple preset through the registry namespace:
+
+```sh
+npx shadcn@latest add @pmndrs/theme-purple
+```
 
 `colorMatch` is Material Theme Builder's "stay true to my color inputs": each seed keeps its
-chroma, and lands in its container role. It takes the place of a `scheme`. The two neutral seeds
+chroma, and lands in its container role. It takes the place of a `scheme`. Lime's two neutral seeds
 look nothing like the grey ramps they produce, by design: under `colorMatch` a neutral ramp takes
 an eighth of its seed's chroma, so a seed carries eight times what comes back.
 
-The posters below follow the same seed: this site's theme is built from it, `colorMatch`, the
-neutrals and `error` included, so what they render is the palette `md3.ts` ships.
+The table shows the defined seed settings. Selecting a preset restores its `colorMatch`
+and scheme defaults. Contrast stays at your preferred level, just like light/dark mode.
+The posters follow the selected seeds and your display preferences.
 
 ## Poster
 
@@ -230,7 +738,8 @@ background.
 </ColorGroup>
 
 Each seed can be overridden from the environment, as the primary can with `THEME_PRIMARY`; the
-baked `theme` is always built without them, so it ships the seeds above.
+baked `theme` is always built without them, so it ships the default seed values from
+`md3.ts`, with Lime as the source.
 
 To change any custom colour, edit `customColors` in
 [`md3.ts`](https://github.com/pmndrs/design-system/blob/main/registry/md3-base/md3.ts), run
@@ -279,9 +788,10 @@ one fits: a role follows the scheme, a tone does not.
 
 ## Figma tokens
 
-The same palette, for designers: light and dark as two modes of one Figma variable collection,
-in [DTCG](https://www.designtokens.org) files. Every role is the hex the CSS gives it, alias for
-alias. Install them next to your code, into `design/tokens/pmndrs/` at the root of your project:
+The default Lime palette, for designers: light and dark as two modes of one Figma variable collection,
+in [DTCG](https://www.designtokens.org) files. Every role matches the default `theme` CSS, alias for
+alias. These are static exports: selecting a preset or changing the preview controls does not
+change the downloaded files. Install them next to your code, into `design/tokens/pmndrs/` at the root of your project:
 
 ```sh
 npx shadcn@latest add pmndrs/design-system/figma-tokens#v0.9.0
@@ -310,4 +820,3 @@ For a palette of your own, install `md3-base` instead of `theme` and emit the ro
 ```sh
 npx shadcn@latest add pmndrs/design-system/md3-base#v0.9.0
 ```
-

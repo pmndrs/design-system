@@ -18,16 +18,16 @@ test('one row per item, across registries, in order', () => {
     .split('\n')
     .filter((line) => line.startsWith('| ['))
   assert.deepEqual(rows, [
-    '| [x](https://github.com/pmndrs/a/tree/v1.0.0/registry/x) | `pmndrs/a/x#v1.0.0` |',
-    '| [y](https://github.com/pmndrs/b/tree/main/registry/y) | `pmndrs/b/y#main` |',
+    '| [x](https://github.com/pmndrs/a/tree/v1.0.0/registry/x) |  | `pmndrs/a/x#v1.0.0` |',
+    '| [y](https://github.com/pmndrs/b/tree/main/registry/y) |  | `pmndrs/b/y#main` |',
   ])
 })
 
-test('hosted items use the namespace and link to the source served by it', () => {
+test('hosted items use the namespace and link to the installable JSON', () => {
   const catalog = renderCatalog([
     { repo: 'pmndrs/design-system', ref: 'v0.9.0', items: [{ name: 'logo', type: 'registry:item' }] },
   ])
-  assert.match(catalog, /\[logo\]\(https:\/\/github\.com\/pmndrs\/design-system\/tree\/main\/registry\/logo\)/)
+  assert.match(catalog, /\[logo\]\(https:\/\/pmndrs\.github\.io\/design-system\/r\/logo\.json\)/)
   assert.match(catalog, /`@pmndrs\/logo`/)
   assert.match(catalog, /search pmndrs\/design-system#v0\.9\.0/)
 })
@@ -46,4 +46,12 @@ test('the catalog is written between the markers, the prose around it untouched'
 
 test('a page that lost its markers is an error, not a silent no-op', () => {
   assert.throws(() => writeCatalog('## Items', registries), /lost its catalog markers/)
+})
+
+test('description cells show one sentence, keeping pipes and line breaks inside the cell', () => {
+  const catalog = renderCatalog([
+    { repo: 'pmndrs/docs', ref: 'main', items: [{ name: 'sample', type: 'registry:block', description: 'A panel with\nlight | dark modes. More details.' }] },
+  ])
+  assert.match(catalog, /\| A panel with light \\\| dark modes\. \|/)
+  assert.doesNotMatch(catalog, /More details/)
 })

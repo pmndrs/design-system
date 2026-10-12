@@ -38,6 +38,7 @@ import { builder } from 'material-theme-builder'
 import { mtbColors } from 'material-theme-builder/tailwind'
 import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
+import { themePresets } from '../registry/md3-base/presets.ts'
 import { fill, stripArtifactOnly } from './brand-book.mjs'
 import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
 import { foundationStyles, foundationVariables } from './foundation-tokens.mjs'
@@ -198,6 +199,16 @@ const items = [
     registryDependencies: [`pmndrs/design-system/md3-base#${version}`, `pmndrs/design-system/font-mono#${version}`],
     palette: true,
   },
+  ...themePresets.map(({ name, label, config }) => ({
+    name: `theme-${name}`,
+    type: 'registry:lib',
+    title: `pmndrs ${label} theme`,
+    description: `The pmndrs theme with ${label} (${config.source}) as its source seed. ${name === 'lime' ? 'Lime keeps the designer-selected neutral seeds.' : 'MD3 derives the neutral palettes from this source.'} Custom colours and the mono font stay the pmndrs defaults. Light and dark palettes are baked at standard contrast; nothing to mount.`,
+    author: 'pmndrs',
+    registryDependencies: [`pmndrs/design-system/md3-base#${version}`, `pmndrs/design-system/font-mono#${version}`],
+    palette: config,
+    docs: `The ${label} palette is already working, light and dark, with ${config.source} as its source seed. ${name === 'lime' ? 'Lime keeps the designer-selected neutral seeds.' : 'Its neutral seeds are omitted so MD3 derives them automatically.'}\n\nInstall another \`@pmndrs/theme-<colour>\` item to switch the seed, or \`@pmndrs/theme\` to restore the default palette. No provider or client JavaScript is needed.\n\n${readFileSync(new URL('../registry/theme/docs.md', import.meta.url), 'utf8').trimEnd()}`,
+  })),
   {
     name: 'palette',
     type: 'registry:item',
@@ -515,18 +526,18 @@ function parseBlocks(css) {
 const { source, ...options } = pmndrsMtb
 const theme = builder(source, options)
 
-function bakePalette() {
-  const blocks = parseBlocks(theme.toCss())
+function bakePalette(computedTheme) {
+  const blocks = parseBlocks(computedTheme.toCss())
   if (!blocks[':root'] || !blocks['.dark']) throw new Error('toCss() no longer emits `:root` and `.dark`')
   const light = blocks[':root']
   const dark = blocks['.dark']
 
-  // The `--md-ref-palette-*` tonal shades are scheme-independent, so `.dark`
-  // re-emits them unchanged. `.dark` and `:root` both match `<html>`, so
-  // anything not restated there keeps its `:root` value — carry only what differs.
+  // shadcn merges declarations when a second theme is installed. Restate both
+  // modes completely: an alias equal in this theme's modes may have had a
+  // different dark override in the previous theme, which must be replaced too.
   return {
     ':root': light,
-    '.dark': Object.fromEntries(Object.entries(dark).filter(([k, v]) => light[k] !== v)),
+    '.dark': dark,
   }
 }
 
@@ -534,21 +545,27 @@ function bakePalette() {
 // every cssVar it is handed, so these would also land as hundreds of junk
 // Tailwind theme names — and it builds their references by prefixing `--`,
 // which on an already-prefixed name yields `var(----md-ref-palette-primary-40)`.
-const palette = bakePalette()
+const palette = bakePalette(theme)
 
 const built = {
   ...registry,
-  items: items.map(({ palette: needsPalette, ...item }) => ({
-    ...item,
-    ...(needsPalette ? {
-      css: {
+  items: items.map(({ palette: needsPalette, ...item }) => {
+    let css
+    if (needsPalette === true) css = palette
+    else if (needsPalette) {
+      const { source, ...options } = needsPalette
+      css = bakePalette(builder(source, options))
+    }
+    return {
+      ...item,
+      ...(css ? { css: {
         ...item.css,
-        ':root': { ...palette[':root'], ...item.css?.[':root'] },
-        '.dark': { ...palette['.dark'], ...item.css?.['.dark'] },
-      },
-    } : {}),
-    docs: readFileSync(new URL(`../registry/${item.name}/docs.md`, import.meta.url), 'utf8').trimEnd(),
-  })),
+        ':root': { ...css[':root'], ...item.css?.[':root'] },
+        '.dark': { ...css['.dark'], ...item.css?.['.dark'] },
+      } } : {}),
+      docs: item.docs ?? readFileSync(new URL(`../registry/${item.name}/docs.md`, import.meta.url), 'utf8').trimEnd(),
+    }
+  }),
 }
 
 const root = new URL('../', import.meta.url)
@@ -611,6 +628,8 @@ for (const [index, color] of customColors.entries()) {
 storybookUrl.searchParams.set('args', storybookArgs.join(';'))
 const storybookStart = '{/* mtb-storybook:start */}'
 const storybookEnd = '{/* mtb-storybook:end */}'
+const presetsStart = '{/* theme-presets:start */}'
+const presetsEnd = '{/* theme-presets:end */}'
 const colorPageUrl = new URL('tokens/colors.mdx', docsDir)
 
 // The Open in v0 links are rewritten too: a prompt names tokens, and each link is written once, in `v0.mjs`.
@@ -623,6 +642,12 @@ for (const url of docs) {
     if (start === -1 || end < start) throw new Error('Color system page has lost its Storybook badge markers')
     const badge = `<Badge href="${storybookUrl.href}" logo="storybook">material theme builder</Badge>`
     page = page.slice(0, start + storybookStart.length) + '\n\n' + badge + '\n\n' + page.slice(end)
+    const presetsFrom = page.indexOf(presetsStart)
+    const presetsTo = page.indexOf(presetsEnd)
+    if (presetsFrom === -1 || presetsTo < presetsFrom) throw new Error('Color system page has lost its theme preset markers')
+    const presets = themePresets.map(({ name, ...preset }) => ({ name: `theme-${name}`, ...preset }))
+    const selector = `<ThemeSeeds presets={${JSON.stringify(presets, null, 2)}} />`
+    page = page.slice(0, presetsFrom + presetsStart.length) + '\n\n' + selector + '\n\n' + page.slice(presetsTo)
   }
   outputs.push([url, page])
 }

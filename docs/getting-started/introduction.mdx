@@ -5,6 +5,23 @@ nav: 0
 ---
 
 <Badge href="../storybook/" logo="storybook" color="storybook">Storybook</Badge>
+<Badge href="https://ui.shadcn.com/docs/directory?q=pmndrs">
+  <svg
+    data-icon="inline-start"
+    width="12"
+    height="12"
+    viewBox="0 0 256 256"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="32"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M208 128l-80 80M192 40L40 192" />
+  </svg>
+  <span>shadcn/ui</span>
+</Badge>
 
 <Intro>
   A shared visual language for pmndrs: colours, typography, spacing, radius,
@@ -40,12 +57,10 @@ Choose items that fit your project's environment. Browse the
 [JSON index](https://pmndrs.github.io/design-system/r/registry.json) or read an
 item directly, such as [`logo.json`](https://pmndrs.github.io/design-system/r/logo.json).
 
-For the CLI, register `@pmndrs` in your project's `components.json`, then
-browse, inspect or install resources:
+The `@pmndrs` namespace is built into the shadcn CLI. Browse, inspect or install
+resources directly:
 
 ```sh
-npx shadcn@latest registry add \
-  '@pmndrs=https://pmndrs.github.io/design-system/r/{name}.json'
 npx shadcn@latest search @pmndrs
 npx shadcn@latest view @pmndrs/logo
 npx shadcn@latest add @pmndrs/logo @pmndrs/figma-tokens

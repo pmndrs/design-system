@@ -33,7 +33,7 @@ test('hosted items use the namespace and link to the source served by it', () =>
 })
 
 test('the `search` command is pinned to each registry\'s ref', () => {
-  assert.match(renderCatalog(registries), /^npx shadcn@latest search pmndrs\/a#v1\.0\.0 pmndrs\/b#main$/m)
+  assert.match(renderCatalog(registries), /^pnpm dlx shadcn@latest search pmndrs\/a#v1\.0\.0 pmndrs\/b#main$/m)
 })
 
 test('the catalog is written between the markers, the prose around it untouched', () => {

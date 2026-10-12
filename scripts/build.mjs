@@ -49,8 +49,8 @@ import { rewriteV0Links, sansFont, v0GlobalsCss } from './v0.mjs'
 /**
  * Refs are not inherited, so a cross-item dependency carries its own — and it
  * has to be *this* version, not a frozen one. Derived from package.json so the
- * changesets bump reaches it; `npm run version` rebuilds, and `build.test.mjs`
- * (in `npm run lgtm`) fails if it didn't.
+ * changesets bump reaches it; `pnpm run version` rebuilds, and `build.test.mjs`
+ * (in `pnpm run lgtm`) fails if it didn't.
  */
 const version = `v${pkg.version}`
 
@@ -209,7 +209,7 @@ const items = [
   },
   /**
    * The poimandres preset as an item, the theme with it: what
-   * `npx shadcn@latest init @pmndrs/preset` starts a project from, so a consumer
+   * `pnpm dlx shadcn@latest init @pmndrs/preset` starts a project from, so a consumer
    * never needs the preset code.
    *
    * A `registry:base`, not a `registry:style`: a style carries no preset

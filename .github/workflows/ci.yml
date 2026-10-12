@@ -15,16 +15,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-      - run: npm ci
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
 
       # `registry.json` is generated but committed, because GitHub-based
       # resolution reads it from the repo. Nothing else would notice it drifting
       # from `scripts/build.mjs`, the docs markdown, or the seed.
-      - run: npm run lgtm
+      - run: pnpm run lgtm
 
   # The package is never published to npm — the git tag *is* the install address
   # (`theme#v1.2.3`), so a version bump is the whole release. changesets opens the
@@ -40,16 +41,17 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-      - run: npm ci
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
 
       - uses: changesets/action@v1
         with:
-          version: npm run version
-          publish: npm run release
+          version: pnpm run version
+          publish: pnpm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -1,5 +1,5 @@
 /**
- * What `npm run hosted-registry` writes for the docs site's `r/` folder: the
+ * What `pnpm run hosted-registry` writes for the docs site's `r/` folder: the
  * static registry a `components.json` namespace and the shadcn MCP server
  * read. These run the writer into a temporary folder and assert what a
  * consumer fetches from there, against `registry.json`, not how

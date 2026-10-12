@@ -67,13 +67,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-          cache: npm
-      - run: npm ci
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
       - name: Build composed Storybook
-        run: npm run build-storybook
+        run: pnpm run build-storybook
       - uses: actions/download-artifact@v8
         with:
           name: github-pages
@@ -81,7 +82,7 @@ jobs:
       - run: |
           mkdir -p "$SITE"
           tar -xf "$RUNNER_TEMP/github-pages/artifact.tar" -C "$SITE"
-          npm run hosted-registry -- "$SITE/r"
+          pnpm run hosted-registry "$SITE/r"
           mkdir -p "$SITE/storybook"
           cp -R out/storybook/. "$SITE/storybook/"
         env:
@@ -147,6 +148,10 @@ jobs:
         with:
           name: site
       - if: env.VERCEL == 'true'
+        uses: pnpm/action-setup@v6
+        with:
+          version: 10.33.4
+      - if: env.VERCEL == 'true'
         uses: actions/setup-node@v7
         with:
           node-version: 24
@@ -175,7 +180,7 @@ jobs:
           printf '{"version":3,"cleanUrls":true,"routes":[{"src":"^/$","status":308,"headers":{"Location":"%s"}},{"src":"^%s/storybook$","status":308,"headers":{"Location":"%s/storybook/"}},{"handle":"filesystem"},{"src":"^%s/(.+?)/?$","dest":"%s/$1.html","check":true}]}' \
             "$BASE_PATH" "$BASE_PATH" "$BASE_PATH" "$BASE_PATH" "$BASE_PATH" > .vercel/output/config.json
           # `--archive`: one tarball, not one upload per file
-          url=$(npx -y vercel deploy --prebuilt --archive=tgz --token="$VERCEL_TOKEN" \
+          url=$(pnpm dlx vercel deploy --prebuilt --archive=tgz --token="$VERCEL_TOKEN" \
             --target="$([ "$PRODUCTION" = 'true' ] && echo production || echo preview)")
 
           echo "url=$url" >> "$GITHUB_OUTPUT"

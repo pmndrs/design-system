@@ -1,6 +1,6 @@
 /**
  * `registry.json` is generated, so most of it is already pinned: `build.test.mjs`
- * (in `npm run lgtm`) compares the output to what is committed, which fixes anything that is a pure
+ * (in `pnpm run lgtm`) compares the output to what is committed, which fixes anything that is a pure
  * function of the inputs. Asserting those here would only restate the build.
  *
  * What `build.test.mjs` cannot catch is a bad *input*. Mistype a variable in the

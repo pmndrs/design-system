@@ -4,7 +4,7 @@ Poimandres is a distributed design system: nothing is installed from npm. It shi
 The full documentation is at [pmndrs.github.io/design-system](https://pmndrs.github.io/design-system/), which follows `main`. This system is synced to `main`, release {{release}}: the colours, fonts and radii here match that site.
 <!-- /artifact-only -->
 
-In code, one add brings the whole theme (the palette, the colour machinery under it and the mono font): `npx shadcn@latest add pmndrs/design-system/theme#{{release}}`.
+In code, one add brings the whole theme (the palette, the colour machinery under it and the mono font): `pnpm dlx shadcn@latest add pmndrs/design-system/theme#{{release}}`.
 
 ## Colour
 
@@ -33,7 +33,7 @@ No colour is picked by hand. A few seeds go in and Material Design 3 computes ev
 - The seed hex itself is the *container* role: `--md-sys-color-primary-container` is the lime. `primary` is a dark olive in light and white in dark, so use the container where the brand colour itself must show.
 - `--md-sys-color-secondary` and `--md-sys-color-tertiary` are generated but intentionally unused as accents: the named brand colours take their place.
 - The dark scheme is the `dark` class on `<html>`.
-- Designers get the same palette as Figma tokens, light and dark as two modes of one variable collection: `npx shadcn@latest add pmndrs/design-system/figma-tokens#{{release}}`. The same item carries type, spacing, radius and motion as a second collection, and the text and shadow styles as a file for Tokens Studio.
+- Designers get the same palette as Figma tokens, light and dark as two modes of one variable collection: `pnpm dlx shadcn@latest add pmndrs/design-system/figma-tokens#{{release}}`. The same item carries type, spacing, radius and motion as a second collection, and the text and shadow styles as a file for Tokens Studio.
 
 ### shadcn tokens and the roles they point at
 
@@ -108,21 +108,21 @@ Poimandres is shadcn-based, so outside colour, fonts and the base radius it embr
 
 Poimandres is a distributed architecture based on shadcn blocks: any `pmndrs/*` repository can contribute blocks, each installed with a single `shadcn add` command, plus shared defaults (colours, radius, every shadcn token) that stay overridable by the consumer app. It is fully shadcn-compatible: every shadcn component is supported as is, and takes the palette through the shadcn tokens. The system adds no component library of its own.
 
-- Start from a shadcn primitive (`npx shadcn@latest add button`). Never restyle one with hardcoded colours; it already reads `primary`, `border`, `ring` and the rest.
-- pmndrs' own components are *blocks*, distributed through shadcn's GitHub registries: any public `pmndrs/*` repository with a `registry.json` at its root is a registry. Install one by address: `npx shadcn@latest add pmndrs/docs/keypoints#{{docsRef}}`.
+- Start from a shadcn primitive (`pnpm dlx shadcn@latest add button`). Never restyle one with hardcoded colours; it already reads `primary`, `border`, `ring` and the rest.
+- pmndrs' own components are *blocks*, distributed through shadcn's GitHub registries: any public `pmndrs/*` repository with a `registry.json` at its root is a registry. Install one by address: `pnpm dlx shadcn@latest add pmndrs/docs/keypoints#{{docsRef}}`.
 - Always pin a ref (a tag or a sha). Refs are not inherited: every entry in `registryDependencies` carries its own.
 - A block depends on a shadcn primitive by bare name (`registryDependencies: ["button"]`) and on another pmndrs block by its full pinned address (`{{exampleBlockAddress}}`). A bare name never means a same-repo item.
 - A block that uses colour depends on `pmndrs/design-system/theme`, so one add pulls the block and the colour layer with it, and the mono font through `font-mono`. `theme` is the single install target: it depends on `md3-base` (the colour machinery and the seed) and `font-mono`. Install `md3-base` alone only to compute a palette of your own.
 - A block lives in the repository it was born in. It is promoted to `pmndrs/design-system` only once it has shipped in its own repository and a second repository reuses it. There is always exactly one source of truth; promotion moves it.
 - Blocks are copied code, not a package: the consuming app owns the files and may override any shadcn token.
 - A registry item is a set of files, so the same mechanism ships more than UI: a shader, a helper, a `SKILL.md`.
-- Keypoints is the first block, born in `pmndrs/docs`, the generator behind several hundred pages of documentation across the pmndrs libraries. It is released at that repository's `{{docsRef}}` tag: `npx shadcn@latest add pmndrs/docs/keypoints#{{docsRef}}`. The same registry also holds Color, swatches of the MD3 roles: `npx shadcn@latest add pmndrs/docs/color#{{docsRef}}`. Both pin the colour layer, the pmndrs theme, at `{{blocksColourLayer}}`; in a new app the current one is `pmndrs/design-system/theme#{{release}}`. Planned, not yet available: shaders from `pmndrs/drei`, assets from `pmndrs/assets`, and blocks from other `pmndrs/*` repositories. Do not assume a block exists; check the owning repository's `registry.json`, or the registry catalog on the docs site, before installing.
+- Keypoints is the first block, born in `pmndrs/docs`, the generator behind several hundred pages of documentation across the pmndrs libraries. It is released at that repository's `{{docsRef}}` tag: `pnpm dlx shadcn@latest add pmndrs/docs/keypoints#{{docsRef}}`. The same registry also holds Color, swatches of the MD3 roles: `pnpm dlx shadcn@latest add pmndrs/docs/color#{{docsRef}}`. Both pin the colour layer, the pmndrs theme, at `{{blocksColourLayer}}`; in a new app the current one is `pmndrs/design-system/theme#{{release}}`. Planned, not yet available: shaders from `pmndrs/drei`, assets from `pmndrs/assets`, and blocks from other `pmndrs/*` repositories. Do not assume a block exists; check the owning repository's `registry.json`, or the registry catalog on the docs site, before installing.
 
 ## Logo
 
 - Use `logo_complete.svg` <!-- artifact-only -->from the Logos group <!-- /artifact-only -->as the mark, as an image. `logo_idle.svg` is its resting state.
 - Both paint their own black square background; there is no transparent variant. Never recolour, crop or redraw the mark.
-- In code, `npx shadcn@latest add pmndrs/design-system/logo#{{release}}` writes all four states (`logo_complete`, `logo_idle`, `logo_animated`, `logo_loading`) to `public/pmndrs/`.
+- In code, `pnpm dlx shadcn@latest add pmndrs/design-system/logo#{{release}}` writes all four states (`logo_complete`, `logo_idle`, `logo_animated`, `logo_loading`) to `public/pmndrs/`.
 - MIT, like the rest of pmndrs/design-system. No attribution required.
 
 ## Iconography

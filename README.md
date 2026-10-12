@@ -28,8 +28,8 @@ Read the [JSON index](https://pmndrs.github.io/design-system/r/registry.json)
 or use the shadcn CLI to browse and install individual items:
 
 ```sh
-npx shadcn@latest add @pmndrs/logo @pmndrs/figma-tokens
-npx shadcn@latest search @pmndrs
+pnpm dlx shadcn@latest add @pmndrs/logo @pmndrs/figma-tokens
+pnpm dlx shadcn@latest search @pmndrs
 ```
 
 See the [registry catalog](https://pmndrs.github.io/design-system/getting-started/introduction#registry-items)
@@ -81,7 +81,7 @@ so that the designs Claude generates stay on brand: its tokens, its brand book
 (`README.md`), its fonts, and a card per pmndrs block of the registry catalog.
 The artifact draws the foundations, colours to shadows, from the tokens itself.
 
-Every file of it comes from this repo. `npm run artifact` writes them into
+Every file of it comes from this repo. `pnpm run artifact` writes them into
 `out/artifact/project/` (gitignored), laid out as the artifact's own
 `project/`:
 
@@ -91,7 +91,7 @@ Every file of it comes from this repo. `npm run artifact` writes them into
   from `artifact/` with their `{{placeholders}}` filled: every version and sha
   in them comes from git, `package.json`, `node_modules` or
   `registry/external.json`. `README.md` is the brand book, which
-  `npm run build` also turns into the docs site's
+  `pnpm run build` also turns into the docs site's
   [Guidelines](https://pmndrs.github.io/design-system/guidelines/introduction)
   page and the `guidelines` item's `Guidelines.md`: passages that only make
   sense in the artifact sit between `<!-- artifact-only -->` and
@@ -111,7 +111,7 @@ in place.
 A maintainer publishes after each release, from Claude Code, signed in to
 claude.ai, which is why CI cannot do it:
 
-1. Check out `main` at the release and run `npm run artifact`.
+1. Check out `main` at the release and run `pnpm run artifact`.
 2. Diff `out/artifact/project/` against the artifact's files, and publish only
    the files that changed to https://claude.ai/artifact/FF46zANDT1mt2kdF9D9QAf
    with Claude Code's Artifact tool.
@@ -126,8 +126,8 @@ Nothing of it is committed but its sources: `scripts/artifact.mjs`,
 Browse the supported registry components and links to the design system documentation:
 
 ```sh
-npm run storybook        # http://localhost:6006
-npm run build-storybook  # static output in out/storybook/
+pnpm run storybook        # http://localhost:6006
+pnpm run build-storybook  # static output in out/storybook/
 ```
 
 The documentation deployment includes Storybook at
@@ -151,12 +151,14 @@ the mapping; no external build or component code is imported by the DS.
 
 ## dev
 
+Use Node.js 24 and pnpm 10.33.4 (pinned in `package.json`).
+
 ```sh
-npm install
-npm run build   # regenerate registry.json, figma/*.tokens.json, the docs catalog
-npm run artifact  # generate the Claude Design artifact files into out/artifact/
-npm run lgtm    # outputs are current and valid, preset code round-trips
-npm run refresh-catalog  # re-fetch the other repos' items listed in the docs catalog
+pnpm install
+pnpm run build   # regenerate registry.json, figma/*.tokens.json, the docs catalog
+pnpm run artifact  # generate the Claude Design artifact files into out/artifact/
+pnpm run lgtm    # outputs are current and valid, preset code round-trips
+pnpm run refresh-catalog  # re-fetch the other repos' items listed in the docs catalog
 ```
 
 Docs live in `docs/` ([pmndrs/docs](https://github.com/pmndrs/docs)), deployed to

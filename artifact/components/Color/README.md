@@ -5,7 +5,7 @@ Color is a pmndrs block from `pmndrs/docs`, the generator behind the documentati
 ## Install
 
 ```sh
-npx shadcn@latest add pmndrs/docs/color#{{docsRef}}
+pnpm dlx shadcn@latest add pmndrs/docs/color#{{docsRef}}
 ```
 
 The block is released at the `{{docsRef}}` tag of `pmndrs/docs`. The add pulls `class-variance-authority` and the colour layer with it, the pmndrs theme at the release that tag was built against: `{{blocksColourLayer}}`. In a new app, the pmndrs theme today is `pmndrs/design-system/theme#{{release}}`.

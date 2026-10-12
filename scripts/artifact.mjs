@@ -29,7 +29,7 @@
  *                                    items in the catalog
  *   registry/external.json           the other repos' items in the catalog
  *   material-theme-builder           the shadcn remap
- *   docs/<page>/introduction.mdx     the type scale, the spacing, radius and
+ *   docs/tokens/<page>.mdx     the type scale, the spacing, radius and
  *                                    shadow tables, the font families, read
  *                                    through `foundations.mjs`
  *   tailwindcss                      the mono fallback stack, the one value

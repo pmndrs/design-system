@@ -11,6 +11,6 @@ A few things to know:
   }
   ```
 
-  The brand colours' shade utilities take over Tailwind's stock palettes of the same names. Style alerts, hints and badges with the alert roles, not with a brand colour. The [Colors page](https://pmndrs.github.io/design-system/colors/introduction#custom-colours) lists their seeds.
+  The brand colours' shade utilities take over Tailwind's stock palettes of the same names. Style alerts, hints and badges with the alert roles, not with a brand colour. The [Colors page](https://pmndrs.github.io/design-system/tokens/colors#custom-colours) lists their seeds.
 - If you want a palette other than the pmndrs one, install **`md3-base`** instead and compute your own. See its docs. Installing both means committing a whole baked palette you immediately override.
 - **The bake is the seed's own output.** It is `builder(pmndrsMtb)` as Material Theme Builder computes it, with nothing redrawn on top, so `<Mtb>` or `builder()` at runtime with the same seed renders exactly these colours.

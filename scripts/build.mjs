@@ -611,7 +611,7 @@ for (const [index, color] of customColors.entries()) {
 storybookUrl.searchParams.set('args', storybookArgs.join(';'))
 const storybookStart = '{/* mtb-storybook:start */}'
 const storybookEnd = '{/* mtb-storybook:end */}'
-const colorPageUrl = new URL('colors/introduction.mdx', docsDir)
+const colorPageUrl = new URL('tokens/colors.mdx', docsDir)
 
 // The Open in v0 links are rewritten too: a prompt names tokens, and each link is written once, in `v0.mjs`.
 for (const url of docs) {
@@ -629,8 +629,7 @@ for (const url of docs) {
 
 /**
  * The brand book, `artifact/README.md`, as the docs site reads it: the
- * Guidelines page, right after Getting Started (`nav` sorts numerically, so
- * `0.5` sits between it and Colors without renumbering every page). Passages
+ * Guidelines page, last in the navigation (`nav` sorts numerically). Passages
  * marked artifact-only are dropped, and the placeholders are filled the way
  * `artifact.mjs` fills them, so the page, the artifact and `Guidelines.md`
  * say the same thing at the same versions.
@@ -653,7 +652,7 @@ outputs.push([
 # ${generatedFrom}
 title: Guidelines
 description: The do and don't of the pmndrs design system — colour, type, spacing, components, logo, iconography and voice.
-nav: 0.5
+nav: 4
 ---
 
 These guidelines are intended for AI agents building with the pmndrs design system. They define the rules for colours, typography, spacing, components, logos, iconography and voice. Copy the Markdown below into your project’s \`AGENTS.md\` or your agent’s instructions.

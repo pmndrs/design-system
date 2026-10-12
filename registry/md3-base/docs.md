@@ -21,7 +21,7 @@ Computed here, the palette is the baked `theme` one, colour for colour: both are
 
 `<Mtb>` from `material-theme-builder/react` does the same as a client component. Avoid it in an app that renders on the server, but it is the right tool where there is no build to hook — a Storybook preview decorator, for instance. With `next-themes`, nest `<ThemeProvider>` inside it, not around it.
 
-The seed ships twelve custom colours, and `theme` bakes their roles. Seven are the brand colours. Five are alert roles: `note`, `tip`, `important`, `warning` and `caution`. The [Colors page](https://pmndrs.github.io/design-system/colors/introduction#custom-colours) lists their seeds and what each is for. Each alert seed is overridable, like the primary: `THEME_NOTE`, `THEME_TIP`, `THEME_IMPORTANT`, `THEME_WARNING`, `THEME_CAUTION`.
+The seed ships twelve custom colours, and `theme` bakes their roles. Seven are the brand colours. Five are alert roles: `note`, `tip`, `important`, `warning` and `caution`. The [Colors page](https://pmndrs.github.io/design-system/tokens/colors#custom-colours) lists their seeds and what each is for. Each alert seed is overridable, like the primary: `THEME_NOTE`, `THEME_TIP`, `THEME_IMPORTANT`, `THEME_WARNING`, `THEME_CAUTION`.
 
 Their utilities are not automatic. The `@plugin` line this item added to your CSS is installed in statement form (`@plugin '...';`), and the registry cannot give it a body, so give it one yourself:
 

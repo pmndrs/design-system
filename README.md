@@ -10,7 +10,7 @@ and exported files across design tools and implementations.
 ## Design resources
 
 Start with the [guidelines](https://pmndrs.github.io/design-system/guidelines/introduction)
-and [foundations](https://pmndrs.github.io/design-system/colors/introduction).
+and [tokens](https://pmndrs.github.io/design-system/tokens/introduction).
 The [SVG assets](https://pmndrs.github.io/design-system/assets/introduction) and
 [design tokens](figma/) are available directly. Light and dark colours and
 foundations use DTCG; text and shadow styles use Tokens Studio.

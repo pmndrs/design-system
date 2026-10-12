@@ -139,9 +139,9 @@ test('a foundations page without the section or table it should have is an error
   const docs = pathToFileURL(`${mkdtempSync(join(tmpdir(), 'foundations-'))}/`)
   try {
     cpSync(new URL('./docs/', import.meta.url), docs, { recursive: true })
-    const spacing = new URL('spacing/introduction.mdx', docs)
+    const spacing = new URL('tokens/spacing.mdx', docs)
     writeFileSync(spacing, readFileSync(spacing, 'utf8').replace('## Scale', '## Steps'))
-    assert.throws(() => readFoundations(docs), /docs\/spacing has no "## Scale" section/)
+    assert.throws(() => readFoundations(docs), /docs\/tokens\/spacing has no "## Scale" section/)
   } finally {
     rmSync(docs, { recursive: true, force: true })
   }

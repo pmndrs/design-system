@@ -11,21 +11,21 @@
  */
 import { readFileSync } from 'node:fs'
 
-/** Where the docs pages live: `<dir>/introduction.mdx` under it. */
+/** Where the docs pages live: `tokens/<name>.mdx` under it. */
 const defaultDocsDir = new URL('../docs/', import.meta.url)
 
 /**
- * A docs page, `<docsDir>/<dir>/introduction.mdx`, cut at its `##` headings.
+ * A docs page, `<docsDir>/tokens/<name>.mdx`, cut at its `##` headings.
  *
- * @param {string} dir
+ * @param {string} name
  * @param {URL} [docsDir]
  */
-export function readPage(dir, docsDir = defaultDocsDir) {
-  const text = readFileSync(new URL(`${dir}/introduction.mdx`, docsDir), 'utf8')
+export function readPage(name, docsDir = defaultDocsDir) {
+  const text = readFileSync(new URL(`tokens/${name}.mdx`, docsDir), 'utf8')
   const [, ...chunks] = text.split(/^## /m)
 
   return {
-    dir,
+    name,
     text,
     sections: chunks.map((chunk) => ({
       heading: chunk.slice(0, chunk.indexOf('\n')).trim(),
@@ -42,7 +42,7 @@ export function readPage(dir, docsDir = defaultDocsDir) {
  */
 export function section(page, heading) {
   const found = page.sections.find((entry) => entry.heading === heading)
-  if (!found) throw new Error(`docs/${page.dir} has no "## ${heading}" section`)
+  if (!found) throw new Error(`docs/tokens/${page.name} has no "## ${heading}" section`)
   return found
 }
 
@@ -161,7 +161,7 @@ function motion(page) {
  * @param {URL} [docsDir]
  */
 export function readFoundations(docsDir = defaultDocsDir) {
-  const page = (dir) => readPage(dir, docsDir)
+  const page = (name) => readPage(name, docsDir)
   return {
     typography: typography(page('typography')),
     spacing: spacing(page('spacing')),

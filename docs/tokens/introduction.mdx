@@ -1,0 +1,33 @@
+---
+title: Tokens
+description: The shared values behind the pmndrs visual language, from colours and typography to motion.
+nav: 1
+---
+
+<Intro>
+  Tokens are the shared values behind every pmndrs interface: colours, typography,
+  spacing, radius, shadows and motion. This section documents their sources,
+  scales and utilities, with live previews.
+</Intro>
+
+## Token layers
+
+Four layers set the tokens, each one deciding what the layer below leaves open:
+
+<Mermaid chart={`
+block-beta
+  columns 3
+  pmndrs["pmndrs<br/>colours · Inter · Inconsolata · --radius"]:3
+  shadcn["shadcn base-luma<br/>token names · radius scale · element recipe"]:2
+  mtb["material-theme-builder<br/>MD3 roles"]:1
+  tailwind["Tailwind v4<br/>spacing · shadows · motion · text-* · utilities"]:3
+
+  classDef pmndrsLayer fill:var(--md-sys-color-primary-container),stroke:var(--md-sys-color-primary),color:var(--md-sys-color-on-primary-container)
+  classDef shadcnLayer fill:var(--md-sys-color-inverse-surface),stroke:var(--md-sys-color-outline),color:var(--md-sys-color-inverse-on-surface)
+  classDef mtbLayer fill:var(--md-sys-color-purple-container),stroke:var(--md-sys-color-purple),color:var(--md-sys-color-on-purple-container)
+  classDef tailwindLayer fill:var(--md-sys-color-cyan-container),stroke:var(--md-sys-color-cyan),color:var(--md-sys-color-on-cyan-container)
+  class pmndrs pmndrsLayer
+  class shadcn shadcnLayer
+  class mtb mtbLayer
+  class tailwind tailwindLayer
+`} />

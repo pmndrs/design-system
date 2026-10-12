@@ -403,6 +403,27 @@ const items = [
     author: 'pmndrs',
     files: guidelinesFiles,
   },
+  {
+    name: 'poimandres-design-system',
+    type: 'registry:item',
+    title: 'Poimandres Agent Skill',
+    description:
+      'Apply pmndrs branding to interfaces and visual artifacts: an Agent Skill with the canonical brand book, palette and static logos.',
+    author: 'pmndrs',
+    files: [
+      'SKILL.md',
+      'agents/openai.yaml',
+      'references/guidelines.md',
+      'assets/palette.css',
+      'assets/logo_complete.svg',
+      'assets/logo_idle.svg',
+      'LICENSE',
+    ].map((path) => ({
+      path: `skills/poimandres-design-system/${path}`,
+      type: 'registry:file',
+      target: `~/.agents/skills/poimandres-design-system/${path}`,
+    })),
+  },
   /**
    * What an "Open in v0" link opens. v0 drops `css`, `cssVars` and
    * namespaces, and resolves no GitHub address, so nothing above reaches it:
@@ -669,6 +690,23 @@ outputs.push([
   new URL('../registry/guidelines/Guidelines.md', import.meta.url),
   `<!-- ${generatedFrom} -->\n\n# Poimandres design system guidelines\n\n${guidelines}\n`,
 ])
+
+/**
+ * A portable skill installs as a folder of its own. Bundle its references and
+ * assets from the existing sources so it works outside this checkout without
+ * maintaining another brand book or palette. `build.test.mjs` holds these
+ * committed copies current, just like the other distribution formats.
+ */
+const skillRoot = new URL('../skills/poimandres-design-system/', import.meta.url)
+outputs.push(
+  [new URL('references/guidelines.md', skillRoot), `<!-- ${generatedFrom} -->\n\n# Poimandres design system guidelines\n\n${guidelines}\n`],
+  [new URL('assets/palette.css', skillRoot), `/* Generated from registry/md3-base/md3.ts by scripts/build.mjs: do not edit. */\n\n${paletteStylesheet}\n`],
+  ...['logo_complete.svg', 'logo_idle.svg'].map((name) => [
+    new URL(`assets/${name}`, skillRoot),
+    readFileSync(new URL(`../docs/assets/${name}`, import.meta.url), 'utf8'),
+  ]),
+  [new URL('LICENSE', skillRoot), readFileSync(new URL('../LICENSE', import.meta.url), 'utf8')],
+)
 
 /** The `v0` item's stylesheet; what is in it is `v0.mjs`'s story. */
 outputs.push([new URL('../registry/v0/globals.css', import.meta.url), v0GlobalsCss(palette, foundations, fontMono)])

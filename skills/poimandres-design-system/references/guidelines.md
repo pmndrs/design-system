@@ -1,0 +1,136 @@
+<!-- Generated from artifact/README.md by scripts/build.mjs: do not edit. -->
+
+# Poimandres design system guidelines
+
+Poimandres is a distributed design system: nothing is installed from npm. It ships as a shadcn preset and a shadcn registry, so every pmndrs app gets the same colours by copying code in. shadcn's tokens are the base; Material Design 3 colour roles are additive, for what shadcn has no name for.
+
+In code, one add brings the whole theme (the palette, the colour machinery under it and the mono font): `npx shadcn@latest add pmndrs/design-system/theme#v0.9.0`.
+
+## Colour
+
+No colour is picked by hand. A few seeds go in and Material Design 3 computes every role from them, for light and dark alike.
+
+| Option | Value |
+| --- | --- |
+| `source` | `#CAF543` (poimandres lime) |
+| `colorMatch` | `true` |
+| `contrast` | `0` |
+| `neutral` | `#c1b793` |
+| `neutralVariant` | `#495720` |
+| `error` | `#FF4980` |
+
+`colorMatch` is Material Theme Builder's "stay true to my color inputs": the source seed lands in its light container role; the dark container resolves to a generated tone. The two neutral seeds look nothing like the grey ramps they produce, by design: a neutral ramp takes an eighth of its seed's chroma.
+
+- Never write a hex. Use a role; if the palette must change, change the seed and recompute.
+- Reach for the shadcn token first: `background`, `foreground`, `card`, `popover`, `primary`, `secondary`, `muted`, `accent`, `destructive`, `border`, `input`, `ring`. Use an `--md-sys-color-*` role only where shadcn has no equivalent (`--md-sys-color-surface-dim`, `--md-sys-color-tertiary-container`, `--md-sys-color-on-surface-variant`).
+- Never build with `--md-ref-palette-*` shades directly. They are the tonal ramps the roles alias, and they do not change between schemes.
+- Every fill has the role meant to go on it. Put `primary-foreground` on `primary`, `secondary-foreground` on `secondary`, `accent-foreground` on `accent`, `--md-sys-color-on-<role>` on `--md-sys-color-<role>`, and `--md-sys-color-on-<role>-container` on `--md-sys-color-<role>-container`.
+- Set body text in `foreground` and lower-emphasis text in `muted-foreground`, on `background`, `card`, `popover` or `muted`.
+- `secondary` and `accent` are the MD3 secondary *container* (`--md-sys-color-secondary-container`), not `--md-sys-color-secondary`.
+- Draw control boundaries with `input`. `border` is decorative: it is too faint (under 2:1 on `background`) to be the only thing marking a control.
+- Draw focus with `ring`.
+- Colour chart series with `chart-1` to `chart-5`, in that order. They are the fixed roles, so a chart keeps its colours in light and dark.
+- The brand lime belongs to the *container* role: `--md-sys-color-primary-container` is the seed hex in light and a generated lime tone in dark. `primary` is a dark olive in light and white in dark, so use the container where the brand colour itself must show.
+- `--md-sys-color-secondary` and `--md-sys-color-tertiary` are generated but intentionally unused as accents: the named brand colours take their place.
+- The dark scheme is the `dark` class on `<html>`.
+- Designers get the same palette as Figma tokens, light and dark as two modes of one variable collection: `npx shadcn@latest add pmndrs/design-system/figma-tokens#v0.9.0`. The same item carries type, spacing, radius and motion as a second collection, and the text and shadow styles as a file for Tokens Studio.
+
+### shadcn tokens and the roles they point at
+
+| shadcn token | MD3 role |
+| --- | --- |
+| `background` | `--md-sys-color-surface` |
+| `foreground`, `card-foreground`, `popover-foreground` | `--md-sys-color-on-surface` |
+| `card`, `sidebar` | `--md-sys-color-surface-container-low` |
+| `popover` | `--md-sys-color-surface-container-high` |
+| `muted` | `--md-sys-color-surface-container-highest` |
+| `muted-foreground` | `--md-sys-color-on-surface-variant` |
+| `primary`, `ring` | `--md-sys-color-primary` |
+| `primary-foreground` | `--md-sys-color-on-primary` |
+| `secondary`, `accent` | `--md-sys-color-secondary-container` |
+| `secondary-foreground`, `accent-foreground` | `--md-sys-color-on-secondary-container` |
+| `destructive` | `--md-sys-color-error` |
+| `input` | `--md-sys-color-outline` |
+| `border` | `--md-sys-color-outline-variant` |
+| `chart-1` … `chart-5` | `--md-sys-color-primary-fixed`, `-secondary-fixed`, `-tertiary-fixed`, `-primary-fixed-dim`, `-secondary-fixed-dim` |
+
+The `sidebar-*` tokens follow their counterparts: `sidebar-foreground` is `foreground`, `sidebar-primary` is `primary`, `sidebar-primary-foreground` is `primary-foreground`, `sidebar-accent` is `accent`, `sidebar-accent-foreground` is `accent-foreground`, `sidebar-border` is `border`, `sidebar-ring` is `ring`.
+
+### Brand colours
+
+The seven brand colours are declared next to the seed as custom colours, none of them blended. Their seeds stay unchanged; the generated roles depend on the scheme. Each becomes four roles: `--md-sys-color-<name>`, `-on-<name>`, `-<name>-container`, `-on-<name>-container`.
+
+| Name | Seed |
+| --- | --- |
+| `lime` | `#CAF543` |
+| `teal` | `#00F7A3` |
+| `cyan` | `#2BDCF6` |
+| `purple` | `#D855F9` |
+| `red` | `#FF4980` |
+| `orange` | `#FFC043` |
+| `yellow` | `#EBFF0F` |
+
+- Lime is also the `source` seed, and red also drives the error role: `destructive` and `--md-sys-color-red` are the same colour.
+- For a brand fill, use `--md-sys-color-<name>-container` with `--md-sys-color-on-<name>-container` on it. Resolve both from the active scheme: lime's container is `#CAF543` in light and `#C8F240` in dark.
+- Their shade utilities (`bg-purple-500`) take over Tailwind's stock palettes of the same names.
+
+### Alert colours
+
+Five semantic custom colours follow the brand ones, for alerts, hints, badges and statuses. They are seeded with GitHub's alert hues and, unlike the brand colours, blended toward the `source` seed, so they keep their meaning and still sit in the palette. Same four roles each.
+
+| Name | Seed | Meaning |
+| --- | --- | --- |
+| `note` | `#1F6FEB` | Information the reader should notice |
+| `tip` | `#238636` | Optional advice that helps |
+| `important` | `#8957E5` | Information the reader needs to succeed |
+| `warning` | `#D29922` | Something that needs attention |
+| `caution` | `#DA3633` | A risk or a negative outcome |
+
+- Style an alert with `--md-sys-color-<name>-container` and `--md-sys-color-on-<name>-container`, and its accent (border, icon, title) with `--md-sys-color-<name>`.
+- Never use a brand colour for an alert level: `cyan` is not `note`, `red` is not `caution`.
+
+## Type
+
+- The preset's font is Inter (`sans`), and headings inherit it. Never hardcode a font family in a block.
+- The type scale is Tailwind's default: `text-xs` to `text-9xl`, inherited, not yet a pmndrs decision. Set UI text in `text-sm` and body copy in `text-base`; choose weight with Tailwind's `font-*` utilities.
+- `mono` is Inconsolata, from the `font-mono` registry item that `theme` depends on. It is scoped to `code, kbd, samp, pre`: those elements use it without a class, and the rest of the UI keeps Inter. In app code, add `font-mono` to any other element that should be monospace; a block never does.
+- Headings, paragraphs, lists and inline code follow shadcn's Typography class recipe (inline code: `font-mono text-sm font-semibold` on `bg-muted`). No element is styled by default.
+
+## Spacing, radii and shadows
+
+Poimandres is shadcn-based, so outside colour, fonts and the base radius it embraces Tailwind's defaults. The repository's docs say which is which: the radius is a pmndrs decision; spacing and shadows are inherited from Tailwind v4.
+
+- Space with the Tailwind scale, multiples of `--spacing` (0.25rem): step 1 (`p-1`, `gap-1`) is 0.25rem, step 4 (`p-4`) is 1rem; never an arbitrary pixel value.
+- Every corner derives from one value, `--radius` (0.625rem), from the preset. Its base-luma style multiplies it: `--radius-sm` is ×0.6, `--radius-lg` is `--radius` itself, `--radius-4xl` is ×2.6. Round with `rounded-sm` to `rounded-4xl`; change `--radius` and every corner rescales. `rounded-xs` (`--radius-xs`) is Tailwind's own step, outside that scale.
+- Elevate with `shadow-2xs` to `shadow-2xl`, recess with `inset-shadow-2xs` to `inset-shadow-sm`, and shadow shapes that are not boxes (icons, SVGs) with `drop-shadow-xs` to `drop-shadow-2xl`. Shadows are black at low opacity in both schemes; in dark, set surfaces apart with the `--md-sys-color-surface-container-*` steps instead.
+
+## Components
+
+Poimandres is a distributed architecture based on shadcn blocks: any `pmndrs/*` repository can contribute blocks, each installed with a single `shadcn add` command, plus shared defaults (colours, radius, every shadcn token) that stay overridable by the consumer app. It is fully shadcn-compatible: every shadcn component is supported as is, and takes the palette through the shadcn tokens. The system adds no component library of its own.
+
+- Start from a shadcn primitive (`npx shadcn@latest add button`). Never restyle one with hardcoded colours; it already reads `primary`, `border`, `ring` and the rest.
+- pmndrs' own components are *blocks*, distributed through shadcn's GitHub registries: any public `pmndrs/*` repository with a `registry.json` at its root is a registry. Install one by address: `npx shadcn@latest add pmndrs/docs/keypoints#v4.22.0`.
+- Always pin a ref (a tag or a sha). Refs are not inherited: every entry in `registryDependencies` carries its own.
+- A block depends on a shadcn primitive by bare name (`registryDependencies: ["button"]`) and on another pmndrs block by its full pinned address (`pmndrs/docs/mdx-prose#v1.0.0`). A bare name never means a same-repo item.
+- A block that uses colour depends on `pmndrs/design-system/theme`, so one add pulls the block and the colour layer with it, and the mono font through `font-mono`. `theme` is the single install target: it depends on `md3-base` (the colour machinery and the seed) and `font-mono`. Install `md3-base` alone only to compute a palette of your own.
+- A block lives in the repository it was born in. It is promoted to `pmndrs/design-system` only once it has shipped in its own repository and a second repository reuses it. There is always exactly one source of truth; promotion moves it.
+- Blocks are copied code, not a package: the consuming app owns the files and may override any shadcn token.
+- A registry item is a set of files, so the same mechanism ships more than UI: a shader, a helper, a `SKILL.md`.
+- Keypoints is the first block, born in `pmndrs/docs`, the generator behind several hundred pages of documentation across the pmndrs libraries. It is released at that repository's `v4.22.0` tag: `npx shadcn@latest add pmndrs/docs/keypoints#v4.22.0`. The same registry also holds Color, swatches of the MD3 roles: `npx shadcn@latest add pmndrs/docs/color#v4.22.0`. Both pin the colour layer, the pmndrs theme, at `pmndrs/design-system/theme#v0.6.0`; in a new app the current one is `pmndrs/design-system/theme#v0.9.0`. Planned, not yet available: shaders from `pmndrs/drei`, assets from `pmndrs/assets`, and blocks from other `pmndrs/*` repositories. Do not assume a block exists; check the owning repository's `registry.json`, or the registry catalog on the docs site, before installing.
+
+## Logo
+
+- Use `logo_complete.svg` as the mark, as an image. `logo_idle.svg` is its resting state.
+- Both paint their own black square background; there is no transparent variant. Never recolour, crop or redraw the mark.
+- In code, `npx shadcn@latest add pmndrs/design-system/logo#v0.9.0` writes all four states (`logo_complete`, `logo_idle`, `logo_animated`, `logo_loading`) to `public/pmndrs/`.
+- MIT, like the rest of pmndrs/design-system. No attribution required.
+
+## Iconography
+
+- Icons are `lucide`, the pmndrs baseline, taken from the app's `components.json` `iconLibrary`. The repository ships no icon files.
+
+## Voice
+
+- British spelling: "colour", "harmonizes".
+- Short declarative sentences that state a fact and its consequence: "No colour is picked by hand.", "Nothing mounted: the palette is baked into the CSS.", "Always pin a ref".
+- Lowercase `pmndrs` and `shadcn` in running text; "Poimandres" when naming the collective. No emoji.

@@ -19,7 +19,7 @@ No colour is picked by hand. A few seeds go in and Material Design 3 computes ev
 | `neutralVariant` | `#495720` |
 | `error` | `#FF4980` |
 
-`colorMatch` is Material Theme Builder's "stay true to my color inputs": each seed keeps its chroma and lands in its container role. The two neutral seeds look nothing like the grey ramps they produce, by design: a neutral ramp takes an eighth of its seed's chroma.
+`colorMatch` is Material Theme Builder's "stay true to my color inputs": the source seed lands in its light container role; the dark container resolves to a generated tone. The two neutral seeds look nothing like the grey ramps they produce, by design: a neutral ramp takes an eighth of its seed's chroma.
 
 - Never write a hex. Use a role; if the palette must change, change the seed and recompute.
 - Reach for the shadcn token first: `background`, `foreground`, `card`, `popover`, `primary`, `secondary`, `muted`, `accent`, `destructive`, `border`, `input`, `ring`. Use an `--md-sys-color-*` role only where shadcn has no equivalent (`--md-sys-color-surface-dim`, `--md-sys-color-tertiary-container`, `--md-sys-color-on-surface-variant`).
@@ -30,7 +30,7 @@ No colour is picked by hand. A few seeds go in and Material Design 3 computes ev
 - Draw control boundaries with `input`. `border` is decorative: it is too faint (under 2:1 on `background`) to be the only thing marking a control.
 - Draw focus with `ring`.
 - Colour chart series with `chart-1` to `chart-5`, in that order. They are the fixed roles, so a chart keeps its colours in light and dark.
-- The seed hex itself is the *container* role: `--md-sys-color-primary-container` is the lime. `primary` is a dark olive in light and white in dark, so use the container where the brand colour itself must show.
+- The brand lime belongs to the *container* role: `--md-sys-color-primary-container` is the seed hex in light and a generated lime tone in dark. `primary` is a dark olive in light and white in dark, so use the container where the brand colour itself must show.
 - `--md-sys-color-secondary` and `--md-sys-color-tertiary` are generated but intentionally unused as accents: the named brand colours take their place.
 - The dark scheme is the `dark` class on `<html>`.
 - Designers get the same palette as Figma tokens, light and dark as two modes of one variable collection: `npx shadcn@latest add pmndrs/design-system/figma-tokens#{{release}}`. The same item carries type, spacing, radius and motion as a second collection, and the text and shadow styles as a file for Tokens Studio.
@@ -58,7 +58,7 @@ The `sidebar-*` tokens follow their counterparts: `sidebar-foreground` is `foreg
 
 ### Brand colours
 
-The seven brand colours are declared next to the seed as custom colours, none of them blended: each stays its exact hex. Each becomes four roles: `--md-sys-color-<name>`, `-on-<name>`, `-<name>-container`, `-on-<name>-container`.
+The seven brand colours are declared next to the seed as custom colours, none of them blended. Their seeds stay unchanged; the generated roles depend on the scheme. Each becomes four roles: `--md-sys-color-<name>`, `-on-<name>`, `-<name>-container`, `-on-<name>-container`.
 
 | Name | Seed |
 | --- | --- |
@@ -71,7 +71,7 @@ The seven brand colours are declared next to the seed as custom colours, none of
 | `yellow` | `#EBFF0F` |
 
 - Lime is also the `source` seed, and red also drives the error role: `destructive` and `--md-sys-color-red` are the same colour.
-- For the brand hex as a fill, use `--md-sys-color-<name>-container` with `--md-sys-color-on-<name>-container` on it.
+- For a brand fill, use `--md-sys-color-<name>-container` with `--md-sys-color-on-<name>-container` on it. Resolve both from the active scheme: lime's container is `#CAF543` in light and `#C8F240` in dark.
 - Their shade utilities (`bg-purple-500`) take over Tailwind's stock palettes of the same names.
 
 ### Alert colours

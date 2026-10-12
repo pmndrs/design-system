@@ -1,0 +1,37 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Introduction" />
+
+# Poimandres design system
+
+The shared pmndrs colour layer, typography and shadcn preset.
+
+**Foundations / Colors** previews the palette shipped by this repository. Use the
+theme toolbar to switch between light and dark.
+
+The [design system documentation](https://pmndrs.github.io/design-system/getting-started/introduction)
+remains the reference for installation, tokens and usage:
+
+- [Brand guidelines](https://pmndrs.github.io/design-system/guidelines/introduction)
+- [Colors](https://pmndrs.github.io/design-system/colors/introduction)
+- [Typography](https://pmndrs.github.io/design-system/typography/introduction)
+- [Spacing](https://pmndrs.github.io/design-system/spacing/introduction)
+- [Radius](https://pmndrs.github.io/design-system/radius/introduction)
+- [Shadows](https://pmndrs.github.io/design-system/shadows/introduction)
+- [Motion](https://pmndrs.github.io/design-system/motion/introduction)
+
+## External components
+
+Expand **pmndrs/docs** in the sidebar for its live Storybook, including the
+supported **Color** and **Keypoints** registry blocks. These stories run in their
+own preview with their own theme; the local theme toolbar applies to DS stories.
+
+Composition exposes the remote Storybook's entire catalog, including components
+that are not supported registry blocks. Check the
+[registry catalog](https://pmndrs.github.io/design-system/getting-started/introduction#registry-items)
+for supported items and pinned installation versions.
+
+The composed catalog follows `pmndrs/docs`'s `main` branch. It can be newer than
+the registry's pinned release. Some addons behave differently in composition;
+use the [original Storybook](https://main--6977e41687a50b30c4349650.chromatic.com/)
+when you need its full tooling.

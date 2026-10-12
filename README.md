@@ -165,6 +165,24 @@ claude.ai, which is why CI cannot do it:
 Nothing of it is committed but its sources: `scripts/artifact.mjs`,
 `scripts/artifact.notes.json` and `artifact/`.
 
+## Storybook
+
+Preview the design system's colors and links to its documentation alongside supported
+external components:
+
+```sh
+npm run storybook        # http://localhost:6006
+npm run build-storybook  # static output in out/storybook/
+```
+
+[Storybook composition](https://storybook.js.org/docs/sharing/storybook-composition)
+is configured through `refs` in `.storybook/main.ts`. The `pmndrs/docs` reference
+includes its entire remote catalog, including Color and Keypoints. Remote stories keep
+their own theme, and some addons have composition limitations.
+
+The remote catalog follows `pmndrs/docs`'s `main` branch. Registry installs still use
+their own pinned refs; the composed previews may show a newer version.
+
 ## dev
 
 ```sh

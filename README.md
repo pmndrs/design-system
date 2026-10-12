@@ -167,8 +167,7 @@ Nothing of it is committed but its sources: `scripts/artifact.mjs`,
 
 ## Storybook
 
-Preview the design system's colors and links to its documentation alongside supported
-external components:
+Browse the supported registry components and links to the design system documentation:
 
 ```sh
 npm run storybook        # http://localhost:6006
@@ -183,8 +182,11 @@ Remote stories keep their own theme, and some addons have composition limitation
 This filters sidebar navigation; remote search results and direct links can still
 reach other entries in the source Storybook.
 
-The remote catalog follows `pmndrs/docs`'s `main` branch. Registry installs still use
-their own pinned refs; the composed previews may show a newer version.
+`registry/external.json` records each published Storybook's release ref, source commit
+and immutable build URL. The `pmndrs/docs` preview matches `v4.22.0`. Updating a registry
+ref without updating its Storybook mapping fails the build. `refresh-catalog` preserves
+this metadata. Verify the published build's commit against the new release when updating
+the mapping; no external build or component code is imported by the DS.
 
 ## dev
 

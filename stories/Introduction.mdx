@@ -1,13 +1,14 @@
 import { Meta } from '@storybook/addon-docs/blocks'
+import externalRegistries from '../registry/external.json'
+import { storybookRefs } from '../scripts/storybook.mjs'
+
+export const composedStorybooks = Object.values(storybookRefs(externalRegistries))
 
 <Meta title="Introduction" />
 
 # Poimandres design system
 
 The shared pmndrs colour layer, typography and shadcn preset.
-
-**Foundations / Colors** previews the palette shipped by this repository. Use the
-theme toolbar to switch between light and dark.
 
 The [design system documentation](https://pmndrs.github.io/design-system/getting-started/introduction)
 remains the reference for installation, tokens and usage:
@@ -22,16 +23,20 @@ remains the reference for installation, tokens and usage:
 
 ## External components
 
-Expand **pmndrs/docs** in the sidebar for its live Storybook, including the
-supported **Color** and **Keypoints** registry blocks. These stories run in their
-own preview with their own theme; the local theme toolbar applies to DS stories.
+Expand the versioned reference in the sidebar for the supported registry blocks.
+These stories run in their own preview with their own theme.
 
 The sidebar only displays components supported by the DS, listed in
 `registry/external.json`. Check the
 [registry catalog](https://pmndrs.github.io/design-system/getting-started/introduction#registry-items)
 for supported items and pinned installation versions.
 
-The composed catalog follows `pmndrs/docs`'s `main` branch. It can be newer than
-the registry's pinned release. Some addons behave differently in composition;
-use the [original Storybook](https://main--6977e41687a50b30c4349650.chromatic.com/)
-when you need its full tooling.
+Each composed Storybook is pinned to a published build from the catalog's release.
+Some addons behave differently in composition; use the original Storybook when you
+need its full tooling:
+
+<ul>
+  {composedStorybooks.map(({ title, url }) => (
+    <li key={url}><a href={url}>{title}</a></li>
+  ))}
+</ul>

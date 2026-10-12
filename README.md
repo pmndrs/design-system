@@ -177,8 +177,11 @@ npm run build-storybook  # static output in out/storybook/
 
 [Storybook composition](https://storybook.js.org/docs/sharing/storybook-composition)
 is configured through `refs` in `.storybook/main.ts`. The `pmndrs/docs` reference
-includes its entire remote catalog, including Color and Keypoints. Remote stories keep
-their own theme, and some addons have composition limitations.
+loads the remote catalog; the sidebar filter in `.storybook/manager.ts` only displays
+components listed for that repository in `registry/external.json` (Color and Keypoints).
+Remote stories keep their own theme, and some addons have composition limitations.
+This filters sidebar navigation; remote search results and direct links can still
+reach other entries in the source Storybook.
 
 The remote catalog follows `pmndrs/docs`'s `main` branch. Registry installs still use
 their own pinned refs; the composed previews may show a newer version.

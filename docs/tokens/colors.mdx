@@ -738,7 +738,8 @@ background.
 </ColorGroup>
 
 Each seed can be overridden from the environment, as the primary can with `THEME_PRIMARY`; the
-baked `theme` is always built without them, so it ships the seeds above.
+baked `theme` is always built without them, so it ships the default seed values from
+`md3.ts`, with Lime as the source.
 
 To change any custom colour, edit `customColors` in
 [`md3.ts`](https://github.com/pmndrs/design-system/blob/main/registry/md3-base/md3.ts), run
@@ -787,9 +788,10 @@ one fits: a role follows the scheme, a tone does not.
 
 ## Figma tokens
 
-The same palette, for designers: light and dark as two modes of one Figma variable collection,
-in [DTCG](https://www.designtokens.org) files. Every role is the hex the CSS gives it, alias for
-alias. Install them next to your code, into `design/tokens/pmndrs/` at the root of your project:
+The default Lime palette, for designers: light and dark as two modes of one Figma variable collection,
+in [DTCG](https://www.designtokens.org) files. Every role matches the default `theme` CSS, alias for
+alias. These are static exports: selecting a preset or changing the preview controls does not
+change the downloaded files. Install them next to your code, into `design/tokens/pmndrs/` at the root of your project:
 
 ```sh
 npx shadcn@latest add pmndrs/design-system/figma-tokens#v0.9.0
@@ -818,4 +820,3 @@ For a palette of your own, install `md3-base` instead of `theme` and emit the ro
 ```sh
 npx shadcn@latest add pmndrs/design-system/md3-base#v0.9.0
 ```
-

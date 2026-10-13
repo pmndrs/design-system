@@ -102,6 +102,7 @@ Use Node.js 24 and pnpm 10.33.4 (pinned in `package.json`).
 pnpm install
 pnpm run build   # regenerate registry.json, CSS and figma/*.tokens.json
 pnpm run build-docs  # build the website from authored docs into out/site/
+pnpm run build-docs:fragments  # standalone HTML in out/fragments/
 pnpm run lgtm    # outputs are current and valid, preset code round-trips
 pnpm run refresh-catalog  # re-fetch the other repos' items listed in the docs catalog
 ```
@@ -120,23 +121,22 @@ rewrite these files, `README.md` or `.changeset/README.md`.
   the same data; headings and Markdown formatting have no effect on tokens.
 - Edit colour seeds in `registry/md3-base/md3.ts` and named presets in
   `registry/md3-base/presets.ts`.
-- [`docs.config.ts`](./docs.config.ts) exposes shared data as MDX scope, indexed
+- [`docs.scope.ts`](./docs.scope.ts) exposes shared data as MDX scope, indexed
   by token or registry item name. Tables are ordinary Markdown in the pages;
   their cells use expressions such as `{spacing['4'].value}`. Edit their headings,
   rows and order directly. Adding a token or registry item does not insert a row
   automatically: add it to the relevant table when it should be documented.
-- The engine supplies the interactive palette preview with
+- The local `ThemeSeeds` component supplies the interactive palette preview with
   `<ThemeSeeds presets={themePresets} />`. Literal URLs and historical versions
   remain exactly as authored.
 
 Run `pnpm run build` after changing tokens. `pnpm run build-docs` uses the published
 `@pmndrs/docs@4.25.0` CLI to compile `docs/` directly, discovering `docs.config.ts`
 at the repository root. Run it from this directory after `pnpm install`.
-The CLI is invoked through `npx` rather than installed into the isolated pnpm tree:
-the engine currently requires its temporary website app outside `node_modules`.
+The CLI is installed locally; the hoisted install in `.npmrc` lets it stage its
+temporary Next app outside `node_modules`.
 There is no generated MDX directory. Only distribution outputs need committing;
 `out/` is ignored. CI installs consumer dependencies and uses the same build command.
-There are no custom table components or table styles to maintain.
 
 The engine's Markdown exports (including Copy Page and `llms-full.txt`) currently
 return the authored MDX: Markdown tables and their labels are preserved, but
@@ -161,3 +161,13 @@ npx --yes serve out/site --listen 3000 --no-port-switching --no-clipboard
 
 The website is written to `out/site/`, outside the authored docs. Stop both servers
 with Ctrl+C when finished.
+
+`docs.config.ts` registers the local `ThemeSeeds` component and imports the shared scope
+from `docs.scope.ts` through the fragment config. Its hooks and UI imports use the
+renderer’s `@/` aliases to share the site's theme providers and footer preferences.
+Keep the docs dependency pinned and check preset selection and footer controls when
+upgrading it.
+
+Fragments use `docs.config.fragment.ts` directly: the same shared data with a local static
+preview of the first preset. Its seed table is shared with the live component and uses
+native markup, so fragments need no renderer-internal aliases or theme providers.

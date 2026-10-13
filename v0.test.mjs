@@ -206,10 +206,10 @@ test('the v0 globals.css sets the radius and both fonts, and declares every vari
 })
 
 /** The docs hand out the generated Open in v0 link to the hosted theme item. */
-test('the README and the getting-started page hand out the Open in v0 link, as generated', () => {
+test('the README and the Open in v0 page hand out the Open in v0 link, as generated', () => {
   assert.equal(new URL(v0Link).searchParams.get('url'), `${hostedUrl}v0.json`)
 
-  for (const page of ['README.md', 'docs/getting-started/introduction.mdx']) {
+  for (const page of ['README.md', 'docs/getting-started/v0.mdx']) {
     const text = readFileSync(new URL(page, import.meta.url), 'utf8')
     assert.ok(text.includes(`(${v0Link})`), `${page} lacks ${v0Link}`)
   }

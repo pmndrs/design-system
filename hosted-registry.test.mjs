@@ -127,11 +127,11 @@ test('the hosted v0 item carries its files inline, with nothing v0 cannot resolv
 })
 
 /**
- * The "Open in v0" links the README and the getting-started page hand out:
+ * The "Open in v0" links the README and the Open in v0 page hand out:
  * each has to open the item above, at the address the docs site serves it.
  */
 test('every Open in v0 link opens the hosted v0 item', () => {
-  for (const page of ['README.md', 'docs/getting-started/introduction.mdx']) {
+  for (const page of ['README.md', 'docs/getting-started/v0.mdx']) {
     const text = readFileSync(new URL(page, import.meta.url), 'utf8')
     const links = [...text.matchAll(/https:\/\/v0\.app\/chat\/api\/open\?[^\s)"']+/g)].map(([link]) => new URL(link))
 

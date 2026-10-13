@@ -1,6 +1,6 @@
 /**
  * The foundations as Figma tokens: the type, spacing, radius, shadow and
- * motion values of the docs pages, read through `readFoundations()`, in the
+ * motion values of foundations.json, read through `readFoundations()`, in the
  * two shapes the two Figma readers take.
  *
  * `foundationVariables()` is the file Figma's native "Import variables" reads:

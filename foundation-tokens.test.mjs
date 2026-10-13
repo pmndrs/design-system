@@ -2,8 +2,8 @@
  * The foundation tokens, written by `build.mjs` through
  * `scripts/foundation-tokens.mjs`: `figma/Foundations.tokens.json`, the values
  * a Figma variable can hold, and `figma/Styles.tokens.json`, the composites
- * built on them. Their source is the foundations pages of the docs, so every
- * value is held against the page that decides it, read through the same
+ * built on them. Their source is `foundations.json`, so every value is held
+ * against the canonical data, read through the same
  * `scripts/foundations.mjs`.
  */
 import assert from 'node:assert/strict'
@@ -37,7 +37,7 @@ const tokenName = (step) => step.replaceAll('.', '_')
 
 const px = (value) => ({ value, unit: 'px' })
 
-test('every spacing step of the Spacing page is a px dimension variable, scoped to gaps and sizes', () => {
+test('every canonical spacing step is a px dimension variable, scoped to gaps and sizes', () => {
   assert.deepEqual(variables.get('spacing.4').$value, px(16))
   for (const { step, pixels } of foundations.spacing.scale) {
     const token = variables.get(`spacing.${tokenName(step)}`)
@@ -48,7 +48,7 @@ test('every spacing step of the Spacing page is a px dimension variable, scoped 
   }
 })
 
-test('every radius step of the Radius page is a px dimension variable, scoped to corners', () => {
+test('every canonical radius step is a px dimension variable, scoped to corners', () => {
   assert.deepEqual(variables.get('radius.lg').$value, px(10))
   for (const { token: name, pixels } of foundations.radius.scale) {
     const token = variables.get(`radius.${name.replace('--radius-', '')}`)
@@ -64,7 +64,7 @@ test('every radius step of the Radius page is a px dimension variable, scoped to
  * variable on a line height as pixels: so a line height is its px, not the
  * multiplier CSS writes.
  */
-test('the font families, sizes, line heights and weights of the Typography page are variables', () => {
+test('the canonical font families, sizes, line heights and weights are variables', () => {
   assert.deepEqual(variables.get('font.family.sans').$value, 'Inter')
   assert.deepEqual(variables.get('font.size.xs').$value, px(12))
   assert.deepEqual(variables.get('font.line-height.xs').$value, 16)
@@ -91,7 +91,7 @@ const seconds = (ms) => ({ value: parseFloat(ms) / 1000, unit: 's' })
 /** `cubic-bezier(0.4, 0, 0.2, 1)` as its four numbers; `linear` is the straight curve. */
 const curve = (css) => (css === 'linear' ? [0, 0, 1, 1] : css.match(/^cubic-bezier\((.+)\)$/)[1].split(',').map(Number))
 
-test('the durations and ease curves of the Motion page are variables, the defaults among them', () => {
+test('the canonical durations and ease curves are variables, the defaults among them', () => {
   assert.deepEqual(variables.get('duration.150').$value, { value: 0.15, unit: 's' })
   assert.deepEqual(variables.get('ease.in-out').$value, [0.4, 0, 0.2, 1])
 
@@ -194,7 +194,7 @@ test('every step of the type scale is a text style, in Inter at the normal weigh
   }
 })
 
-/** The utility of the Shadows page a style is named after: `shadow-sm` is `shadow.sm`. */
+/** The shadow utility a style is named after: `shadow-sm` is `shadow.sm`. */
 const stylePath = (utility) => utility.replace(/-(?=[^-]+$)/, '.')
 
 /**
@@ -202,7 +202,7 @@ const stylePath = (utility) => utility.replace(/-(?=[^-]+$)/, '.')
  * px, a missing blur or spread as `0px`, the colour as `rgba()`, and an
  * `inset` layer, or any layer of the inset family, an inner shadow.
  */
-test('every shadow of the Shadows page is an effect style, layer for layer', () => {
+test('every canonical shadow is an effect style, layer for layer', () => {
   const dropShadow = (x, y, blur, spread, color) => ({ x, y, blur, spread, color, type: 'dropShadow' })
   const innerShadow = (x, y, blur, spread, color) => ({ x, y, blur, spread, color, type: 'innerShadow' })
   const pinned = {

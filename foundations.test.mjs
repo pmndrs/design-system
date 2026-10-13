@@ -1,19 +1,17 @@
 /**
- * The foundations pages of the docs are the source of the type, spacing,
- * radius, shadow and motion values, read through `scripts/foundations.mjs`
- * by the Figma foundation tokens. These
- * hold the values it returns against what they claim to be: Tailwind v4's own
- * defaults where a page says it inherits them, and the pixel column of a
- * table against its rem column.
+ * Canonical foundation values stay aligned with Tailwind's inherited defaults
+ * and their pixel equivalents. Editorial changes must not affect exports;
+ * structured source edits must reach both documentation and Figma tokens.
  */
 import assert from 'node:assert/strict'
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
 import { pathToFileURL } from 'node:url'
-import { readFoundations } from './scripts/foundations.mjs'
+import { foundationTables, readFoundations } from './scripts/foundations.mjs'
+import { foundationVariables } from './scripts/foundation-tokens.mjs'
 
 const foundations = readFoundations()
 
@@ -39,6 +37,9 @@ test('the type scale is Tailwind v4 defaults, in pixels as in rem', () => {
     assert.equal(fontSize, tailwind[`--${utility}`], utility)
     assert.equal(lineHeight, tailwind[`--${utility}--line-height`], utility)
     assert.equal(px.fontSize, pixels(fontSize), utility)
+    const ratio = lineHeight.match(/^calc\(([\d.]+) \/ ([\d.]+)\)$/)
+    const multiplier = ratio ? Number(ratio[1]) / Number(ratio[2]) : Number(lineHeight)
+    assert.ok(Math.abs(px.lineHeight - multiplier * px.fontSize) < 1e-10, `${utility} line height disagrees with its pixel value`)
   }
   assert.deepEqual(scale.find(({ utility }) => utility === 'text-xs').pixels, { fontSize: 12, lineHeight: 16 })
   assert.deepEqual(scale.find(({ utility }) => utility === 'text-5xl').pixels, { fontSize: 48, lineHeight: 48 })
@@ -95,6 +96,7 @@ test('the radius scale is the preset base times a factor, but xs, which is Tailw
   for (const { token, formula, value, pixels: px } of scale) {
     const factor = formula.match(/^calc\(var\(--radius\) \* ([\d.]+)\)$/)?.[1]
     if (factor) assert.equal(parseFloat(value), Number(factor) * parseFloat(base), token)
+    if (formula === 'var(--radius)') assert.equal(value, base, token)
     assert.equal(px, pixels(value), token)
   }
 })
@@ -135,14 +137,38 @@ test('the duration scale is its utilities in milliseconds, the default among the
   assert.ok(durations.some(({ value }) => value === fallback), `no step is the default, ${fallback}`)
 })
 
-test('a foundations page without the section or table it should have is an error naming it', () => {
-  const docs = pathToFileURL(`${mkdtempSync(join(tmpdir(), 'foundations-'))}/`)
+test('editorial headings, tables and examples do not determine exported foundations', async () => {
+  const root = pathToFileURL(`${mkdtempSync(join(tmpdir(), 'foundations-'))}/`)
   try {
-    cpSync(new URL('./docs/', import.meta.url), docs, { recursive: true })
-    const spacing = new URL('tokens/spacing.mdx', docs)
-    writeFileSync(spacing, readFileSync(spacing, 'utf8').replace('## Scale', '## Steps'))
-    assert.throws(() => readFoundations(docs), /docs\/tokens\/spacing has no "## Scale" section/)
+    mkdirSync(new URL('scripts/', root))
+    cpSync(new URL('./scripts/foundations.mjs', import.meta.url), new URL('scripts/foundations.mjs', root))
+    const source = new URL('./foundations.json', import.meta.url)
+    cpSync(source, new URL('foundations.json', root))
+    cpSync(new URL('./docs/', import.meta.url), new URL('docs/', root), { recursive: true })
+    for (const name of ['typography', 'spacing', 'radius', 'shadows', 'motion']) {
+      writeFileSync(new URL(`docs/tokens/${name}.mdx`, root), `---\ntitle: ${name}\n---\n\n## A new heading\n\nRewritten editorial content.\n`)
+    }
+    const isolated = await import(new URL('scripts/foundations.mjs', root))
+    assert.deepEqual(isolated.readFoundations(), foundations)
   } finally {
-    rmSync(docs, { recursive: true, force: true })
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('structured source edits reach documentation tables and Figma values together', () => {
+  const root = pathToFileURL(`${mkdtempSync(join(tmpdir(), 'foundations-'))}/`)
+  try {
+    const source = new URL('foundations.json', root)
+    const edited = structuredClone(foundations)
+    const small = edited.typography.scale.find(({ utility }) => utility === 'text-sm')
+    small.fontSize = '0.9375rem'
+    small.lineHeight = 'calc(1.25 / 0.9375)'
+    small.pixels.fontSize = 15
+    writeFileSync(source, JSON.stringify(edited))
+    const loaded = readFoundations(source)
+    assert.equal(foundationVariables(loaded).font.size.sm.$value.value, 15)
+    assert.ok(foundationTables(loaded)['typography.scale'].includes('`0.9375rem` (15px)'))
+  } finally {
+    rmSync(root, { recursive: true, force: true })
   }
 })

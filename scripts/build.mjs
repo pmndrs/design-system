@@ -21,26 +21,24 @@
  * is generated here for the same reason: one seed, or designers and engineers
  * drift.
  *
- * The getting-started page lists these items next to the other pmndrs repos' —
- * a catalog generated here so its install refs follow the version too; how the
- * other repos' get in is `catalog.mjs`'s story.
+ * Documentation is assembled separately by scripts/docs.mjs into out/docs.
+ * Neither build writes into editorial source files.
  *
  * Asserting the committed files are current is `build.test.mjs`'s job — it reads
  * the `outputs` exported here, so a seed change that skipped the rebuild fails
  * rather than shipping, and the check cannot drift from what this writes.
  */
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { builder } from 'material-theme-builder'
 import { mtbColors } from 'material-theme-builder/tailwind'
 import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
 import { themePresets } from '../registry/md3-base/presets.ts'
-import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
 import { foundationStyles, foundationVariables } from './foundation-tokens.mjs'
 import { readFoundations } from './foundations.mjs'
 import { hostedUrl } from './hosted-registry.mjs'
 import { readRemap, tailwindColors } from './remap.mjs'
-import { rewriteV0Links, v0GlobalsCss } from './v0.mjs'
+import { v0GlobalsCss } from './v0.mjs'
 import { sansFont } from './packages.mjs'
 
 /**
@@ -52,7 +50,7 @@ import { sansFont } from './packages.mjs'
 const version = `v${pkg.version}`
 
 /**
- * The foundations pages' values: the base radius the `preset` and `v0` items
+ * The structured foundations' values: the base radius the `preset` and `v0` items
  * carry, and the Figma foundation tokens below.
  */
 const foundations = readFoundations()
@@ -408,25 +406,6 @@ const items = [
 const registryUrl = new URL('../registry.json', import.meta.url)
 
 /**
- * Prose that quotes an install address, which is a version — so it goes stale
- * on every release unless something rewrites it. These are the files where a
- * wrong ref would send someone to the wrong tag: the READMEs, and every page of
- * the docs site. The changeset markdown is history and stays as written.
- */
-const docsDir = new URL('../docs/', import.meta.url)
-const docPages = readdirSync(docsDir, { recursive: true })
-  .filter((path) => path.endsWith('.mdx'))
-  .sort()
-  .map((path) => new URL(path, docsDir))
-const docs = [new URL('../README.md', import.meta.url), new URL('../.changeset/README.md', import.meta.url), ...docPages]
-
-/**
- * `pmndrs/design-system/<item>#v<semver>`, for this repo's items only — an
- * address into another repo (`pmndrs/docs/…#v4.22.0`) is never touched.
- */
-const installRef = new RegExp(`pmndrs/design-system/(${items.map(({ name }) => name).join('|')})#v\\d+\\.\\d+\\.\\d+`, 'g')
-
-/**
  * `toCss()` emits one flat `:root` and one flat `.dark` block, so this reads it
  * back rather than using the structured `toJson()`.
  *
@@ -502,7 +481,8 @@ function bakePalette(computedTheme) {
 // which on an already-prefixed name yields `var(----md-ref-palette-primary-40)`.
 const palette = bakePalette(theme)
 
-const built = {
+/** The assembled registry, also consumed by the documentation catalog. */
+export const built = {
   ...registry,
   items: items.map(({ palette: needsPalette, ...item }) => {
     let css
@@ -549,64 +529,6 @@ outputs.push([
   `/* Generated from registry/md3-base/md3.ts by scripts/build.mjs: do not edit. */\n\n${paletteStylesheet}\n`,
 ])
 
-/**
- * The catalog of every pmndrs registry item, this repo's first — see
- * `catalog.mjs`. This repo's are read off `built`, so they carry this version
- * and whatever the items above say; the other repos' come from the committed
- * snapshot, so the build never touches the network.
- */
-const external = JSON.parse(readFileSync(externalUrl, 'utf8'))
-const registries = [{ repo: 'pmndrs/design-system', ref: version, items: built.items }, ...external]
-
-const bumpInstallRefs = (text) => text.replace(installRef, `pmndrs/design-system/$1#${version}`)
-
-/**
- * Storybook's URL args use `!hex()` for colours and dotted paths for array
- * entries. Derive the badge from the same config as the palette, including
- * custom colours, so reseeding cannot leave the playground on an older theme.
- */
-const storybookUrl = new URL('https://main--695eb517cb602e59b4cc045c.chromatic.com/')
-storybookUrl.searchParams.set('path', '/story/mtb--st-1')
-storybookUrl.searchParams.set('nav', 'false')
-const { customColors, ...coreArgs } = pmndrsMtb
-function storybookValue(value) {
-  if (typeof value === 'boolean') return `!${value}`
-  if (typeof value === 'string' && value.startsWith('#')) return `!hex(${value.slice(1)})`
-  return String(value)
-}
-const storybookArgs = Object.entries(coreArgs).map(([name, value]) => `${name}:${storybookValue(value)}`)
-for (const [index, color] of customColors.entries()) {
-  for (const [name, value] of Object.entries(color)) {
-    storybookArgs.push(`customColors[${index}].${name}:${storybookValue(value)}`)
-  }
-}
-storybookUrl.searchParams.set('args', storybookArgs.join(';'))
-const storybookStart = '{/* mtb-storybook:start */}'
-const storybookEnd = '{/* mtb-storybook:end */}'
-const presetsStart = '{/* theme-presets:start */}'
-const presetsEnd = '{/* theme-presets:end */}'
-const colorPageUrl = new URL('tokens/colors.mdx', docsDir)
-
-// Keep the Open in v0 URL consistent across documentation.
-for (const url of docs) {
-  let page = rewriteV0Links(bumpInstallRefs(readFileSync(url, 'utf8')))
-  if (url.href === pageUrl.href) page = writeCatalog(page, registries)
-  if (url.href === colorPageUrl.href) {
-    const start = page.indexOf(storybookStart)
-    const end = page.indexOf(storybookEnd)
-    if (start === -1 || end < start) throw new Error('Color system page has lost its Storybook badge markers')
-    const badge = `<Badge href="${storybookUrl.href}" logo="storybook">material theme builder</Badge>`
-    page = page.slice(0, start + storybookStart.length) + '\n\n' + badge + '\n\n' + page.slice(end)
-    const presetsFrom = page.indexOf(presetsStart)
-    const presetsTo = page.indexOf(presetsEnd)
-    if (presetsFrom === -1 || presetsTo < presetsFrom) throw new Error('Color system page has lost its theme preset markers')
-    const presets = themePresets.map(({ name, ...preset }) => ({ name: `theme-${name}`, ...preset }))
-    const selector = `<ThemeSeeds presets={${JSON.stringify(presets, null, 2)}} />`
-    page = page.slice(0, presetsFrom + presetsStart.length) + '\n\n' + selector + '\n\n' + page.slice(presetsTo)
-  }
-  outputs.push([url, page])
-}
-
 /** The `v0` item's stylesheet; what is in it is `v0.mjs`'s story. */
 outputs.push([new URL('../registry/v0/globals.css', import.meta.url), v0GlobalsCss(foundations, fontMono)])
 
@@ -629,7 +551,7 @@ for (const [name, tokens] of Object.entries(theme.toFigmaTokens())) {
 
 /**
  * The foundations beside the palette: type, spacing, radius, shadow and
- * motion, read off the docs pages that decide them. `Foundations` is the
+ * motion, read from foundations.json. `Foundations` is the
  * variables file Figma imports natively, `Styles` the text and effect styles
  * Tokens Studio creates; why two shapes is `foundation-tokens.mjs`'s story.
  */

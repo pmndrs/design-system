@@ -100,15 +100,41 @@ Use Node.js 24 and pnpm 10.33.4 (pinned in `package.json`).
 
 ```sh
 pnpm install
-pnpm run build   # regenerate registry.json, figma/*.tokens.json, the docs catalog
+pnpm run build   # regenerate registry.json, CSS and figma/*.tokens.json
+pnpm run build-docs  # assemble publishable pages and assets in out/docs/
 pnpm run lgtm    # outputs are current and valid, preset code round-trips
 pnpm run refresh-catalog  # re-fetch the other repos' items listed in the docs catalog
 ```
 
 Docs live in `docs/` ([pmndrs/docs](https://github.com/pmndrs/docs)), deployed to
 GitHub Pages on push to `main`, and to Vercel as well (a preview per pull request,
-which the sidebar's version switcher links to). Preview them on http://localhost:3000:
+which the sidebar's version switcher links to).
+
+### Editing documentation and tokens
+
+Edit prose, headings and examples directly in `docs/**/*.mdx`. Builds never
+rewrite these files, `README.md` or `.changeset/README.md`.
+
+- Edit shared typography, spacing, radius, shadow and motion values in
+  [`foundations.json`](./foundations.json). The docs tables and Figma exports read
+  the same data; headings and Markdown formatting have no effect on tokens.
+- Edit colour seeds in `registry/md3-base/md3.ts` and named presets in
+  `registry/md3-base/presets.ts`.
+- The MDX references `<ThemePlayground />`, `<ThemePresets />`,
+  `<RegistryCatalog />` and `<FoundationTable name="typography.scale" />` insert
+  computed content into `out/docs/` only. Move or remove them like other content.
+- `{{release}}` explicitly means the current package release, and `{{v0Url}}`
+  inserts the Open in v0 URL. Literal versions and URLs stay as authored,
+  including historical examples. README links are maintained explicitly.
+
+Run `pnpm run build` after changing tokens and `pnpm run build-docs` after changing
+documentation or its data. Only distribution outputs need committing; `out/` is
+ignored. CI prepares the documentation before compiling the site, and edit links
+still point at `docs/`.
+
+Preview on http://localhost:3000 after preparing the pages:
 
 ```sh
-curl -sL https://raw.githubusercontent.com/pmndrs/docs/refs/heads/main/preview.sh | MDX=docs NEXT_PUBLIC_LIBNAME=design-system sh
+pnpm run build-docs
+curl -sL https://raw.githubusercontent.com/pmndrs/docs/refs/heads/main/preview.sh | MDX=out/docs NEXT_PUBLIC_LIBNAME=design-system sh
 ```

@@ -1,3 +1,4 @@
+import { renderPage } from './scripts/docs.mjs'
 /**
  * What `pnpm run hosted-registry` writes for the docs site's `r/` folder: the
  * static registry a `components.json` namespace and the shadcn MCP server
@@ -132,7 +133,8 @@ test('the hosted v0 item carries its files inline, with nothing v0 cannot resolv
  */
 test('every Open in v0 link opens the hosted v0 item', () => {
   for (const page of ['README.md', 'docs/getting-started/v0.mdx']) {
-    const text = readFileSync(new URL(page, import.meta.url), 'utf8')
+    const source = readFileSync(new URL(page, import.meta.url), 'utf8')
+    const text = page.endsWith('.mdx') ? renderPage(source) : source
     const links = [...text.matchAll(/https:\/\/v0\.app\/chat\/api\/open\?[^\s)"']+/g)].map(([link]) => new URL(link))
 
     assert.ok(links.length, `${page} has no Open in v0 link`)

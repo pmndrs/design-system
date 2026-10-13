@@ -22,7 +22,8 @@
     "release": "changeset publish",
     "storybook": "storybook dev -p 6006 --no-open",
     "build-storybook": "storybook build -o out/storybook",
-    "check-storybook": "tsc -p .storybook/tsconfig.json && pnpm run build-storybook"
+    "check-storybook": "tsc -p .storybook/tsconfig.json && pnpm run build-storybook",
+    "build-docs": "node scripts/docs.mjs"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.1",

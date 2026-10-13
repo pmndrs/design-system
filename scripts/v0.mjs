@@ -79,8 +79,3 @@ ${declarations([
 
 /** A public registry item URL is all Open in v0 needs. */
 export const v0Link = `https://v0.app/chat/api/open?${new URLSearchParams({ url: `${hostedUrl}v0.json`, title: 'pmndrs' })}`
-
-/** Keep documentation links pointed at the hosted theme item. */
-export function rewriteV0Links(text) {
-  return text.replace(/https:\/\/v0\.app\/chat\/api\/open\?[^\s)"']+/g, v0Link)
-}

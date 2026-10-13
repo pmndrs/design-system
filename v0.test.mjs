@@ -1,3 +1,4 @@
+import { renderPage } from './scripts/docs.mjs'
 /**
  * The `v0` item and the files it ships, written by `build.mjs` through
  * `scripts/v0.mjs`. `build.test.mjs` holds the generated ones current; these
@@ -210,7 +211,8 @@ test('the README and the Open in v0 page hand out the Open in v0 link, as genera
   assert.equal(new URL(v0Link).searchParams.get('url'), `${hostedUrl}v0.json`)
 
   for (const page of ['README.md', 'docs/getting-started/v0.mdx']) {
-    const text = readFileSync(new URL(page, import.meta.url), 'utf8')
+    const source = readFileSync(new URL(page, import.meta.url), 'utf8')
+    const text = page.endsWith('.mdx') ? renderPage(source) : source
     assert.ok(text.includes(v0Link), `${page} lacks ${v0Link}`)
   }
 })

@@ -1,16 +1,7 @@
 /**
- * What the scripts read off the installed packages rather than restate: a
- * version a generated file names follows `pnpm install --frozen-lockfile`, not a copy kept by hand.
+ * Font family registration read from the installed packages.
  */
 import { readFileSync } from 'node:fs'
-
-/**
- * `x.y.z` of an installed package, from its `package.json` under `node_modules`.
- *
- * @param {string} name
- */
-export const installedVersion = (name) =>
-  JSON.parse(readFileSync(new URL(`../node_modules/${name}/package.json`, import.meta.url), 'utf8')).version
 
 /**
  * Whether the stylesheet of a Fontsource package registers, by `@font-face`,

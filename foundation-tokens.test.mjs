@@ -4,14 +4,13 @@
  * a Figma variable can hold, and `figma/Styles.tokens.json`, the composites
  * built on them. Their source is the foundations pages of the docs, so every
  * value is held against the page that decides it, read through the same
- * `scripts/foundations.mjs` the artifact reads.
+ * `scripts/foundations.mjs`.
  */
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import { isDeepStrictEqual } from 'node:util'
 import registry from './registry.json' with { type: 'json' }
-import { outputs as artifactOutputs } from './scripts/artifact.mjs'
 import { readFoundations } from './scripts/foundations.mjs'
 
 /** A committed Figma token file, parsed. */
@@ -226,52 +225,3 @@ test('every shadow of the Shadows page is an effect style, layer for layer', () 
     [...box, ...inset, ...drop].map(({ utility, value }) => [stylePath(utility), value.match(/rgb\(/g).length])
   )
 })
-
-/**
- * A shadow as `[x, y, blur, spread, colour]` per layer, lengths as numbers of
- * px, so the artifact's CSS (`0 1px rgba(0, 0, 0, 0.05)`, a missing blur or
- * spread meaning 0) and a Tokens Studio style compare as values.
- */
-const cssShadow = (css) =>
-  css.split(/,\s*(?![^()]*\))/).map((layer) => {
-    const color = layer.match(/rgba\([^)]*\)/)[0]
-    const lengths = layer.replace(color, '').replace('inset', '').trim().split(/\s+/).map(parseFloat)
-    return [...lengths, 0, 0].slice(0, 4).concat(color)
-  })
-const styleShadow = (layers) => layers.map(({ x, y, blur, spread, color }) => [x, y, blur, spread].map(parseFloat).concat(color))
-
-/**
- * The Claude Design artifact carries the same foundations in its own
- * `tokens.json`, in rem where Figma takes pixels. Built apart from the Figma
- * files, so this is where the two would be seen to disagree.
- */
-test('the artifact tokens and the Figma tokens agree on every value they share', () => {
-  const artifact = JSON.parse(artifactOutputs.find(([path]) => path === 'tokens.json')[1])
-  const pixels = (rem) => parseFloat(rem) * 16
-  const problems = []
-  const agree = (what, artifactValue, figmaValue) => {
-    if (!isDeepStrictEqual(artifactValue, figmaValue)) problems.push(`${what}: artifact ${JSON.stringify(artifactValue)}, Figma ${JSON.stringify(figmaValue)}`)
-  }
-
-  for (const { name, value } of artifact.spacing.tokens.filter(({ name }) => name !== 'spacing')) {
-    agree(name, px(pixels(value)), variables.get(`spacing.${tokenName(name.replace('spacing-', ''))}`)?.$value)
-  }
-  for (const { name, value } of artifact.radius.tokens.filter(({ name }) => name !== 'radius')) {
-    agree(name, px(pixels(value)), variables.get(`radius.${name.replace('radius-', '')}`)?.$value)
-  }
-  for (const [key, stack] of Object.entries(artifact.type.families)) {
-    agree(`font ${key}`, stack.split(',')[0], variables.get(`font.family.${key}`)?.$value)
-  }
-  for (const { name, fontSize, lineHeight } of artifact.type.groups.find((group) => group.name === 'Text').styles) {
-    const step = name.replace('text-', '')
-    agree(`${name} size`, px(pixels(fontSize)), variables.get(`font.size.${step}`)?.$value)
-    const leading = typeof lineHeight === 'number' ? lineHeight * pixels(fontSize) : pixels(lineHeight)
-    agree(`${name} line height`, leading, variables.get(`font.line-height.${step}`)?.$value)
-  }
-  for (const { name, value } of [...artifact.shadow.tokens, ...artifact.dropShadow.tokens]) {
-    agree(name, cssShadow(value), styleShadow(styles.get(stylePath(name))?.$value ?? []))
-  }
-
-  assert.deepEqual(problems, [])
-})
-

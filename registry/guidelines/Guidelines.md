@@ -1,4 +1,4 @@
-<!-- Generated from artifact/README.md by scripts/build.mjs: do not edit. -->
+<!-- Generated from registry/guidelines/brand-book.md by scripts/build.mjs: do not edit. -->
 
 # Poimandres design system guidelines
 

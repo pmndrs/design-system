@@ -21,8 +21,8 @@
  * is generated here for the same reason: one seed, or designers and engineers
  * drift.
  *
- * The brand book, `artifact/README.md`, is generated into the docs site's
- * Guidelines page and the `guidelines` item's `Guidelines.md` here, for the
+ * The brand book, `registry/guidelines/brand-book.md`, is generated into the
+ * docs site's Guidelines page and the `guidelines` item's `Guidelines.md`, for the
  * same reason again: written once, it cannot say two things.
  *
  * The getting-started page lists these items next to the other pmndrs repos' —
@@ -39,7 +39,7 @@ import { mtbColors } from 'material-theme-builder/tailwind'
 import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
 import { themePresets } from '../registry/md3-base/presets.ts'
-import { fill, stripArtifactOnly } from './brand-book.mjs'
+import { fill } from './brand-book.mjs'
 import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
 import { foundationStyles, foundationVariables } from './foundation-tokens.mjs'
 import { readFoundations } from './foundations.mjs'
@@ -653,11 +653,10 @@ for (const url of docs) {
 }
 
 /**
- * The brand book, `artifact/README.md`, as the docs site reads it: the
- * Guidelines page, last in the navigation (`nav` sorts numerically). Passages
- * marked artifact-only are dropped, and the placeholders are filled the way
- * `artifact.mjs` fills them, so the page, the artifact and `Guidelines.md`
- * say the same thing at the same versions.
+ * The brand book, `registry/guidelines/brand-book.md`, as the docs site reads
+ * it: the Guidelines page, last in navigation (`nav` sorts numerically). Release
+ * placeholders are filled once, so the page and `Guidelines.md` say the same
+ * thing at the same versions.
  *
  * Written whole on every build rather than bumped in place, which is why it is
  * not one of the `docPages` above.
@@ -667,8 +666,8 @@ for (const url of docs) {
  * in the frontmatter, which pmndrs/docs drops: an MDX comment would stay in the
  * body, and so in `llms-full.txt`.
  */
-const brandBookPath = 'artifact/README.md'
-const guidelines = fill(stripArtifactOnly(readFileSync(new URL(`../${brandBookPath}`, import.meta.url), 'utf8')), brandBookPath).trim()
+const brandBookPath = 'registry/guidelines/brand-book.md'
+const guidelines = fill(readFileSync(new URL(`../${brandBookPath}`, import.meta.url), 'utf8'), brandBookPath).trim()
 const generatedFrom = `Generated from ${brandBookPath} by scripts/build.mjs: do not edit.`
 
 outputs.push([

@@ -1,9 +1,5 @@
 Poimandres is a distributed design system: nothing is installed from npm. It ships as a shadcn preset and a shadcn registry, so every pmndrs app gets the same colours by copying code in. shadcn's tokens are the base; Material Design 3 colour roles are additive, for what shadcn has no name for.
 
-<!-- artifact-only -->
-The full documentation is at [pmndrs.github.io/design-system](https://pmndrs.github.io/design-system/), which follows `main`. This system is synced to `main`, release {{release}}: the colours, fonts and radii here match that site.
-<!-- /artifact-only -->
-
 In code, one add brings the whole theme (the palette, the colour machinery under it and the mono font): `npx shadcn@latest add pmndrs/design-system/theme#{{release}}`.
 
 ## Colour
@@ -100,7 +96,7 @@ Five semantic custom colours follow the brand ones, for alerts, hints, badges an
 
 Poimandres is shadcn-based, so outside colour, fonts and the base radius it embraces Tailwind's defaults. The repository's docs say which is which: the radius is a pmndrs decision; spacing and shadows are inherited from Tailwind v4.
 
-- Space with the Tailwind scale, multiples of `--spacing` (0.25rem): step 1 (`p-1`, `gap-1`) is 0.25rem, step 4 (`p-4`) is 1rem; never an arbitrary pixel value.<!-- artifact-only --> Here each step is also a variable, `--spacing-1` to `--spacing-96`.<!-- /artifact-only -->
+- Space with the Tailwind scale, multiples of `--spacing` (0.25rem): step 1 (`p-1`, `gap-1`) is 0.25rem, step 4 (`p-4`) is 1rem; never an arbitrary pixel value.
 - Every corner derives from one value, `--radius` (0.625rem), from the preset. Its {{presetStyle}} style multiplies it: `--radius-sm` is ×0.6, `--radius-lg` is `--radius` itself, `--radius-4xl` is ×2.6. Round with `rounded-sm` to `rounded-4xl`; change `--radius` and every corner rescales. `rounded-xs` (`--radius-xs`) is Tailwind's own step, outside that scale.
 - Elevate with `shadow-2xs` to `shadow-2xl`, recess with `inset-shadow-2xs` to `inset-shadow-sm`, and shadow shapes that are not boxes (icons, SVGs) with `drop-shadow-xs` to `drop-shadow-2xl`. Shadows are black at low opacity in both schemes; in dark, set surfaces apart with the `--md-sys-color-surface-container-*` steps instead.
 
@@ -120,7 +116,7 @@ Poimandres is a distributed architecture based on shadcn blocks: any `pmndrs/*` 
 
 ## Logo
 
-- Use `logo_complete.svg` <!-- artifact-only -->from the Logos group <!-- /artifact-only -->as the mark, as an image. `logo_idle.svg` is its resting state.
+- Use `logo_complete.svg` as the mark, as an image. `logo_idle.svg` is its resting state.
 - Both paint their own black square background; there is no transparent variant. Never recolour, crop or redraw the mark.
 - In code, `npx shadcn@latest add pmndrs/design-system/logo#{{release}}` writes all four states (`logo_complete`, `logo_idle`, `logo_animated`, `logo_loading`) to `public/pmndrs/`.
 - MIT, like the rest of pmndrs/design-system. No attribution required.
@@ -134,16 +130,3 @@ Poimandres is a distributed architecture based on shadcn blocks: any `pmndrs/*` 
 - British spelling: "colour", "harmonizes".
 - Short declarative sentences that state a fact and its consequence: "No colour is picked by hand.", "Nothing mounted: the palette is baked into the CSS.", "Always pin a ref".
 - Lowercase `pmndrs` and `shadcn` in running text; "Poimandres" when naming the collective. No emoji.
-
-<!-- artifact-only -->
-## Not synced
-
-- From the repository (`main` at {{sha}}, release {{release}}): the colour layer, the font families and files, the base radius and its scale, and the two static logo SVGs.
-- The type scale, spacing and shadows are Tailwind v4's defaults, as the repository's Typography, Spacing and Shadows pages list them: inherited, not pmndrs decisions. `radius-xs` is Tailwind's default step, which the Radius page lists as inherited.
-- Fonts: only the latin subset of each, from `@fontsource-variable/inter` and `@fontsource-variable/inconsolata` {{fontsourceVersion}} (variable weight, normal style). The latin-ext, Cyrillic, Greek and Vietnamese subsets and Inter's italic are not stored.
-- `logo_animated.svg` and `logo_loading.svg` are not included: their animation is CSS inside the file, which is stripped when stored here, leaving a still copy of the complete mark. The logo PNGs were not requested.
-- The shadcn tokens are aliased as `material-theme-builder`'s `shadcn.css` maps them ({{mtbVersion}}, the `md3-base` dependency), every one of them.
-- The eleven shades per custom colour (`lime-50` … `lime-950` and so on) are computed by the Tailwind plugin at build time and are not in the repository.
-- shadcn's Typography element recipe (h1 to h4, lead, blockquote, lists) is classes, not tokens: only inline code has a style here.
-- Components: shadcn's components are supported as they ship and have no cards here. Each pmndrs block of the registry catalog, Keypoints and Color, has a card with a static preview, hand-written from `pmndrs/docs@{{docsRef}}`, not the built component.
-<!-- /artifact-only -->

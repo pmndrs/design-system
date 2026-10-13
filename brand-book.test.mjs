@@ -1,6 +1,6 @@
 /**
- * The brand book, `artifact/README.md`, as the docs site and the `guidelines`
- * item read it: the Guidelines page and `Guidelines.md`, both written by
+ * The brand book, `registry/guidelines/brand-book.md`, as the docs site and
+ * the `guidelines` item read it: the Guidelines page and `Guidelines.md`, both written by
  * `build.mjs` through `scripts/brand-book.mjs`. `build.test.mjs` holds them
  * current; these hold what being current cannot: that the text reads right
  * where it lands.
@@ -11,14 +11,12 @@ import { test } from 'node:test'
 import registry from './registry.json' with { type: 'json' }
 
 /**
- * The brand book is written once, in `artifact/README.md`, and the docs site
- * gets it as the Guidelines page. A passage that only makes sense inside the
- * Claude Design artifact stays out of the page: "Not synced" lists what the
- * artifact does not store, which means nothing on the site.
+ * The brand book is written once, in `registry/guidelines/brand-book.md`, and
+ * the docs site gets it as the Guidelines page.
  */
 const guidelinesPage = () => readFileSync(new URL('./docs/guidelines/introduction.mdx', import.meta.url), 'utf8')
 
-test('the Guidelines page carries every brand-book section but the artifact-only ones', () => {
+test('the Guidelines page carries every brand-book section', () => {
   const headings = [...guidelinesPage().matchAll(/^## (.+)$/gm)].map(([, heading]) => heading)
 
   assert.deepEqual(headings, ['Colour', 'Type', 'Spacing, radii and shadows', 'Components', 'Logo', 'Iconography', 'Voice'])
@@ -40,12 +38,10 @@ test('the Guidelines page has no placeholder, marker or bare brace or tag left',
 })
 
 /**
- * The artifact names its tokens bare (`md-sys-color-surface-dim`, `spacing-4`,
- * `radius-sm`), and no stylesheet of a site reader's has those names. The page
- * names the CSS custom property (`--md-sys-color-surface-dim`) or the Tailwind
- * class (`p-4`, `rounded-sm`) instead.
+ * Guidelines name CSS custom properties (`--md-sys-color-surface-dim`) or
+ * Tailwind classes (`p-4`, `rounded-sm`) so readers can use them directly.
  */
-test('the Guidelines page names no token the way only the artifact does', () => {
+test('the Guidelines page names tokens as CSS custom properties or Tailwind classes', () => {
   const code = [...guidelinesPage().matchAll(/`([^`\n]+)`/g)].map(([, span]) => span)
   const offenders = code.filter((span) => /(^|[\s(,])(md-|spacing\b|spacing-|radius\b|radius-)/.test(span))
 
@@ -77,7 +73,7 @@ const guidelinesFile = () => readFileSync(new URL('./registry/guidelines/Guideli
  * it, where an MDX comment would reach `llms-full.txt` with the body.
  */
 test('the Guidelines page and Guidelines.md say they are generated, and from what', () => {
-  const marker = /generated from artifact\/README\.md by scripts\/build\.mjs: do not edit/i
+  const marker = /generated from registry\/guidelines\/brand-book\.md by scripts\/build\.mjs: do not edit/i
   const frontmatter = guidelinesPage().match(/^---\n([\s\S]*?)\n---\n/)?.[1] ?? ''
   const file = guidelinesFile()
 

@@ -61,7 +61,6 @@ const catalogDescriptions = {
   preset: 'Initialise shadcn with pmndrs colours, fonts, radius and icons.',
   logo: 'Static and animated pmndrs logos as SVG files.',
   'figma-tokens': 'Colour and foundation tokens for Figma and Tokens Studio.',
-  guidelines: 'The pmndrs brand book for designers and AI agents.',
   v0: 'A complete pmndrs starter project for Open in v0.',
 }
 

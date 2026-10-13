@@ -4,13 +4,12 @@
 # Distributed Poimandres design-system
 
 The shared pmndrs visual language: colours, typography, spacing, radius, shadows
-and motion, with brand guidelines and reusable assets. Use its documented values
+and motion, with reusable assets. Use its documented values
 and exported files across design tools and implementations.
 
 ## Design resources
 
-Start with the [guidelines](https://pmndrs.github.io/design-system/guidelines/introduction)
-and [tokens](https://pmndrs.github.io/design-system/tokens/introduction).
+Start with the [tokens](https://pmndrs.github.io/design-system/tokens/introduction).
 The [SVG assets](https://pmndrs.github.io/design-system/assets/introduction) and
 [design tokens](figma/) are available directly. Light and dark colours and
 foundations use DTCG; text and shadow styles use Tokens Studio.
@@ -50,13 +49,8 @@ explains how item versions resolve.
 <details>
   <summary>Prototype in v0</summary>
 
-To prototype with the theme, logo and guidelines in v0:
+To prototype with the theme and logo in v0:
 [Open in v0](https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs).
-
-Or generate the brand guidelines as slides:
-
-[Open the brand guidelines as slides](https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs+brand+guidelines&prompt=pmndrs+brand+guidelines%2C+16%3A9+slides%2C+strict+editorial+grid%2C+layout+inspired+by+https%3A%2F%2Fmir-s3-cdn-cf.behance.net%2Fprojects%2F808%2Fbc1589229031299.Y3JvcCwxNjgzLDEzMTYsMCww.jpg%2C+not+its+colours.+Follow+guidelines%2FGuidelines.md.+app%2Fglobals.css+is+the+palette%3A+never+edit%2C+no+hex%3B+brand+lime+%3D+bg-lime-container+%2B+text-on-lime-container.+Not+the+Poimandres+VS+Code+theme.+Light%2Fdark+toggle.+Cover%3A+%2Fpmndrs%2Flogo_complete.svg.+Then%3A+foreword%2C+logo%2C+colour%2C+type%2C+spacing%2C+radius%2C+icons%2C+components%2C+voice.).
-The starter includes the theme, logo and `guidelines/Guidelines.md`.
 
 </details>
 
@@ -72,13 +66,6 @@ seed with [Material Theme Builder](https://www.npmjs.com/package/material-theme-
 [Publish code or files](https://pmndrs.github.io/design-system/getting-started/publishing)
 from the repo that owns them, then add the registry to the catalog. Each item
 declares its files and dependencies; pin every dependency to its own ref.
-
-## Guidelines
-
-The brand book lives in [registry/guidelines/brand-book.md](registry/guidelines/brand-book.md).
-`pnpm run build` publishes it as the docs site's
-[Guidelines page](https://pmndrs.github.io/design-system/guidelines/introduction)
-and the `guidelines` registry item's `Guidelines.md`.
 
 ## Storybook
 

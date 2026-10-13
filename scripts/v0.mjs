@@ -172,22 +172,6 @@ ${declarations([...remap.map(({ name, role }) => [name, literal(modes['.dark'], 
 }
 
 /**
- * What the brand-guidelines link asks v0 for, once the item has landed: under
- * the 500 characters v0's button builder allows, and each clause answers
- * something v0 got wrong without it: the colours of the reference image, the
- * Poimandres VS Code theme, a rewritten stylesheet, a lime it could not find.
- */
-export const brandGuidelinesPrompt = [
-  'pmndrs brand guidelines, 16:9 slides, strict editorial grid, layout inspired by https://mir-s3-cdn-cf.behance.net/projects/808/bc1589229031299.Y3JvcCwxNjgzLDEzMTYsMCww.jpg, not its colours.',
-  'Follow guidelines/Guidelines.md.',
-  `app/globals.css is the palette: never edit, no hex; brand lime = ${brandLime.fill} + ${brandLime.on}.`,
-  'Not the Poimandres VS Code theme.',
-  'Light/dark toggle.',
-  'Cover: /pmndrs/logo_complete.svg.',
-  'Then: foreword, logo, colour, type, spacing, radius, icons, components, voice.',
-].join(' ')
-
-/**
  * An Open in v0 link to the hosted `v0` item, its parameters encoded the way
  * v0's button builder and vercel/registry-starter write them.
  *
@@ -196,13 +180,11 @@ export const brandGuidelinesPrompt = [
 const openInV0 = (params) => `https://v0.app/chat/api/open?${new URLSearchParams({ url: `${hostedUrl}v0.json`, ...params })}`
 
 /**
- * The two Open in v0 links the README and the getting-started page hand out:
- * the theme alone, and the theme with the brand-guidelines prompt. `build.mjs`
- * rewrites every such link there by its `title`, so each is written here only.
+ * The Open in v0 link to the theme starter. `build.mjs` rewrites links in
+ * the README and getting-started page by title so they share this URL.
  */
 export const v0Links = {
   theme: openInV0({ title: 'pmndrs' }),
-  brandGuidelines: openInV0({ title: 'pmndrs brand guidelines', prompt: brandGuidelinesPrompt }),
 }
 
 /**

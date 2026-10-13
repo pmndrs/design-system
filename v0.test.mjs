@@ -14,7 +14,7 @@ import { readFoundations } from './scripts/foundations.mjs'
 import { hostedUrl } from './scripts/hosted-registry.mjs'
 import { registersFamily } from './scripts/packages.mjs'
 import { readRemap, tailwindColors } from './scripts/remap.mjs'
-import { brandGuidelinesPrompt, brandLime, v0Links } from './scripts/v0.mjs'
+import { brandLime, v0Links } from './scripts/v0.mjs'
 
 /**
  * Open in v0 drops `css`, `cssVars` and namespaces, and resolves no GitHub
@@ -43,7 +43,6 @@ test('the v0 item ships a whole v0 project as files, and nothing v0 drops', () =
       'public/pmndrs/logo_idle.svg',
       'public/pmndrs/logo_animated.svg',
       'public/pmndrs/logo_loading.svg',
-      'guidelines/Guidelines.md',
     ].map((target) => ({ type: 'registry:file', target }))
   )
   assert.equal(v0Item.css, undefined)
@@ -53,17 +52,14 @@ test('the v0 item ships a whole v0 project as files, and nothing v0 drops', () =
 })
 
 /**
- * The logo and the brand book are the `logo` and `guidelines` items' own
- * files, at the same project paths minus the `~/` only the CLI reads: one
- * source each, so v0 cannot be handed an older logo or other guidelines.
+ * The logo files come from the `logo` item at the same project paths,
+ * minus the `~/` only the CLI reads.
  */
-test('the v0 item ships the logo and the guidelines from the same sources as their items', () => {
-  for (const name of ['logo', 'guidelines']) {
-    for (const { path, target } of item(name).files) {
-      const shipped = fileAt(target.replace(/^~\//, ''))
-      assert.ok(shipped, `v0 lacks ${target}`)
-      assert.equal(shipped.path, path)
-    }
+test('the v0 item ships the logo from the same source as the logo item', () => {
+  for (const { path, target } of item('logo').files) {
+    const shipped = fileAt(target.replace(/^~\//, ''))
+    assert.ok(shipped, `v0 lacks ${target}`)
+    assert.equal(shipped.path, path)
   }
 })
 
@@ -163,7 +159,7 @@ test('the v0 globals.css maps every colour utility a pmndrs project has, to the 
 /**
  * And every MD3 variable is declared, as the hex Figma has for it, light and
  * dark: every role, for code that names one (`var(--md-sys-color-surface-dim)`,
- * as the guidelines write them), and every tonal shade a utility above maps.
+ * for example), and every tonal shade a utility above maps.
  */
 test('the v0 globals.css declares every MD3 role and mapped shade as its literal hex, light and dark', () => {
   const css = globalsCss()
@@ -259,10 +255,10 @@ test('the v0 starter page shows the logo, the brand lime and a dark toggle, thro
 /**
  * v0 could not find the brand lime: `bg-lime` is a dark olive in light, the
  * MD3 role a colour seeded at its own hex gives the seed to its container. So
- * the prompt names the fill that is the seed hex, checked here against the
+ * the starter uses the fill that is the seed hex, checked here against the
  * brand lime itself rather than read back from the code that picks it.
  */
-test('the brand lime the prompt names is the seed hex, on the role meant to go on it', () => {
+test('the brand lime is the seed hex, on the role meant to go on it', () => {
   const root = block(globalsCss(), ':root')
   const variable = (utility) => `--md-sys-color-${utility.replace(/^(bg|text)-/, '')}`
 
@@ -270,26 +266,8 @@ test('the brand lime the prompt names is the seed hex, on the role meant to go o
   assert.ok(root[variable(brandLime.on)])
 })
 
-/**
- * The prompt of the brand-guidelines link: v0's button builder caps it at 500
- * characters, and it points at what the item ships.
- */
-test('the brand-guidelines prompt fits v0, and names files the item ships', () => {
-  assert.ok(brandGuidelinesPrompt.length <= 500, `${brandGuidelinesPrompt.length} characters`)
-  assert.ok(brandGuidelinesPrompt.includes(brandLime.fill))
-  assert.ok(brandGuidelinesPrompt.includes('guidelines/Guidelines.md') && fileAt('guidelines/Guidelines.md'))
-  assert.ok(brandGuidelinesPrompt.includes('/pmndrs/logo_complete.svg') && fileAt('public/pmndrs/logo_complete.svg'))
-})
-
-/**
- * Both links open the hosted item; the brand-guidelines one carries the
- * prompt. They are generated once, so the README and the getting-started page
- * hand out the same two.
- */
-test('the README and the getting-started page hand out both Open in v0 links, as generated', () => {
-  const brand = new URL(v0Links.brandGuidelines)
-  assert.equal(brand.searchParams.get('url'), `${hostedUrl}v0.json`)
-  assert.equal(brand.searchParams.get('prompt'), brandGuidelinesPrompt)
+/** The docs hand out the generated Open in v0 link to the hosted theme item. */
+test('the README and the getting-started page hand out the Open in v0 link, as generated', () => {
   assert.equal(new URL(v0Links.theme).searchParams.get('url'), `${hostedUrl}v0.json`)
 
   for (const page of ['README.md', 'docs/getting-started/introduction.mdx']) {

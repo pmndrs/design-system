@@ -114,7 +114,7 @@ test('the hosted v0 item carries its files inline, with nothing v0 cannot resolv
     (hosted.registryDependencies ?? []).filter((dependency) => !dependency.startsWith('https://')),
     []
   )
-  for (const target of ['app/globals.css', 'app/layout.tsx', 'app/page.tsx', 'public/pmndrs/logo_complete.svg', 'guidelines/Guidelines.md']) {
+  for (const target of ['app/globals.css', 'app/layout.tsx', 'app/page.tsx', 'public/pmndrs/logo_complete.svg']) {
     const file = hosted.files.find((entry) => entry.target === target)
     assert.ok(file?.content, `no ${target} inline`)
   }

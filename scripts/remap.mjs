@@ -3,8 +3,7 @@
  * shadcn variable at an MD3 role (`--card: var(--md-sys-color-surface-container-low)`).
  * `md3-base` imports it as the package ships it, and everything else that
  * needs the pairs reads them here, so there is one reading of that file: the
- * `preset`'s Tailwind colours, the `v0` stylesheet, the artifact's colour
- * tokens and the tests.
+ * `preset`'s Tailwind colours, the `v0` stylesheet and the tests.
  */
 import { readFileSync } from 'node:fs'
 

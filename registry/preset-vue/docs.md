@@ -21,6 +21,12 @@ cd my-app
 npx shadcn-vue@latest add button
 ```
 
-This preset is for a fresh project. It installs no React components or palette
-runtime. The hosted URL follows `main`; the plain `palette` item is available
+Apply the preset to an existing shadcn-vue project:
+
+```sh
+npx shadcn-vue@latest apply --preset https://pmndrs.github.io/design-system/r/preset-vue.json
+```
+
+This reapplies the preset to existing components, fonts and CSS.
+It installs no React components or palette runtime. The hosted URL follows `main`; the plain `palette` item is available
 when you only need CSS variables, without shadcn-vue or Tailwind.

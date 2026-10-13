@@ -1,16 +1,7 @@
 /**
- * What the scripts read off the installed packages rather than restate: a
- * version a generated file names follows `pnpm install --frozen-lockfile`, not a copy kept by hand.
+ * Font family registration read from the installed packages.
  */
 import { readFileSync } from 'node:fs'
-
-/**
- * `x.y.z` of an installed package, from its `package.json` under `node_modules`.
- *
- * @param {string} name
- */
-export const installedVersion = (name) =>
-  JSON.parse(readFileSync(new URL(`../node_modules/${name}/package.json`, import.meta.url), 'utf8')).version
 
 /**
  * Whether the stylesheet of a Fontsource package registers, by `@font-face`,
@@ -26,4 +17,19 @@ export function registersFamily(dependency, fontFamily) {
   const css = readFileSync(new URL(import.meta.resolve(dependency)), 'utf8')
   const registered = new Set([...css.matchAll(/font-family:\s*'([^']+)'/g)].map(([, family]) => family))
   return registered.has(fontFamily.split(',')[0].trim().replace(/^['"]|['"]$/g, ''))
+}
+
+/**
+ * The sans font as the preset installs it, through shadcn's `font-inter`: the
+ * Typography page's sans family, under the name its Fontsource package
+ * registers (`'Inter Variable', sans-serif`), and that package.
+ *
+ * @param {ReturnType<typeof import('./foundations.mjs').readFoundations>} foundations
+ */
+export function sansFont({ typography }) {
+  const { family } = typography.fonts.find(({ variable }) => variable === '--font-sans')
+  const font = { family: `'${family} Variable', sans-serif`, dependency: `@fontsource-variable/${family.toLowerCase()}` }
+  // The name is Fontsource's convention, not something the page says: hold it to the package.
+  if (!registersFamily(font.dependency, font.family)) throw new Error(`${font.dependency} registers no ${font.family}`)
+  return font
 }

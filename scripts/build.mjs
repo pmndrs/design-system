@@ -21,10 +21,6 @@
  * is generated here for the same reason: one seed, or designers and engineers
  * drift.
  *
- * The brand book, `artifact/README.md`, is generated into the docs site's
- * Guidelines page and the `guidelines` item's `Guidelines.md` here, for the
- * same reason again: written once, it cannot say two things.
- *
  * The getting-started page lists these items next to the other pmndrs repos' —
  * a catalog generated here so its install refs follow the version too; how the
  * other repos' get in is `catalog.mjs`'s story.
@@ -39,13 +35,13 @@ import { mtbColors } from 'material-theme-builder/tailwind'
 import pkg from '../package.json' with { type: 'json' }
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
 import { themePresets } from '../registry/md3-base/presets.ts'
-import { fill, stripArtifactOnly } from './brand-book.mjs'
 import { externalUrl, pageUrl, writeCatalog } from './catalog.mjs'
 import { foundationStyles, foundationVariables } from './foundation-tokens.mjs'
 import { readFoundations } from './foundations.mjs'
 import { hostedUrl } from './hosted-registry.mjs'
 import { readRemap, tailwindColors } from './remap.mjs'
-import { rewriteV0Links, sansFont, v0GlobalsCss } from './v0.mjs'
+import { rewriteV0Links, v0GlobalsCss } from './v0.mjs'
+import { sansFont } from './packages.mjs'
 
 /**
  * Refs are not inherited, so a cross-item dependency carries its own — and it
@@ -102,27 +98,13 @@ const registry = {
 }
 
 /**
- * The `logo` item's files, which the `v0` item ships too: see `logo` below.
+ * The `logo` item's files: see `logo` below.
  */
 const logoFiles = ['logo_complete', 'logo_idle', 'logo_animated', 'logo_loading'].map((logo) => ({
   path: `docs/assets/${logo}.svg`,
   type: 'registry:file',
   target: `~/public/pmndrs/${logo}.svg`,
 }))
-
-/**
- * The `guidelines` item's file, which the `v0` item ships too. Generated below
- * from the brand book, like the Guidelines page, so it cannot say something
- * the page does not. `guidelines/Guidelines.md` at the project root is the one
- * path Figma Make reads.
- */
-const guidelinesFiles = [
-  {
-    path: 'registry/guidelines/Guidelines.md',
-    type: 'registry:file',
-    target: '~/guidelines/Guidelines.md',
-  },
-]
 
 /**
  * `docs` comes from `registry/<name>/docs.md`, and `palette: true` means the
@@ -405,45 +387,21 @@ const items = [
       target: `~/design/tokens/pmndrs/${name}.tokens.json`,
     })),
   },
-  {
-    name: 'guidelines',
-    type: 'registry:item',
-    title: 'pmndrs guidelines',
-    description:
-      'The pmndrs brand book as `guidelines/Guidelines.md`: how to use the colour layer, type, spacing, components, the logo and the voice. The file Figma Make reads, and one to point Claude or Cursor at.',
-    author: 'pmndrs',
-    files: guidelinesFiles,
-  },
-  /**
-   * What an "Open in v0" link opens. v0 drops `css`, `cssVars` and
-   * namespaces, and resolves no GitHub address, so nothing above reaches it:
-   * this item carries everything as files of v0's Next.js project instead.
-   * The `globals.css`, generated below with every colour resolved to a
-   * literal; a layout and a starter page, so the preview shows the theme as
-   * soon as it opens rather than nothing; and the `logo` and `guidelines`
-   * items' own files, so v0 has the mark and the brand book to work from.
-   * The shape is shadcn's own Open in v0 payload's: `registry:file`s at the
-   * project's paths, which is why no target has a `~/` (v0 reads them, not the
-   * CLI).
-   */
+  /** Open in v0 reads files, so the theme is supplied as CSS rather than cssVars. */
   {
     name: 'v0',
     type: 'registry:item',
     title: 'pmndrs theme for v0',
     description:
-      'The pmndrs theme as a v0 project, for Open in v0: an `app/globals.css` with the shadcn colours and the Material Design 3 roles resolved to the pmndrs palette, light and dark, Inter and Inconsolata, and the default radius; a layout and a starter page; the logo in `public/pmndrs/`; and the brand book as `guidelines/Guidelines.md`. In your own project, install `theme` or `preset` instead.',
+      'The pmndrs theme as `app/globals.css` for Open in v0: the light and dark palette, shadcn and MD3 colour utilities, Inter, Inconsolata and the default radius. In your own project, install `theme` or `preset` instead.',
     author: 'pmndrs',
+    registryDependencies: [`${hostedUrl}palette.json`],
     dependencies: [
       'shadcn@latest',
       'tw-animate-css',
       ...[sansFont(foundations), fontMono].map(({ dependency }) => `${dependency}@${pkg.devDependencies[dependency]}`),
     ],
-    files: [
-      { path: 'registry/v0/globals.css', target: 'app/globals.css' },
-      { path: 'registry/v0/app/layout.tsx', target: 'app/layout.tsx' },
-      { path: 'registry/v0/app/page.tsx', target: 'app/page.tsx' },
-      ...[...logoFiles, ...guidelinesFiles].map(({ path, target }) => ({ path, target: target.replace(/^~\//, '') })),
-    ].map((file) => ({ ...file, type: 'registry:file' })),
+    files: [{ path: 'registry/v0/globals.css', target: 'app/globals.css', type: 'registry:file' }],
   },
 ]
 
@@ -456,11 +414,8 @@ const registryUrl = new URL('../registry.json', import.meta.url)
  * the docs site. The changeset markdown is history and stays as written.
  */
 const docsDir = new URL('../docs/', import.meta.url)
-/** The Guidelines page, generated whole from the brand book below. */
-const guidelinesPageUrl = new URL('guidelines/introduction.mdx', docsDir)
 const docPages = readdirSync(docsDir, { recursive: true })
   .filter((path) => path.endsWith('.mdx'))
-  .filter((path) => new URL(path, docsDir).href !== guidelinesPageUrl.href)
   .sort()
   .map((path) => new URL(path, docsDir))
 const docs = [new URL('../README.md', import.meta.url), new URL('../.changeset/README.md', import.meta.url), ...docPages]
@@ -632,7 +587,7 @@ const presetsStart = '{/* theme-presets:start */}'
 const presetsEnd = '{/* theme-presets:end */}'
 const colorPageUrl = new URL('tokens/colors.mdx', docsDir)
 
-// The Open in v0 links are rewritten too: a prompt names tokens, and each link is written once, in `v0.mjs`.
+// Keep the Open in v0 URL consistent across documentation.
 for (const url of docs) {
   let page = rewriteV0Links(bumpInstallRefs(readFileSync(url, 'utf8')))
   if (url.href === pageUrl.href) page = writeCatalog(page, registries)
@@ -652,50 +607,8 @@ for (const url of docs) {
   outputs.push([url, page])
 }
 
-/**
- * The brand book, `artifact/README.md`, as the docs site reads it: the
- * Guidelines page, last in the navigation (`nav` sorts numerically). Passages
- * marked artifact-only are dropped, and the placeholders are filled the way
- * `artifact.mjs` fills them, so the page, the artifact and `Guidelines.md`
- * say the same thing at the same versions.
- *
- * Written whole on every build rather than bumped in place, which is why it is
- * not one of the `docPages` above.
- *
- * Both copies open on `generatedFrom`, so an edit lands in the brand book and
- * not in an output the next build overwrites. On the page it is a YAML comment
- * in the frontmatter, which pmndrs/docs drops: an MDX comment would stay in the
- * body, and so in `llms-full.txt`.
- */
-const brandBookPath = 'artifact/README.md'
-const guidelines = fill(stripArtifactOnly(readFileSync(new URL(`../${brandBookPath}`, import.meta.url), 'utf8')), brandBookPath).trim()
-const generatedFrom = `Generated from ${brandBookPath} by scripts/build.mjs: do not edit.`
-
-outputs.push([
-  guidelinesPageUrl,
-  `---
-# ${generatedFrom}
-title: Guidelines
-description: The do and don't of the pmndrs design system — colour, type, spacing, components, logo, iconography and voice.
-nav: 4
----
-
-These guidelines are intended for AI agents building with the pmndrs design system. They define the rules for colours, typography, spacing, components, logos, iconography and voice. Copy the Markdown below into your project’s \`AGENTS.md\` or your agent’s instructions.
-
-\`\`\`md
-${guidelines}
-\`\`\`
-`,
-])
-
-/** The same text as the `guidelines` item installs it, with a title of its own in place of the frontmatter. */
-outputs.push([
-  new URL('../registry/guidelines/Guidelines.md', import.meta.url),
-  `<!-- ${generatedFrom} -->\n\n# Poimandres design system guidelines\n\n${guidelines}\n`,
-])
-
 /** The `v0` item's stylesheet; what is in it is `v0.mjs`'s story. */
-outputs.push([new URL('../registry/v0/globals.css', import.meta.url), v0GlobalsCss(palette, foundations, fontMono)])
+outputs.push([new URL('../registry/v0/globals.css', import.meta.url), v0GlobalsCss(foundations, fontMono)])
 
 /**
  * The palette as DTCG tokens: `Light` and `Dark` become two modes of one Figma

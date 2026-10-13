@@ -1,6 +1,6 @@
 ---
 title: Introduction
-description: The pmndrs visual language — shared foundations, guidelines and assets, distributed through a registry.
+description: The pmndrs visual language — shared foundations and assets, distributed through a registry.
 nav: 0
 ---
 
@@ -24,43 +24,189 @@ nav: 0
 </Badge>
 
 <Intro>
-  Shared pmndrs tokens, guidelines and assets, distributed through a
+  Shared pmndrs tokens and assets, distributed through a
   [shadcn registry](https://ui.shadcn.com/docs/registry).
 </Intro>
 
 ![A classroom whiteboard with the word "bleu" written in red and "jaune" in green](bleu-jaune.jpg)
 
-## Use the foundations
+## INSTALL
 
-Choose the resources that fit your project:
+<Steps>
 
-- [Guidelines](/guidelines/introduction) describe how to use the visual language;
-  [Colors](/tokens/colors) and [Typography](/tokens/typography)
-  explain the foundations.
-- For Figma, use the DTCG variable files:
-  [Light](https://github.com/pmndrs/design-system/blob/main/figma/Light.tokens.json),
-  [Dark](https://github.com/pmndrs/design-system/blob/main/figma/Dark.tokens.json) and
-  [Foundations](https://github.com/pmndrs/design-system/blob/main/figma/Foundations.tokens.json).
-  Import [Styles](https://github.com/pmndrs/design-system/blob/main/figma/Styles.tokens.json)
-  through Tokens Studio for text and shadow styles.
-- [Assets](/assets/introduction) previews the logo variants. Copy the
-  [SVG files](https://github.com/pmndrs/design-system/tree/main/docs/assets)
-  into your project or use them in your design tool.
+<Step>Create the app</Step>
+
+<Tabs defaultValue="react" syncKey="install-framework">
+  <TabsList>
+    <TabsTrigger value="react">React</TabsTrigger>
+    <TabsTrigger value="vue">Vue</TabsTrigger>
+    <TabsTrigger value="vanilla">HTML and CSS</TabsTrigger>
+  </TabsList>
+  <TabsContent value="react">
+
+```sh
+npx shadcn@latest init @pmndrs/preset --template next --name my-app --no-monorepo
+```
+
+<details>
+  <summary>Or for an existing shadcn app</summary>
+
+```sh
+npx shadcn@latest add @pmndrs/theme
+```
+
+</details>
+
+  </TabsContent>
+  <TabsContent value="vue">
+
+```sh
+npx shadcn-vue@latest init --preset https://pmndrs.github.io/design-system/r/preset-vue.json --template vite --name my-app
+```
+
+<details>
+  <summary>Or for an existing shadcn-vue app</summary>
+
+```sh
+npx shadcn-vue@latest apply --preset https://pmndrs.github.io/design-system/r/preset-vue.json
+```
+
+Reapplies the preset to existing components, fonts and CSS.
+
+</details>
+
+  </TabsContent>
+  <TabsContent value="vanilla">
+
+```sh
+npm create vite@latest my-app -- --template vanilla-ts
+```
+
+  </TabsContent>
+</Tabs>
+
+<Step>Install items</Step>
+
+<Tabs defaultValue="react" syncKey="install-framework">
+  <TabsList>
+    <TabsTrigger value="react">React</TabsTrigger>
+    <TabsTrigger value="vue">Vue</TabsTrigger>
+    <TabsTrigger value="vanilla">HTML and CSS</TabsTrigger>
+  </TabsList>
+  <TabsContent value="react">
+
+```sh
+npx shadcn@latest add button
+```
+
+Install components or blocks (items) from [shadcn](https://ui.shadcn.com/blocks) or other React-compatible registries: [React Bits](https://reactbits.dev/get-started/installation), [Aceternity UI](https://ui.aceternity.com/components/spotlight), [Magic UI](https://magicui.design/docs/installation), etc.
+
+  </TabsContent>
+  <TabsContent value="vue">
+
+```sh
+npx shadcn-vue@latest add button
+```
+
+Install components or blocks (items) from [shadcn-vue](https://www.shadcn-vue.com/blocks) or other Vue-compatible registries.
+
+  </TabsContent>
+  <TabsContent value="vanilla">
+
+```sh
+npm install
+npx shadcn@latest add @pmndrs/palette
+npm install @fontsource-variable/inter @fontsource-variable/inconsolata
+```
+
+  </TabsContent>
+</Tabs>
+
+<Step>Consume tokens</Step>
+
+<Tabs defaultValue="react" syncKey="install-framework">
+  <TabsList>
+    <TabsTrigger value="react">React</TabsTrigger>
+    <TabsTrigger value="vue">Vue</TabsTrigger>
+    <TabsTrigger value="vanilla">HTML and CSS</TabsTrigger>
+  </TabsList>
+  <TabsContent value="react">
+
+```tsx title="app/page.tsx"
+import { Button } from '@/components/ui/button'
+
+export default function Page() {
+  return (
+    <main className="min-h-screen bg-background p-8 text-foreground">
+      <Button>Hello, Poimandres</Button>
+    </main>
+  )
+}
+```
+
+  </TabsContent>
+  <TabsContent value="vue">
+
+```html title="src/App.vue"
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+</script>
+
+<template>
+  <main class="min-h-screen bg-background p-8 text-foreground">
+    <Button>Hello, Poimandres</Button>
+  </main>
+</template>
+```
+
+  </TabsContent>
+  <TabsContent value="vanilla">
+
+```html title="index.html"
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Poimandres</title>
+    <script type="module">
+      import '@fontsource-variable/inter'
+      import '@fontsource-variable/inconsolata'
+      import './src/assets/pmndrs.css'
+    </script>
+    <style>
+      body {
+        margin: 0;
+        padding: 2rem;
+        font-family: 'Inter Variable', sans-serif;
+        background: var(--md-sys-color-background);
+        color: var(--md-sys-color-on-background);
+      }
+      code { font-family: 'Inconsolata Variable', monospace; }
+    </style>
+  </head>
+  <body>
+    <h1>Hello, Poimandres</h1>
+    <p>Shared colours through <code>CSS variables</code>.</p>
+    <button type="button" onclick="document.documentElement.classList.toggle('dark')">
+      Toggle dark mode
+    </button>
+  </body>
+</html>
+```
+
+  </TabsContent>
+</Tabs>
+
+Add `dark` to `<html>` to switch schemes.
+
+</Steps>
 
 ## Registry items
 
-The registry can host assets, vanilla JavaScript, Vue components and other
-resources. Each item defines its files, dependencies and setup requirements.
-Choose items that fit your project's environment. Browse the
-[JSON index](https://pmndrs.github.io/design-system/r/registry.json) or read an
-item directly, such as [`logo.json`](https://pmndrs.github.io/design-system/r/logo.json).
-
-The registry is listed in the
-[official shadcn registry directory](https://ui.shadcn.com/docs/directory?q=pmndrs).
-The shadcn CLI automatically resolves `@pmndrs/<name>` to
-`https://pmndrs.github.io/design-system/r/{name}.json`. The namespace is an
-implicit alias: no `registry add` command or `registries` declaration in
-`components.json` is needed. Browse, inspect or install resources directly:
+Install code and assets from the
+[pmndrs registry](https://pmndrs.github.io/design-system/r/registry.json)
+or another [GitHub registry](https://ui.shadcn.com/docs/registry/github).
 
 ```sh
 npx shadcn@latest search @pmndrs
@@ -68,16 +214,11 @@ npx shadcn@latest view @pmndrs/logo
 npx shadcn@latest add @pmndrs/logo @pmndrs/figma-tokens
 ```
 
-The SVGs go in `public/pmndrs/`; the tokens go in `design/tokens/pmndrs/`.
-
-For shadcn-vue, follow the [Vue setup](/getting-started/vue); its preset
-configures the namespace.
+> [!NOTE]
+> Listed in the [shadcn directory](https://ui.shadcn.com/docs/directory?q=pmndrs),
+> `@pmndrs` works without registry configuration.
 
 ### Catalog
-
-Install addresses from this registry and other pmndrs repos. Use `add` for
-resources; `preset` and `preset-vue` are `init` items. Design-system items link to their installable JSON;
-other repos link to their source documentation.
 
 {/* catalog:start — generated by `pnpm run build`, edit scripts/catalog.mjs or registry/external.json instead */}
 
@@ -98,8 +239,7 @@ other repos link to their source documentation.
 | [preset-vue](https://pmndrs.github.io/design-system/r/preset-vue.json) | Initialise shadcn-vue with the pmndrs palette, fonts and radius. | `@pmndrs/preset-vue` |
 | [logo](https://pmndrs.github.io/design-system/r/logo.json) | Static and animated pmndrs logos as SVG files. | `@pmndrs/logo` |
 | [figma-tokens](https://pmndrs.github.io/design-system/r/figma-tokens.json) | Colour and foundation tokens for Figma and Tokens Studio. | `@pmndrs/figma-tokens` |
-| [guidelines](https://pmndrs.github.io/design-system/r/guidelines.json) | The pmndrs brand book for designers and AI agents. | `@pmndrs/guidelines` |
-| [v0](https://pmndrs.github.io/design-system/r/v0.json) | A complete pmndrs starter project for Open in v0. | `@pmndrs/v0` |
+| [v0](https://pmndrs.github.io/design-system/r/v0.json) | The pmndrs theme as CSS for Open in v0. | `@pmndrs/v0` |
 | [keypoints](https://github.com/pmndrs/docs/tree/v4.22.0/registry/keypoints) | A titled panel listing the main points an article covers — one bullet per `KeypointsItem`. | `pmndrs/docs/keypoints#v4.22.0` |
 | [color](https://github.com/pmndrs/docs/tree/v4.22.0/registry/color) | Swatches of the theme's Material 3 color roles, as Material's scheme poster shows them. | `pmndrs/docs/color#v4.22.0` |
 
@@ -122,29 +262,3 @@ npx shadcn@latest add pmndrs/design-system/logo#v0.9.0
 
 Each dependency keeps its own ref. Installing from a branch preview does not
 make its dependencies follow that branch.
-
-## Next steps
-
-To share a reusable item, [publish an item](/getting-started/publishing) from the
-repo that owns it.
-
-<span id="installation" />
-
-Choose an integration guide for your app:
-
-- [Vanilla HTML and CSS](/getting-started/vanilla): shared palette, fonts and native elements.
-- [Vue](/getting-started/vue): preset, theme and components with shadcn-vue, or standard CSS.
-- [React and Tailwind](/getting-started/react): preset, theme and components.
-
-<details>
-  <summary>Prototype in v0</summary>
-
-For a prototype with the theme already applied,
-[open in v0](https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs).
-
-Or generate the brand guidelines as slides:
-
-[Open the brand guidelines as slides](https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs+brand+guidelines&prompt=pmndrs+brand+guidelines%2C+16%3A9+slides%2C+strict+editorial+grid%2C+layout+inspired+by+https%3A%2F%2Fmir-s3-cdn-cf.behance.net%2Fprojects%2F808%2Fbc1589229031299.Y3JvcCwxNjgzLDEzMTYsMCww.jpg%2C+not+its+colours.+Follow+guidelines%2FGuidelines.md.+app%2Fglobals.css+is+the+palette%3A+never+edit%2C+no+hex%3B+brand+lime+%3D+bg-lime-container+%2B+text-on-lime-container.+Not+the+Poimandres+VS+Code+theme.+Light%2Fdark+toggle.+Cover%3A+%2Fpmndrs%2Flogo_complete.svg.+Then%3A+foreword%2C+logo%2C+colour%2C+type%2C+spacing%2C+radius%2C+icons%2C+components%2C+voice.).
-The starter includes the theme, logo and `guidelines/Guidelines.md`.
-
-</details>

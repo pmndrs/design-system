@@ -9902,7 +9902,7 @@
           }
         }
       },
-      "docs": "Starts a project that already looks like pmndrs: `npx shadcn@latest init @pmndrs/preset` configures the poimandres preset and installs the theme, in one step and with no preset code.\n\n- **It is the preset and the theme.** `components.json` gets the preset's choices (style `base-luma`, lucide icons, the menu settings) and the `@pmndrs` namespace, the project gets Inter and the default radius, and `theme` brings the Material Design 3 palette and the mono font.\n- **Init only.** It replaces shadcn's stock style rather than sitting on it, so run it on a fresh project. In a project that is already set up, add `theme` instead.\n- **The colours are `theme`'s.** This item declares none: shadcn's stock neutrals would land after the MD3 remap and override it.\n- **Its `cssVars` hold no colour.** They are there because shadcn (4.18) writes some things from `cssVars` only: without the `--color-*` mapping in `@theme inline`, `@apply border-border` fails the Tailwind build, and the `--radius-*` scale is derived from `cssVars.light.radius` alone. Each mapping points at a variable, never a literal, so the MD3 remap (`material-theme-builder/shadcn.css`) stays in charge of the colours.\n- **The namespace serves the latest state of `main`.** For a pinned version, init with the preset code and add `theme` at a tag, as the [versioning section](https://pmndrs.github.io/design-system/getting-started/react#versioning) shows."
+      "docs": "Starts a project that already looks like pmndrs: `npx shadcn@latest init @pmndrs/preset` configures the poimandres preset and installs the theme, in one step and with no preset code.\n\n- **It is the preset and the theme.** `components.json` gets the preset's choices (style `base-luma`, lucide icons, the menu settings) and the `@pmndrs` namespace, the project gets Inter and the default radius, and `theme` brings the Material Design 3 palette and the mono font.\n- **Init only.** It replaces shadcn's stock style rather than sitting on it, so run it on a fresh project. In a project that is already set up, add `theme` instead.\n- **The colours are `theme`'s.** This item declares none: shadcn's stock neutrals would land after the MD3 remap and override it.\n- **Its `cssVars` hold no colour.** They are there because shadcn (4.18) writes some things from `cssVars` only: without the `--color-*` mapping in `@theme inline`, `@apply border-border` fails the Tailwind build, and the `--radius-*` scale is derived from `cssVars.light.radius` alone. Each mapping points at a variable, never a literal, so the MD3 remap (`material-theme-builder/shadcn.css`) stays in charge of the colours.\n- **The namespace serves the latest state of `main`.** For a pinned version, init with the preset code and add `theme` at a tag, as described under [Versioning](https://pmndrs.github.io/design-system/getting-started/introduction#versioning)."
     },
     {
       "name": "preset-vue",
@@ -11564,7 +11564,7 @@
           }
         }
       },
-      "docs": "Start a Vue project with the pmndrs colours, fonts and radius already configured:\n\n```sh\nnpx shadcn-vue@latest init --preset https://pmndrs.github.io/design-system/r/preset-vue.json --template vite --name my-app\n```\n\nUse `--preset` with this URL so shadcn-vue applies the item's configuration.\nIt chooses `reka-luma`, Lucide icons and the `@pmndrs` registry namespace, and\ninstalls Inter and Inconsolata through Fontsource.\n\nThe palette is the same light and dark Material Design 3 palette as `theme`.\nUse stock shadcn tokens such as `bg-background` and `text-primary`, or MD3 roles\nsuch as `bg-surface-dim` and `text-on-surface-variant`. Brand and alert utilities\nare ready too: `bg-lime-container`, `text-on-warning-container`, `bg-purple-500`.\nAdd `dark` to `<html>` or an ancestor to switch schemes.\n\nAdd Vue components through shadcn-vue:\n\n```sh\ncd my-app\nnpx shadcn-vue@latest add button\n```\n\nThis preset is for a fresh project. It installs no React components or palette\nruntime. The hosted URL follows `main`; the plain `palette` item is available\nwhen you only need CSS variables, without shadcn-vue or Tailwind."
+      "docs": "Start a Vue project with the pmndrs colours, fonts and radius already configured:\n\n```sh\nnpx shadcn-vue@latest init --preset https://pmndrs.github.io/design-system/r/preset-vue.json --template vite --name my-app\n```\n\nUse `--preset` with this URL so shadcn-vue applies the item's configuration.\nIt chooses `reka-luma`, Lucide icons and the `@pmndrs` registry namespace, and\ninstalls Inter and Inconsolata through Fontsource.\n\nThe palette is the same light and dark Material Design 3 palette as `theme`.\nUse stock shadcn tokens such as `bg-background` and `text-primary`, or MD3 roles\nsuch as `bg-surface-dim` and `text-on-surface-variant`. Brand and alert utilities\nare ready too: `bg-lime-container`, `text-on-warning-container`, `bg-purple-500`.\nAdd `dark` to `<html>` or an ancestor to switch schemes.\n\nAdd Vue components through shadcn-vue:\n\n```sh\ncd my-app\nnpx shadcn-vue@latest add button\n```\n\nApply the preset to an existing shadcn-vue project:\n\n```sh\nnpx shadcn-vue@latest apply --preset https://pmndrs.github.io/design-system/r/preset-vue.json\n```\n\nThis reapplies the preset to existing components, fonts and CSS.\nIt installs no React components or palette runtime. The hosted URL follows `main`; the plain `palette` item is available\nwhen you only need CSS variables, without shadcn-vue or Tailwind."
     },
     {
       "name": "logo",
@@ -11627,26 +11627,14 @@
       "docs": "Four files, in `design/tokens/pmndrs/` at the root of your project. They are the pmndrs design system as [DTCG](https://www.designtokens.org) design tokens, for Figma:\n\n| File | What it holds | Read by |\n| --- | --- | --- |\n| `Light.tokens.json`, `Dark.tokens.json` | The palette, light and dark: two modes of one variable collection | Figma's \"Import variables\" |\n| `Foundations.tokens.json` | Font families, sizes, line heights and weights; spacing; radius; durations and ease curves: one mode of a second collection | Figma's \"Import variables\" |\n| `Styles.tokens.json` | A text style per step of the type scale, and an effect style per shadow | Tokens Studio |\n\n- **They are the values your code gets.** The colours are the ones `theme` bakes into CSS, hex for hex, roles aliased onto the tonal shades (`{ref.palette.Neutral.98}`) the way the CSS uses `var()`. The foundations are the tables of the Typography, Spacing, Radius, Shadows and Motion pages of the docs.\n- **Nothing in your app reads them.** No code this registry installs imports them, and they are outside `public/`, so nothing serves them either.\n\nTo update them, add the item again at the newer tag, with `--overwrite`, and import them again.\n\n## Variables: Figma's native import\n\n1. In the Variables view, create a collection named `Colours`, and drag `Light.tokens.json` and `Dark.tokens.json` into it together. Each file becomes a mode.\n2. Create a second collection named `Foundations`, and drag `Foundations.tokens.json` into it on its own. It has one mode, so switching Light and Dark does not duplicate it.\n3. To update a collection later, right-click a mode, choose \"Import mode\" and pick the newer file.\n\nThe foundations are written for that import, so a few values differ from their CSS:\n\n- **Every length is in px**: `spacing/4` is `16`, `font/size/xs` is `12`. Figma imports a dimension in px only, and the CSS `rem` is at a 16px root.\n- **A line height is its px**: `font/line-height/xs` is `16`, not the `calc(1 / 0.75)` the CSS writes. Figma binds a number variable on a line height as pixels.\n- **A duration is in seconds**: `duration/150` is `0.15`. Figma imports a duration in seconds only.\n- **A font family is one name**: `Inter`, not a stack. Figma refuses an array.\n- **Each variable is scoped to the pickers it belongs in**: spacing to gaps and sizes, radius to corners, the font variables to their text properties. Durations and ease curves are offered in no picker.\n\nTwo things the import does not carry:\n\n- **The weight scope.** `font/weight/*` imports as numbers, but Figma drops their \"Font weight\" scope. Set it by hand once, in the variables' scoping settings.\n- **The ease curves.** `ease/*` are `cubicBezier` tokens, a type Figma's import skips without a word. They stay in the file for other DTCG readers, and for a prototype transition you build by hand.\n\n## Styles: Tokens Studio\n\nText and effect styles are composites, which Figma's import does not create. [Tokens Studio](https://tokens.studio) does, from `Styles.tokens.json`. The file is in Tokens Studio's own shape rather than DTCG 2025.10: a dimension is a string (`12px`), a shadow is `x`, `y` and a `type`, because Tokens Studio reads nothing else. It is one file with two token sets: `foundations`, the font values the styles name, and `styles`, the styles themselves.\n\n1. Import the variables first, as above, in the same Figma file.\n2. In Tokens Studio, add a sync provider that reads the one file, read-only:\n   - **URL**, no account needed: `https://raw.githubusercontent.com/pmndrs/design-system/main/figma/Styles.tokens.json`. Replace `main` with a release tag to pin one.\n   - **GitHub**, with a token that can read public repositories: repository `pmndrs/design-system`, branch `main`, file path `figma/Styles.tokens.json`. Point it at the file, not at the `figma/` folder: a folder sync would load the colour files as sets too.\n3. Set `foundations` as a source set and enable `styles`.\n4. Export to Figma: styles only, typography and shadows, with \"Create styles with variable references\" on.\n\nA text style then binds to the `Foundations` variables by name: `{font.size.xs}` is the variable `font/size/xs`. Change a variable and the styles follow. Shadows have no variables, so their values are written into the effect styles.\n\nTo re-sync after a release, pull from the provider and export again."
     },
     {
-      "name": "guidelines",
-      "type": "registry:item",
-      "title": "pmndrs guidelines",
-      "description": "The pmndrs brand book as `guidelines/Guidelines.md`: how to use the colour layer, type, spacing, components, the logo and the voice. The file Figma Make reads, and one to point Claude or Cursor at.",
-      "author": "pmndrs",
-      "files": [
-        {
-          "path": "registry/guidelines/Guidelines.md",
-          "type": "registry:file",
-          "target": "~/guidelines/Guidelines.md"
-        }
-      ],
-      "docs": "One file, `guidelines/Guidelines.md` at the root of your project: the pmndrs brand book, the do and don't of the colour layer, type, spacing, radii and shadows, components, the logo, iconography and voice.\n\n- **It is the Guidelines page of the docs site**, word for word: [pmndrs.github.io/design-system/guidelines](https://pmndrs.github.io/design-system/guidelines/introduction).\n- **Figma Make reads it** from that path, so a Make project follows the pmndrs rules once it is there.\n- **Point Claude or Cursor at it** (`@guidelines/Guidelines.md`, or a line in `CLAUDE.md` or a Cursor rule) so the UI they generate uses the shadcn tokens first and never a raw hex.\n- **Nothing in your app reads it.** It is outside `public/`, so nothing serves it either.\n\nTo update it, add the item again at the newer tag, with `--overwrite`."
-    },
-    {
       "name": "v0",
       "type": "registry:item",
       "title": "pmndrs theme for v0",
-      "description": "The pmndrs theme as a v0 project, for Open in v0: an `app/globals.css` with the shadcn colours and the Material Design 3 roles resolved to the pmndrs palette, light and dark, Inter and Inconsolata, and the default radius; a layout and a starter page; the logo in `public/pmndrs/`; and the brand book as `guidelines/Guidelines.md`. In your own project, install `theme` or `preset` instead.",
+      "description": "The pmndrs theme as `app/globals.css` for Open in v0: the light and dark palette, shadcn and MD3 colour utilities, Inter, Inconsolata and the default radius. In your own project, install `theme` or `preset` instead.",
       "author": "pmndrs",
+      "registryDependencies": [
+        "https://pmndrs.github.io/design-system/r/palette.json"
+      ],
       "dependencies": [
         "shadcn@latest",
         "tw-animate-css",
@@ -11658,44 +11646,9 @@
           "path": "registry/v0/globals.css",
           "target": "app/globals.css",
           "type": "registry:file"
-        },
-        {
-          "path": "registry/v0/app/layout.tsx",
-          "target": "app/layout.tsx",
-          "type": "registry:file"
-        },
-        {
-          "path": "registry/v0/app/page.tsx",
-          "target": "app/page.tsx",
-          "type": "registry:file"
-        },
-        {
-          "path": "docs/assets/logo_complete.svg",
-          "target": "public/pmndrs/logo_complete.svg",
-          "type": "registry:file"
-        },
-        {
-          "path": "docs/assets/logo_idle.svg",
-          "target": "public/pmndrs/logo_idle.svg",
-          "type": "registry:file"
-        },
-        {
-          "path": "docs/assets/logo_animated.svg",
-          "target": "public/pmndrs/logo_animated.svg",
-          "type": "registry:file"
-        },
-        {
-          "path": "docs/assets/logo_loading.svg",
-          "target": "public/pmndrs/logo_loading.svg",
-          "type": "registry:file"
-        },
-        {
-          "path": "registry/guidelines/Guidelines.md",
-          "target": "guidelines/Guidelines.md",
-          "type": "registry:file"
         }
       ],
-      "docs": "The item an \"Open in v0\" link opens: a v0 project that already has the pmndrs colours, fonts and radius, and shows them.\n\n- **Files only.** v0 ignores `css`, `cssVars` and namespaces, so everything travels as files of v0's Next.js project: `app/globals.css`, overwriting the default one, `app/layout.tsx`, `app/page.tsx`, the logo in `public/pmndrs/` and the brand book as `guidelines/Guidelines.md`.\n- **A preview from the start.** The starter page renders the logo, the brand colours, the type and a light/dark toggle (the `dark` class on `<html>`), through tokens only, so the preview is never blank and v0 has a first example of the tokens to follow.\n- **A pmndrs project's names.** shadcn's variables (`--background`, `--primary`, `--border`…) and every Material Design 3 role (`--md-sys-color-primary-container`, the `surface-container` steps, the brand and alert colours) are the pmndrs palette resolved to literal colours, light and dark. They map onto the utilities a pmndrs project gets from `theme`: `bg-primary`, `bg-primary-container`, `bg-surface-container-high`, `bg-purple-500`. The brand lime is `bg-lime-container`, with `text-on-lime-container` on it; `bg-lime` is a dark olive in light.\n- **The same logo and brand book.** They are the `logo` and `guidelines` items' own files, at the same paths.\n- **Do not edit the stylesheet.** It opens by saying so, and that it is not the Poimandres VS Code theme: v0 took it for that once.\n- **Not for your own project.** There, install `theme` or `preset`: the palette stays computed from the seed, and the same utilities follow, the brand and alert colours' once the `@plugin` line names them, as `md3-base`'s docs say."
+      "docs": "The pmndrs theme as `app/globals.css` for [Open in v0](https://ui.shadcn.com/docs/registry/open-in-v0).\n\nOpen in v0 does not read `css` or `cssVars`, so this item supplies the theme as a CSS file with its dependencies. The `palette` registry item supplies `src/assets/pmndrs.css`, which the stylesheet imports. Only shadcn and MD3 utility mappings, fonts and radius are added here.\n\nThe item supplies no page, layout or logos. In your own project, install `theme` or `preset` instead.\n\nSee the [Open in v0 guide](https://pmndrs.github.io/design-system/getting-started/v0) for the import flow and shared palette."
     }
   ]
 }

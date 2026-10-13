@@ -1,8 +1,7 @@
-The item an "Open in v0" link opens: a v0 project that already has the pmndrs colours, fonts and radius, and shows them.
+The pmndrs theme as `app/globals.css` for [Open in v0](https://ui.shadcn.com/docs/registry/open-in-v0).
 
-- **Files only.** v0 ignores `css`, `cssVars` and namespaces, so everything travels as files of v0's Next.js project: `app/globals.css`, overwriting the default one, `app/layout.tsx`, `app/page.tsx`, the logo in `public/pmndrs/` and the brand book as `guidelines/Guidelines.md`.
-- **A preview from the start.** The starter page renders the logo, the brand colours, the type and a light/dark toggle (the `dark` class on `<html>`), through tokens only, so the preview is never blank and v0 has a first example of the tokens to follow.
-- **A pmndrs project's names.** shadcn's variables (`--background`, `--primary`, `--border`…) and every Material Design 3 role (`--md-sys-color-primary-container`, the `surface-container` steps, the brand and alert colours) are the pmndrs palette resolved to literal colours, light and dark. They map onto the utilities a pmndrs project gets from `theme`: `bg-primary`, `bg-primary-container`, `bg-surface-container-high`, `bg-purple-500`. The brand lime is `bg-lime-container`, with `text-on-lime-container` on it; `bg-lime` is a dark olive in light.
-- **The same logo and brand book.** They are the `logo` and `guidelines` items' own files, at the same paths.
-- **Do not edit the stylesheet.** It opens by saying so, and that it is not the Poimandres VS Code theme: v0 took it for that once.
-- **Not for your own project.** There, install `theme` or `preset`: the palette stays computed from the seed, and the same utilities follow, the brand and alert colours' once the `@plugin` line names them, as `md3-base`'s docs say.
+Open in v0 does not read `css` or `cssVars`, so this item supplies the theme as a CSS file with its dependencies. The `palette` registry item supplies `src/assets/pmndrs.css`, which the stylesheet imports. Only shadcn and MD3 utility mappings, fonts and radius are added here.
+
+The item supplies no page, layout or logos. In your own project, install `theme` or `preset` instead.
+
+See the [Open in v0 guide](https://pmndrs.github.io/design-system/getting-started/v0) for the import flow and shared palette.

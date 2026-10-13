@@ -124,8 +124,8 @@ function radius(page) {
 
 /**
  * `css` with every colour written the Shadows page's way, `rgb(0 0 0 / 0.1)`,
- * rewritten `rgba(0, 0, 0, 0.1)`: the form both the artifact and Tokens Studio
- * take, a colour function with plain comma-separated numbers.
+ * rewritten `rgba(0, 0, 0, 0.1)`: the form Tokens Studio
+ * takes, a colour function with plain comma-separated numbers.
  *
  * @param {string} css
  */

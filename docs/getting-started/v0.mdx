@@ -1,0 +1,24 @@
+---
+title: Open in v0
+description: Import the pmndrs theme into v0.
+nav: 0.5
+---
+
+<Badge href="https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs">Open in v0</Badge>
+
+<Intro>
+  The pmndrs colours, fonts and radius in v0.
+</Intro>
+
+[Open in v0](https://ui.shadcn.com/docs/registry/open-in-v0) ignores `css` and
+`cssVars`. Our [`v0` item](https://pmndrs.github.io/design-system/r/v0.json)
+supplies `app/globals.css` with the shadcn and MD3 Tailwind mappings instead.
+
+Its [`palette.json` dependency](https://pmndrs.github.io/design-system/r/palette.json)
+supplies the shared light and dark colours, imported once:
+
+```css title="app/globals.css"
+@import "../src/assets/pmndrs.css";
+```
+
+Both registry URLs follow `main`.

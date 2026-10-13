@@ -1,13 +1,11 @@
-import foundations from './foundations.json'
-import pkg from './package.json'
-import registry from './registry.json'
-import external from './registry/external.json'
+import foundations from './foundations.json' with { type: 'json' }
+import pkg from './package.json' with { type: 'json' }
+import registry from './registry.json' with { type: 'json' }
+import external from './registry/external.json' with { type: 'json' }
 import { pmndrsMtb } from './registry/md3-base/md3.ts'
 import { themePresets } from './registry/md3-base/presets.ts'
 import { catalogEntries, registrySearchCommand } from './scripts/catalog.mjs'
 import { v0Link } from './scripts/v0.mjs'
-import { RegistryCatalog } from './docs/getting-started/RegistryCatalog'
-import { FoundationTable } from './docs/tokens/FoundationTable'
 
 const release = `v${pkg.version}`
 const registries = [{ repo: 'pmndrs/design-system', ref: release, items: registry.items }, ...external]
@@ -28,16 +26,26 @@ for (const [index, color] of customColors.entries()) {
 }
 playgroundUrl.searchParams.set('args', args.join(';'))
 
-/** Native MDX components and shared values, loaded by @pmndrs/docs 4.25+. */
+/** Shared values for authored Markdown tables, addressed by stable names. */
 export default {
-  components: { FoundationTable, RegistryCatalog },
   scope: {
     foundations,
+    fonts: Object.fromEntries(foundations.typography.fonts.map((row) => [row.utility, row])),
+    typeScale: Object.fromEntries(foundations.typography.scale.map((row) => [row.utility, row])),
+    fontWeights: Object.fromEntries(foundations.typography.weights.map((row) => [row.utility, row])),
+    spacing: Object.fromEntries(foundations.spacing.scale.map((row) => [row.step, row])),
+    radii: Object.fromEntries(foundations.radius.scale.map((row) => [row.token, row])),
+    shadows: Object.fromEntries(Object.values(foundations.shadows).flat().map((row) => [row.utility, row])),
+    transitions: Object.fromEntries(foundations.motion.defaults.map((row) => [row.variable, row])),
+    durations: Object.fromEntries(foundations.motion.durations.map((row) => [row.utility, row])),
+    easings: Object.fromEntries(foundations.motion.easings.map((row) => [row.utility, row])),
     release,
     v0Url: v0Link,
     playgroundUrl: playgroundUrl.href,
     themePresets: themePresets.map(({ name, ...preset }) => ({ name: `theme-${name}`, ...preset })),
-    catalog: catalogEntries(registries),
+    catalog: Object.fromEntries(registries.flatMap((registry) =>
+      catalogEntries([registry]).map((entry) => [`${registry.repo}/${entry.name}`, entry]),
+    )),
     catalogSearchCommand: registrySearchCommand(registries),
   },
 }

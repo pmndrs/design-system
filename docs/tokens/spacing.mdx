@@ -14,7 +14,9 @@ nav: 1.3
 
 ## Base unit
 
-<FoundationTable name="spacing.base" foundations={foundations} />
+| Token | Value |
+| --- | --- |
+| `--spacing` | <code>{foundations.spacing.base}</code> |
 
 The same scale drives padding (`p-*`), margin (`m-*`), gaps (`gap-*`, `space-*`), sizes (`w-*`,
 `h-*`, `size-*`, `min-*`, `max-*`), offsets (`inset-*`, `top-*`…) and translations
@@ -27,4 +29,40 @@ The common steps, with the value your project gets. Pixels assume the browser's 
 root. The bars use the listed CSS widths: this site's root is 17px, so
 they draw slightly wider than in your project. The table is rendered from `foundations.json`.
 
-<FoundationTable name="spacing.scale" foundations={foundations} />
+| Step | Value | Pixels | Preview |
+| --- | --- | --- | --- |
+| `0` | <code>{spacing['0'].value}</code> | {spacing['0'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['0'].value }} /> |
+| `px` | <code>{spacing['px'].value}</code> | {spacing['px'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['px'].value }} /> |
+| `0.5` | <code>{spacing['0.5'].value}</code> | {spacing['0.5'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['0.5'].value }} /> |
+| `1` | <code>{spacing['1'].value}</code> | {spacing['1'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['1'].value }} /> |
+| `1.5` | <code>{spacing['1.5'].value}</code> | {spacing['1.5'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['1.5'].value }} /> |
+| `2` | <code>{spacing['2'].value}</code> | {spacing['2'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['2'].value }} /> |
+| `2.5` | <code>{spacing['2.5'].value}</code> | {spacing['2.5'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['2.5'].value }} /> |
+| `3` | <code>{spacing['3'].value}</code> | {spacing['3'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['3'].value }} /> |
+| `3.5` | <code>{spacing['3.5'].value}</code> | {spacing['3.5'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['3.5'].value }} /> |
+| `4` | <code>{spacing['4'].value}</code> | {spacing['4'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['4'].value }} /> |
+| `5` | <code>{spacing['5'].value}</code> | {spacing['5'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['5'].value }} /> |
+| `6` | <code>{spacing['6'].value}</code> | {spacing['6'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['6'].value }} /> |
+| `7` | <code>{spacing['7'].value}</code> | {spacing['7'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['7'].value }} /> |
+| `8` | <code>{spacing['8'].value}</code> | {spacing['8'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['8'].value }} /> |
+| `9` | <code>{spacing['9'].value}</code> | {spacing['9'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['9'].value }} /> |
+| `10` | <code>{spacing['10'].value}</code> | {spacing['10'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['10'].value }} /> |
+| `11` | <code>{spacing['11'].value}</code> | {spacing['11'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['11'].value }} /> |
+| `12` | <code>{spacing['12'].value}</code> | {spacing['12'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['12'].value }} /> |
+| `14` | <code>{spacing['14'].value}</code> | {spacing['14'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['14'].value }} /> |
+| `16` | <code>{spacing['16'].value}</code> | {spacing['16'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['16'].value }} /> |
+| `20` | <code>{spacing['20'].value}</code> | {spacing['20'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['20'].value }} /> |
+| `24` | <code>{spacing['24'].value}</code> | {spacing['24'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['24'].value }} /> |
+| `28` | <code>{spacing['28'].value}</code> | {spacing['28'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['28'].value }} /> |
+| `32` | <code>{spacing['32'].value}</code> | {spacing['32'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['32'].value }} /> |
+| `36` | <code>{spacing['36'].value}</code> | {spacing['36'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['36'].value }} /> |
+| `40` | <code>{spacing['40'].value}</code> | {spacing['40'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['40'].value }} /> |
+| `44` | <code>{spacing['44'].value}</code> | {spacing['44'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['44'].value }} /> |
+| `48` | <code>{spacing['48'].value}</code> | {spacing['48'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['48'].value }} /> |
+| `52` | <code>{spacing['52'].value}</code> | {spacing['52'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['52'].value }} /> |
+| `56` | <code>{spacing['56'].value}</code> | {spacing['56'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['56'].value }} /> |
+| `60` | <code>{spacing['60'].value}</code> | {spacing['60'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['60'].value }} /> |
+| `64` | <code>{spacing['64'].value}</code> | {spacing['64'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['64'].value }} /> |
+| `72` | <code>{spacing['72'].value}</code> | {spacing['72'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['72'].value }} /> |
+| `80` | <code>{spacing['80'].value}</code> | {spacing['80'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['80'].value }} /> |
+| `96` | <code>{spacing['96'].value}</code> | {spacing['96'].pixels}px | <div className="h-3 bg-primary" style={{ width: spacing['96'].value }} /> |

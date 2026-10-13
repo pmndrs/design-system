@@ -1,6 +1,4 @@
 import assert from 'node:assert/strict'
-import { createElement } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
 import { test } from 'node:test'
 import config from './docs.config.ts'
 import { pmndrsMtb } from './registry/md3-base/md3.ts'
@@ -8,28 +6,23 @@ import { themePresets } from './registry/md3-base/presets.ts'
 import { v0Link } from './scripts/v0.mjs'
 import { foundationVariables } from './scripts/foundation-tokens.mjs'
 
-const { components, scope } = config
+const { scope } = config
 
-test('structured token edits reach native documentation and Figma without parsing a page', () => {
-  const foundations = structuredClone(scope.foundations)
-  const step = foundations.spacing.scale.find(({ step }) => step === '4')
-  step.value = '1.25rem'
-  step.pixels = 20
-  const html = renderToStaticMarkup(createElement(components.FoundationTable, { name: 'spacing.scale', foundations }))
-  assert.match(html, /width:1.25rem/)
-  assert.match(html, /20px/)
-  assert.equal(foundationVariables(foundations).spacing['4'].$value.value, 20)
+test('documentation addresses shared foundation values by name, not array position', () => {
+  assert.equal(scope.spacing['4'].value, '1rem')
+  assert.equal(scope.spacing['4'].pixels, foundationVariables(scope.foundations).spacing['4'].$value.value)
+  assert.equal(scope.typeScale['text-sm'].pixels.fontSize, 14)
+  assert.equal(scope.radii['--radius-lg'].value, scope.foundations.radius.base)
+  assert.equal(scope.shadows['shadow-sm'].variable, '--shadow-sm')
+  assert.equal(scope.shadows['inset-shadow-sm'].variable, '--inset-shadow-sm')
+  assert.equal(scope.shadows['drop-shadow-sm'].variable, '--drop-shadow-sm')
 })
 
-test('native catalog renders installable links and escapes descriptions as text', () => {
-  const rows = [{ name: 'example', href: '/r/example.json', address: '@pmndrs/example', description: '<script>test</script>' }]
-  const html = renderToStaticMarkup(createElement(components.RegistryCatalog, { rows }))
-  assert.match(html, /href="\/r\/example.json"/)
-  assert.match(html, /@pmndrs\/example/)
-  assert.match(html, /&lt;script&gt;test&lt;\/script&gt;/)
-  assert.doesNotMatch(html, /<script>/)
-  const catalog = renderToStaticMarkup(createElement(components.RegistryCatalog, { rows: scope.catalog }))
-  assert.match(catalog, /@pmndrs\/theme/)
+test('documentation catalog addresses each item by repository and name', () => {
+  assert.equal(scope.catalog['pmndrs/design-system/theme'].address, '@pmndrs/theme')
+  assert.equal(scope.catalog['pmndrs/design-system/theme'].href, 'https://pmndrs.github.io/design-system/r/theme.json')
+  assert.equal(scope.catalog['pmndrs/docs/color'].name, 'color')
+  assert.match(scope.catalog['pmndrs/docs/color'].address, /^pmndrs\/docs\/color#v/)
 })
 
 test('native scope uses the installable theme presets and Open in v0 item', () => {

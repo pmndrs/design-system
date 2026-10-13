@@ -120,13 +120,14 @@ rewrite these files, `README.md` or `.changeset/README.md`.
   the same data; headings and Markdown formatting have no effect on tokens.
 - Edit colour seeds in `registry/md3-base/md3.ts` and named presets in
   `registry/md3-base/presets.ts`.
-- [`docs.config.ts`](./docs.config.ts) registers the React components
-  `FoundationTable` and `RegistryCatalog`, and exposes shared data as MDX scope.
-  They are ordinary React components under `docs/`, not preprocessing markers.
-- Pages use native expressions, such as `<ThemeSeeds presets={themePresets} />`,
-  `<Badge href={v0Url}>Open in v0</Badge>` and
-  `<FoundationTable name="spacing.scale" foundations={foundations} />`.
-  Literal URLs and historical versions remain exactly as authored.
+- [`docs.config.ts`](./docs.config.ts) exposes shared data as MDX scope, indexed
+  by token or registry item name. Tables are ordinary Markdown in the pages;
+  their cells use expressions such as `{spacing['4'].value}`. Edit their headings,
+  rows and order directly. Adding a token or registry item does not insert a row
+  automatically: add it to the relevant table when it should be documented.
+- The engine supplies the interactive palette preview with
+  `<ThemeSeeds presets={themePresets} />`. Literal URLs and historical versions
+  remain exactly as authored.
 
 Run `pnpm run build` after changing tokens. `pnpm run build-docs` uses the published
 `@pmndrs/docs@4.25.0` CLI to compile `docs/` directly, discovering `docs.config.ts`
@@ -135,12 +136,11 @@ The CLI is invoked through `npx` rather than installed into the isolated pnpm tr
 the engine currently requires its temporary website app outside `node_modules`.
 There is no generated MDX directory. Only distribution outputs need committing;
 `out/` is ignored. CI installs consumer dependencies and uses the same build command.
-The custom components live under `docs/` so the engine's staged Tailwind source
-scan includes their static utility classes; data-driven preview dimensions use CSS values.
+There are no custom table components or table styles to maintain.
 
 The engine's Markdown exports (including Copy Page and `llms-full.txt`) currently
-return the authored MDX: component tables and scope expressions are rendered on
-the website, but are not expanded in those text exports.
+return the authored MDX: Markdown tables and their labels are preserved, but
+scope expressions in cells are not expanded in those text exports.
 
 Preview on http://localhost:3000:
 

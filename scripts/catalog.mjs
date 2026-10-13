@@ -26,8 +26,8 @@
  * To list another registry, add `{ "repo": "owner/name", "ref": "…" }`
  * to `registry/external.json` and run the same command.
  *
- * The documentation config supplies these entries to the RegistryCatalog
- * React component. The authored page is never rewritten.
+ * The documentation config supplies these entries to the authored Markdown
+ * table through MDX scope. The page is never rewritten.
  */
 import { readFileSync, writeFileSync } from 'node:fs'
 import { hostedUrl } from './hosted-registry.url.ts'

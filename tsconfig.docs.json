@@ -1,10 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
     "allowJs": true,
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true
   },
-  "include": ["docs.config.ts", "docs/**/*.tsx"]
+  "include": ["docs.config.ts"]
 }

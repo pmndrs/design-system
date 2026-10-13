@@ -1,4 +1,4 @@
-/** Catalog data shared by the documentation component and registry search command. */
+/** Catalog data shared by the authored documentation and registry search command. */
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { catalogEntries, registrySearchCommand } from './scripts/catalog.mjs'

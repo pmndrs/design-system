@@ -59,7 +59,7 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # docs.config.ts supplies native components and scope; MDX stays untouched.
+      # docs.config.ts supplies shared values through scope; MDX stays untouched.
       - run: pnpm run build-docs
         env:
           BASE_PATH: ${{ steps.configurepages.outputs.base_path }}

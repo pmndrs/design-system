@@ -17,7 +17,10 @@ nav: 1.6
 A `transition-*` utility (`transition`, `transition-colors`, `transition-transform`…) without a
 `duration-*` or an `ease-*` runs on these two theme variables:
 
-<FoundationTable name="motion.defaults" foundations={foundations} />
+| Variable | Value |
+| --- | --- |
+| `--default-transition-duration` | <code>{transitions['--default-transition-duration'].value}</code> |
+| `--default-transition-timing-function` | <code>{transitions['--default-transition-timing-function'].value}</code> |
 
 The default curve is the one `ease-in-out` sets.
 
@@ -27,7 +30,17 @@ The default curve is the one `ease-in-out` sets.
 variable stands behind it, so any number works, not only the steps below: `duration-250` is
 `250ms`. Use brackets for another unit (`duration-[2s]`).
 
-<FoundationTable name="motion.durations" foundations={foundations} />
+| Utility | Value |
+| --- | --- |
+| `duration-0` | <code>{durations['duration-0'].value}</code> |
+| `duration-75` | <code>{durations['duration-75'].value}</code> |
+| `duration-100` | <code>{durations['duration-100'].value}</code> |
+| `duration-150` | <code>{durations['duration-150'].value}</code> |
+| `duration-200` | <code>{durations['duration-200'].value}</code> |
+| `duration-300` | <code>{durations['duration-300'].value}</code> |
+| `duration-500` | <code>{durations['duration-500'].value}</code> |
+| `duration-700` | <code>{durations['duration-700'].value}</code> |
+| `duration-1000` | <code>{durations['duration-1000'].value}</code> |
 
 Hover the panel to run every step at once, on the default curve:
 
@@ -45,7 +58,12 @@ Hover the panel to run every step at once, on the default curve:
 `ease-*` sets `transition-timing-function`, from the `--ease-*` theme variables. See
 [Tailwind's transition-timing-function docs](https://tailwindcss.com/docs/transition-timing-function).
 
-<FoundationTable name="motion.easings" foundations={foundations} />
+| Utility | Variable | Value |
+| --- | --- | --- |
+| `ease-linear` | none | <code>{easings['ease-linear'].value}</code> |
+| `ease-in` | `--ease-in` | <code>{easings['ease-in'].value}</code> |
+| `ease-out` | `--ease-out` | <code>{easings['ease-out'].value}</code> |
+| `ease-in-out` | `--ease-in-out` | <code>{easings['ease-in-out'].value}</code> |
 
 `ease-in` starts slow, so it suits an element leaving the screen. `ease-out` ends slow, so it
 suits an element arriving. `ease-in-out` suits an element that moves from one place to another.

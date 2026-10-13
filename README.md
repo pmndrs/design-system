@@ -121,7 +121,7 @@ rewrite these files, `README.md` or `.changeset/README.md`.
   the same data; headings and Markdown formatting have no effect on tokens.
 - Edit colour seeds in `registry/md3-base/md3.ts` and named presets in
   `registry/md3-base/presets.ts`.
-- [`docs.config.fragment.ts`](./docs.config.fragment.ts) exposes shared data as MDX scope, indexed
+- [`docs.scope.ts`](./docs.scope.ts) exposes shared data as MDX scope, indexed
   by token or registry item name. Tables are ordinary Markdown in the pages;
   their cells use expressions such as `{spacing['4'].value}`. Edit their headings,
   rows and order directly. Adding a token or registry item does not insert a row
@@ -163,10 +163,11 @@ The website is written to `out/site/`, outside the authored docs. Stop both serv
 with Ctrl+C when finished.
 
 `docs.config.ts` registers the local `ThemeSeeds` component and imports the shared scope
-from `docs.config.fragment.ts`. Its hooks and UI imports use the renderer's `@/` aliases
-to share the site's theme providers and footer preferences. Keep the docs dependency
-pinned and check preset selection and footer controls when upgrading it.
+from `docs.scope.ts` through the fragment config. Its hooks and UI imports use the
+renderer’s `@/` aliases to share the site's theme providers and footer preferences.
+Keep the docs dependency pinned and check preset selection and footer controls when
+upgrading it.
 
-Fragments use `docs.config.fragment.ts` directly: the same shared data with the renderer's
-static seed table, without interactive theme providers. The fragment loader cannot
-resolve the renderer-internal aliases used by the website component.
+Fragments use `docs.config.fragment.ts` directly: the same shared data with a local static
+preview of the first preset. Its seed table is shared with the live component and uses
+native markup, so fragments need no renderer-internal aliases or theme providers.

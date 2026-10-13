@@ -3,7 +3,11 @@
   "compilerOptions": {
     "allowJs": true,
     "allowImportingTsExtensions": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "jsx": "react-jsx"
   },
-  "include": ["docs.config.ts"]
+  "include": [
+    "docs.config*.ts",
+    "docs/*.tsx"
+  ]
 }

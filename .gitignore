@@ -3,3 +3,5 @@ public/r
 .DS_Store
 docs/out
 out/
+.pmndrs-docs/
+.pmndrs-docs-config-*/

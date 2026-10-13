@@ -8,7 +8,11 @@
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "paths": {
+      "@/registry/*": ["./node_modules/@pmndrs/docs/registry/*"],
+      "@/*": ["./node_modules/@pmndrs/docs/src/*"]
+    }
   },
   "include": ["registry", "scripts"]
 }

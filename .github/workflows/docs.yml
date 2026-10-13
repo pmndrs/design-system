@@ -19,6 +19,7 @@ jobs:
       pages: write
       id-token: write
     outputs:
+      version_url: ${{ steps.version-url.outputs.url }}
       version_hostname: ${{ steps.version-url.outputs.hostname }}
     env:
       NEXT_PUBLIC_LIBNAME: design-system
@@ -59,14 +60,16 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # docs.config.ts supplies shared values through scope; MDX stays untouched.
+      # docs.config.ts supplies shared values and the local ThemeSeeds component.
       - run: pnpm run build-docs
         env:
           BASE_PATH: ${{ steps.configurepages.outputs.base_path }}
           NEXT_PUBLIC_URL: ${{ steps.configurepages.outputs.base_url }}
       - id: version-url
         run: |
-          hostname=$(npx -y @pmndrs/docs@4.25.0 version-url --hostname)
+          url=$(pnpm exec pmndrs-docs version-url)
+          hostname=$(pnpm exec pmndrs-docs version-url --hostname)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "hostname=$hostname" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-pages-artifact@v5
         with:

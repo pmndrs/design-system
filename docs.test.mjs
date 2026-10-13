@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import config from './docs.config.ts'
+import config from './docs.config.fragment.ts'
 import { pmndrsMtb } from './registry/md3-base/md3.ts'
 import { themePresets } from './registry/md3-base/presets.ts'
 import { v0Link } from './scripts/v0.mjs'

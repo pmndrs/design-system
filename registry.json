@@ -11632,6 +11632,9 @@
       "title": "pmndrs theme for v0",
       "description": "The pmndrs theme as `app/globals.css` for Open in v0: the light and dark palette, shadcn and MD3 colour utilities, Inter, Inconsolata and the default radius. In your own project, install `theme` or `preset` instead.",
       "author": "pmndrs",
+      "registryDependencies": [
+        "https://pmndrs.github.io/design-system/r/palette.json"
+      ],
       "dependencies": [
         "shadcn@latest",
         "tw-animate-css",
@@ -11645,7 +11648,7 @@
           "type": "registry:file"
         }
       ],
-      "docs": "The pmndrs theme as `app/globals.css` for [Open in v0](https://ui.shadcn.com/docs/registry/open-in-v0).\n\nOpen in v0 does not read `css` or `cssVars`, so this item supplies the theme as a CSS file with its dependencies. It uses the same light and dark palette, shadcn and MD3 colour utilities, fonts and radius as the design system.\n\nThe item supplies no page, layout or logos. In your own project, install `theme` or `preset` instead."
+      "docs": "The pmndrs theme as `app/globals.css` for [Open in v0](https://ui.shadcn.com/docs/registry/open-in-v0).\n\nOpen in v0 does not read `css` or `cssVars`, so this item supplies the theme as a CSS file with its dependencies. The `palette` registry item supplies `src/assets/pmndrs.css`, which the stylesheet imports. Only shadcn and MD3 utility mappings, fonts and radius are added here.\n\nThe item supplies no page, layout or logos. In your own project, install `theme` or `preset` instead."
     }
   ]
 }

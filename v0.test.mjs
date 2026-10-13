@@ -42,6 +42,15 @@ test('the v0 item ships only the theme stylesheet and its dependencies', () => {
   assert.deepEqual(relative, [])
 })
 
+/** The palette is installed once by its registry item and imported at its target. */
+test('the v0 stylesheet imports the palette registry dependency', () => {
+  assert.deepEqual(v0().registryDependencies, [`${hostedUrl}palette.json`])
+  const palette = registry.items.find(({ name }) => name === 'palette')
+  assert.equal(palette.files[0].target, '~/src/assets/pmndrs.css')
+  assert.ok(read('app/globals.css').includes('@import "../src/assets/pmndrs.css";'))
+  assert.doesNotMatch(read('app/globals.css'), /--md-(?:sys-color|ref-palette)-[\w-]+\s*:/)
+})
+
 /** The declarations of the top-level `selector { … }` block of a stylesheet. */
 function block(css, selector) {
   const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -60,6 +69,13 @@ function block(css, selector) {
 }
 
 const globalsCss = () => read('app/globals.css')
+const paletteCss = () => readFileSync(new URL('./registry/palette/palette.css', import.meta.url), 'utf8')
+const schemeDeclarations = (selector) => ({
+  ...block(paletteCss(), ':root'),
+  ...block(paletteCss(), selector),
+  ...block(globalsCss(), ':root'),
+  ...block(globalsCss(), selector),
+})
 
 /**
  * The hex of every `--md-*` variable in a mode, from the Figma tokens, which
@@ -108,11 +124,10 @@ function resolved(declared, name) {
 /** Shadcn aliases must resolve to the same colours as the Figma exports. */
 test('the v0 stylesheet resolves shadcn colours in both schemes, including dark subtrees', () => {
   const css = globalsCss()
-  const root = block(css, ':root')
   for (const [mode, selector] of modes) {
     const hexOf = figmaHex(mode)
     const scheme = block(css, selector)
-    const declared = { ...root, ...scheme }
+    const declared = schemeDeclarations(selector)
     for (const { name, role } of readRemap()) {
       assert.equal(scheme[name], `var(${role})`, `${mode} ${name}`)
       assert.equal(resolved(declared, name), hexOf[role], `${mode} ${name}`)
@@ -147,13 +162,12 @@ test('the v0 globals.css maps every colour utility a pmndrs project has, to the 
  */
 test('the v0 globals.css resolves every MD3 role and mapped shade to the Figma colour', () => {
   const css = globalsCss()
-  const root = block(css, ':root')
   const mapped = [...Object.values(block(css, '@theme inline')).join(' ').matchAll(/var\((--md-[\w-]+)\)/g)].map(([, name]) => name)
 
   const mismatches = []
   for (const [mode, selector] of modes) {
     const hexOf = figmaHex(mode)
-    const declared = { ...root, ...block(css, selector) }
+    const declared = schemeDeclarations(selector)
     const roles = Object.keys(hexOf).filter((name) => name.startsWith('--md-sys-color-'))
     for (const name of new Set([...roles, ...mapped])) {
       if (!hexOf[name] || resolved(declared, name) !== hexOf[name]) mismatches.push(`${mode} ${name}: ${declared[name]}, Figma has ${hexOf[name]}`)
@@ -185,8 +199,9 @@ test('the v0 globals.css sets the radius and both fonts, and declares every vari
     assert.ok(registersFamily(dependency, theme[variable] ?? ''), `${variable}: ${theme[variable]}`)
   }
 
-  const declared = new Set([...css.matchAll(/(--[\w-]+)\s*:/g)].map(([, name]) => name))
-  const dangling = [...css.matchAll(/var\(\s*(--[\w-]+)/g)].map(([, name]) => name).filter((name) => !declared.has(name))
+  const combined = paletteCss() + '\n' + css
+  const declared = new Set([...combined.matchAll(/(--[\w-]+)\s*:/g)].map(([, name]) => name))
+  const dangling = [...combined.matchAll(/var\(\s*(--[\w-]+)/g)].map(([, name]) => name).filter((name) => !declared.has(name))
   assert.deepEqual(dangling, [])
 })
 

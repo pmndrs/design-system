@@ -6,13 +6,12 @@ import { sansFont } from './packages.mjs'
 import { readRemap, tailwindColors } from './remap.mjs'
 
 /**
- * A standalone stylesheet using the same baked palette and utilities as theme.
+ * Theme mappings and fonts layered on the palette registry dependency.
  *
- * @param {{ ':root': Record<string, string>, '.dark': Record<string, string> }} palette
  * @param {ReturnType<typeof import('./foundations.mjs').readFoundations>} foundations
  * @param {{ family: string, dependency: string }} mono
  */
-export function v0GlobalsCss(palette, foundations, mono) {
+export function v0GlobalsCss(foundations, mono) {
   const remap = readRemap()
   const sans = sansFont(foundations)
   const declarations = (entries) => entries.map(([name, value]) => `  ${name}: ${value};`).join('\n')
@@ -31,6 +30,7 @@ export function v0GlobalsCss(palette, foundations, mono) {
 @import "shadcn/tailwind.css";
 @import "${sans.dependency}";
 @import "${mono.dependency}";
+@import "../src/assets/pmndrs.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -47,14 +47,12 @@ ${declarations([
 :root {
 ${declarations([
   ['--radius', foundations.radius.base],
-  ...Object.entries(palette[':root']),
   ...remap.map(({ name, role }) => [name, `var(${role})`]),
 ])}
 }
 
 .dark {
 ${declarations([
-  ...Object.entries(palette['.dark']),
   ...remap.map(({ name, role }) => [name, `var(${role})`]),
 ])}
 }

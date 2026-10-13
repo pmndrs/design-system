@@ -114,9 +114,14 @@ test('the hosted v0 item carries its files inline, with nothing v0 cannot resolv
     (hosted.registryDependencies ?? []).filter((dependency) => !dependency.startsWith('https://')),
     []
   )
+  assert.deepEqual(hosted.registryDependencies, [`${hostedUrl}palette.json`])
   assert.deepEqual(hosted.files.map(({ target }) => target), ['app/globals.css'])
   const { content } = hosted.files[0]
   assert.ok(content, 'no stylesheet content inline')
+  assert.ok(content.includes('@import "../src/assets/pmndrs.css";'))
+  const palette = read('palette.json')
+  assert.equal(palette.files[0].target, '~/src/assets/pmndrs.css')
+  assert.match(palette.files[0].content, /^:root \{/m)
   assert.match(content, /^:root \{[^}]*--primary: var\(--md-sys-color-primary\);/m)
   assert.match(content, /^\.dark \{[^}]*--primary: var\(--md-sys-color-primary\);/m)
 })

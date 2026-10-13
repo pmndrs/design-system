@@ -395,6 +395,7 @@ const items = [
     description:
       'The pmndrs theme as `app/globals.css` for Open in v0: the light and dark palette, shadcn and MD3 colour utilities, Inter, Inconsolata and the default radius. In your own project, install `theme` or `preset` instead.',
     author: 'pmndrs',
+    registryDependencies: [`${hostedUrl}palette.json`],
     dependencies: [
       'shadcn@latest',
       'tw-animate-css',
@@ -607,7 +608,7 @@ for (const url of docs) {
 }
 
 /** The `v0` item's stylesheet; what is in it is `v0.mjs`'s story. */
-outputs.push([new URL('../registry/v0/globals.css', import.meta.url), v0GlobalsCss(palette, foundations, fontMono)])
+outputs.push([new URL('../registry/v0/globals.css', import.meta.url), v0GlobalsCss(foundations, fontMono)])
 
 /**
  * The palette as DTCG tokens: `Light` and `Dark` become two modes of one Figma

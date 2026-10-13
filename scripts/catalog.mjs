@@ -22,15 +22,15 @@
  *   pnpm run refresh-catalog
  *
  * which runs this file to re-fetch each listed registry at its ref, then
- * rebuilds the registry. Run `pnpm run build-docs` to refresh the staged docs.
+ * rebuilds the registry.
  * To list another registry, add `{ "repo": "owner/name", "ref": "…" }`
  * to `registry/external.json` and run the same command.
  *
- * scripts/docs.mjs renders the catalog into out/docs. The authored page
- * contains a RegistryCatalog placeholder and is never rewritten.
+ * The documentation config supplies these entries to the RegistryCatalog
+ * React component. The authored page is never rewritten.
  */
 import { readFileSync, writeFileSync } from 'node:fs'
-import { hostedUrl } from './hosted-registry.mjs'
+import { hostedUrl } from './hosted-registry.url.ts'
 
 /** The committed snapshot of the other repos' registries. */
 export const externalUrl = new URL('../registry/external.json', import.meta.url)
@@ -56,7 +56,7 @@ const catalogDescriptions = {
 function descriptionCell(repo, { name, description = '' }) {
   const brief = repo === 'pmndrs/design-system' && catalogDescriptions[name]
   const firstSentence = description.split(/(?<=[.!?])\s+/)[0]
-  return (brief || firstSentence).replace(/\s+/g, ' ').replace(/\|/g, '\\|').trim()
+  return (brief || firstSentence).replace(/\s+/g, ' ').trim()
 }
 
 /**
@@ -76,32 +76,35 @@ export function itemUrl(repo, ref, name) {
 }
 
 /**
- * The catalog as MDX: a source link and install address for every item, then the
- * `search` command that lists them all from the terminal.
+ * Catalog entries with a source link, short description and install address.
  *
- * @param {{ repo: string, ref: string, items: { name: string, type: string }[] }[]} registries
+ * @param {{ repo: string, ref: string, items: { name: string, type: string, description?: string }[] }[]} registries
  *   `repo` is the GitHub `owner/name` the CLI resolves, `ref` the tag or branch
  *   to install its items from.
- * @returns {string}
  */
-export function renderCatalog(registries) {
-  const rows = registries.flatMap(({ repo, ref, items }) =>
+export function catalogEntries(registries) {
+  return registries.flatMap(({ repo, ref, items }) =>
     items.map((entry) => {
       const { name } = entry
       const hosted = repo === 'pmndrs/design-system'
-      const item = `[${name}](${itemUrl(repo, hosted ? 'main' : ref, name)})`
-      const address = hosted ? `@pmndrs/${name}` : `${repo}/${name}#${ref}`
-      return `| ${item} | ${descriptionCell(repo, entry)} | \`${address}\` |`
+      return {
+        name,
+        href: itemUrl(repo, ref, name),
+        description: descriptionCell(repo, entry),
+        address: hosted ? `@pmndrs/${name}` : `${repo}/${name}#${ref}`,
+      }
     }),
   )
-  const table = ['| Item | Description | Install address |', '| --- | --- | --- |', ...rows].join('\n')
+}
 
-  // Pinned like an install command: `search` prints each item's address with
-  // the ref it was given, so an unpinned search hands out unpinned addresses.
+/**
+ * Search every registry at its specified ref, so returned install addresses stay pinned.
+ *
+ * @param {{ repo: string, ref: string }[]} registries - Registries to search in order.
+ */
+export function registrySearchCommand(registries) {
   const addresses = registries.map(({ repo, ref }) => `${repo}#${ref}`).join(' ')
-  const search = ['```sh', `npx shadcn@latest search ${addresses}`, '```'].join('\n')
-
-  return [table, 'To browse a specific release across repos:', search].join('\n\n')
+  return `npx shadcn@latest search ${addresses}`
 }
 
 /**

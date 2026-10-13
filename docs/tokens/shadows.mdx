@@ -19,7 +19,7 @@ family also has a `-none` utility that removes the shadow.
 
 `shadow-*` sets `box-shadow` from the `--shadow-*` theme variable:
 
-<FoundationTable name="shadows.box" />
+<FoundationTable name="shadows.box" foundations={foundations} />
 
 <div className="grid! grid-cols-2 gap-6 rounded-lg bg-surface-container-low p-6 sm:grid-cols-4">
   {['shadow-2xs', 'shadow-xs', 'shadow-sm', 'shadow-md', 'shadow-lg', 'shadow-xl', 'shadow-2xl'].map((shadow) => (
@@ -34,7 +34,7 @@ family also has a `-none` utility that removes the shadow.
 `inset-shadow-*` sets an inner `box-shadow` from the `--inset-shadow-*` theme variable. It
 stacks with `shadow-*` on the same element:
 
-<FoundationTable name="shadows.inset" />
+<FoundationTable name="shadows.inset" foundations={foundations} />
 
 <div className="grid! grid-cols-1 gap-6 rounded-lg bg-surface-container-low p-6 sm:grid-cols-3">
   {['inset-shadow-2xs', 'inset-shadow-xs', 'inset-shadow-sm'].map((shadow) => (
@@ -50,7 +50,7 @@ stacks with `shadow-*` on the same element:
 follows the painted shape, transparent pixels excluded, so it suits icons, SVGs and cut-out
 images:
 
-<FoundationTable name="shadows.drop" />
+<FoundationTable name="shadows.drop" foundations={foundations} />
 
 <div className="grid! grid-cols-2 gap-6 rounded-lg bg-surface-container-low p-6 sm:grid-cols-3">
   {['drop-shadow-xs', 'drop-shadow-sm', 'drop-shadow-md', 'drop-shadow-lg', 'drop-shadow-xl', 'drop-shadow-2xl'].map((shadow) => (

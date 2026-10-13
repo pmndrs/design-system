@@ -21,8 +21,8 @@
  * is generated here for the same reason: one seed, or designers and engineers
  * drift.
  *
- * Documentation is assembled separately by scripts/docs.mjs into out/docs.
- * Neither build writes into editorial source files.
+ * Documentation consumes the same values through docs.config.ts.
+ * The build never writes into editorial source files.
  *
  * Asserting the committed files are current is `build.test.mjs`'s job — it reads
  * the `outputs` exported here, so a seed change that skipped the rebuild fails
@@ -36,7 +36,7 @@ import { pmndrsMtb } from '../registry/md3-base/md3.ts'
 import { themePresets } from '../registry/md3-base/presets.ts'
 import { foundationStyles, foundationVariables } from './foundation-tokens.mjs'
 import { readFoundations } from './foundations.mjs'
-import { hostedUrl } from './hosted-registry.mjs'
+import { hostedUrl } from './hosted-registry.url.ts'
 import { readRemap, tailwindColors } from './remap.mjs'
 import { v0GlobalsCss } from './v0.mjs'
 import { sansFont } from './packages.mjs'

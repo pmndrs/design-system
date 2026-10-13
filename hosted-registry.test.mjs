@@ -1,4 +1,3 @@
-import { renderPage } from './scripts/docs.mjs'
 /**
  * What `pnpm run hosted-registry` writes for the docs site's `r/` folder: the
  * static registry a `components.json` namespace and the shadcn MCP server
@@ -15,7 +14,8 @@ import { pathToFileURL } from 'node:url'
 import { registryItemSchema, registrySchema } from 'shadcn/schema'
 import pkg from './package.json' with { type: 'json' }
 import registry from './registry.json' with { type: 'json' }
-import { hostedUrl, writeHostedRegistry } from './scripts/hosted-registry.mjs'
+import { writeHostedRegistry } from './scripts/hosted-registry.mjs'
+import { hostedUrl } from './scripts/hosted-registry.url.ts'
 
 const out = pathToFileURL(`${mkdtempSync(join(tmpdir(), 'hosted-registry-'))}/`)
 // An item removed since the last run: its file must not linger.
@@ -128,13 +128,12 @@ test('the hosted v0 item carries its files inline, with nothing v0 cannot resolv
 })
 
 /**
- * The "Open in v0" links the README and the Open in v0 page hand out:
+ * The "Open in v0" links the README hands out:
  * each has to open the item above, at the address the docs site serves it.
  */
 test('every Open in v0 link opens the hosted v0 item', () => {
-  for (const page of ['README.md', 'docs/getting-started/v0.mdx']) {
-    const source = readFileSync(new URL(page, import.meta.url), 'utf8')
-    const text = page.endsWith('.mdx') ? renderPage(source) : source
+  for (const page of ['README.md']) {
+    const text = readFileSync(new URL(page, import.meta.url), 'utf8')
     const links = [...text.matchAll(/https:\/\/v0\.app\/chat\/api\/open\?[^\s)"']+/g)].map(([link]) => new URL(link))
 
     assert.ok(links.length, `${page} has no Open in v0 link`)

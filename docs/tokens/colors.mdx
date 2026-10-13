@@ -5,7 +5,7 @@ sourcecode: registry/md3-base/md3.ts
 nav: 1.1
 ---
 
-<ThemePlayground />
+<Badge href={playgroundUrl} logo="storybook">material theme builder</Badge>
 
 <Intro>
   No colour is picked by hand. A few seeds go in, and
@@ -26,7 +26,7 @@ The preview and the installable `theme-lime`, `theme-teal`, `theme-cyan`, `theme
 `theme-red`, `theme-orange` and `theme-yellow` items share the same
 [`presets.ts`](https://github.com/pmndrs/design-system/blob/main/registry/md3-base/presets.ts).
 
-<ThemePresets />
+<ThemeSeeds presets={themePresets} />
 
 For example, install the Purple preset through the registry namespace:
 
@@ -285,9 +285,7 @@ in [DTCG](https://www.designtokens.org) files. Every role matches the default `t
 alias. These are static exports: selecting a preset or changing the preview controls does not
 change the downloaded files. Install them next to your code, into `design/tokens/pmndrs/` at the root of your project:
 
-```sh
-npx shadcn@latest add pmndrs/design-system/figma-tokens#{{release}}
-```
+<Code>{`npx shadcn@latest add pmndrs/design-system/figma-tokens#${release}`}</Code>
 
 Or download them: [light](https://github.com/pmndrs/design-system/blob/main/figma/Light.tokens.json),
 [dark](https://github.com/pmndrs/design-system/blob/main/figma/Dark.tokens.json).
@@ -309,6 +307,4 @@ The palette is computed, never written by hand: change the seeds in
 
 For a palette of your own, install `md3-base` instead of `theme` and emit the roles from your seeds:
 
-```sh
-npx shadcn@latest add pmndrs/design-system/md3-base#{{release}}
-```
+<Code>{`npx shadcn@latest add pmndrs/design-system/md3-base#${release}`}</Code>

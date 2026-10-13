@@ -1,7 +1,7 @@
 /**
  * Canonical foundation values stay aligned with Tailwind's inherited defaults
  * and their pixel equivalents. Editorial changes must not affect exports;
- * structured source edits must reach both documentation and Figma tokens.
+ * structured source edits must reach Figma tokens.
  */
 import assert from 'node:assert/strict'
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
@@ -10,7 +10,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
 import { pathToFileURL } from 'node:url'
-import { foundationTables, readFoundations } from './scripts/foundations.mjs'
+import { readFoundations } from './scripts/foundations.mjs'
 import { foundationVariables } from './scripts/foundation-tokens.mjs'
 
 const foundations = readFoundations()
@@ -155,7 +155,7 @@ test('editorial headings, tables and examples do not determine exported foundati
   }
 })
 
-test('structured source edits reach documentation tables and Figma values together', () => {
+test('structured source edits reach Figma values', () => {
   const root = pathToFileURL(`${mkdtempSync(join(tmpdir(), 'foundations-'))}/`)
   try {
     const source = new URL('foundations.json', root)
@@ -167,7 +167,6 @@ test('structured source edits reach documentation tables and Figma values togeth
     writeFileSync(source, JSON.stringify(edited))
     const loaded = readFoundations(source)
     assert.equal(foundationVariables(loaded).font.size.sm.$value.value, 15)
-    assert.ok(foundationTables(loaded)['typography.scale'].includes('`0.9375rem` (15px)'))
   } finally {
     rmSync(root, { recursive: true, force: true })
   }

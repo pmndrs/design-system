@@ -17,7 +17,7 @@ nav: 1.6
 A `transition-*` utility (`transition`, `transition-colors`, `transition-transform`…) without a
 `duration-*` or an `ease-*` runs on these two theme variables:
 
-<FoundationTable name="motion.defaults" />
+<FoundationTable name="motion.defaults" foundations={foundations} />
 
 The default curve is the one `ease-in-out` sets.
 
@@ -27,7 +27,7 @@ The default curve is the one `ease-in-out` sets.
 variable stands behind it, so any number works, not only the steps below: `duration-250` is
 `250ms`. Use brackets for another unit (`duration-[2s]`).
 
-<FoundationTable name="motion.durations" />
+<FoundationTable name="motion.durations" foundations={foundations} />
 
 Hover the panel to run every step at once, on the default curve:
 
@@ -45,7 +45,7 @@ Hover the panel to run every step at once, on the default curve:
 `ease-*` sets `transition-timing-function`, from the `--ease-*` theme variables. See
 [Tailwind's transition-timing-function docs](https://tailwindcss.com/docs/transition-timing-function).
 
-<FoundationTable name="motion.easings" />
+<FoundationTable name="motion.easings" foundations={foundations} />
 
 `ease-in` starts slow, so it suits an element leaving the screen. `ease-out` ends slow, so it
 suits an element arriving. `ease-in-out` suits an element that moves from one place to another.

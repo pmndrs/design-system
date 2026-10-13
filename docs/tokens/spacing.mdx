@@ -14,7 +14,7 @@ nav: 1.3
 
 ## Base unit
 
-<FoundationTable name="spacing.base" />
+<FoundationTable name="spacing.base" foundations={foundations} />
 
 The same scale drives padding (`p-*`), margin (`m-*`), gaps (`gap-*`, `space-*`), sizes (`w-*`,
 `h-*`, `size-*`, `min-*`, `max-*`), offsets (`inset-*`, `top-*`…) and translations
@@ -24,7 +24,7 @@ utility with `-` for a negative value (`-mt-2`), and use brackets for a one-off 
 ## Scale
 
 The common steps, with the value your project gets. Pixels assume the browser's default 16px
-root. The bars are live `w-*` utilities, rendered with this site's CSS: its root is 17px, so
+root. The bars use the listed CSS widths: this site's root is 17px, so
 they draw slightly wider than in your project. The table is rendered from `foundations.json`.
 
-<FoundationTable name="spacing.scale" />
+<FoundationTable name="spacing.scale" foundations={foundations} />

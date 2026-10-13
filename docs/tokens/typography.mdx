@@ -11,7 +11,7 @@ nav: 1.2
 
 ## Font family
 
-<FoundationTable name="typography.fonts" />
+<FoundationTable name="typography.fonts" foundations={foundations} />
 
 **Inter** comes from the poimandres `preset` registry item, installed by the
 [getting-started command](/getting-started/introduction#install). The pinned setup
@@ -21,9 +21,7 @@ uses the equivalent preset code, `b1VlIttI`. On Next.js it loads through `next/f
 **Inconsolata** comes from the `font-mono` registry item, which `theme` depends on, so adding the
 theme installs it:
 
-```sh
-npx shadcn@latest add pmndrs/design-system/theme#{{release}}
-```
+<Code>{`npx shadcn@latest add pmndrs/design-system/theme#${release}`}</Code>
 
 It is scoped to `code, kbd, samp, pre`: those elements use it without a class, and the rest of
 the UI keeps Inter. In your own app code, add the `font-mono` utility to any other element that
@@ -55,7 +53,7 @@ Each `text-*` utility sets a font size and its paired line height, from the `--t
 previews render with this site's CSS: its root is 17px, so they draw slightly larger than in
 your project.
 
-<FoundationTable name="typography.scale" />
+<FoundationTable name="typography.scale" foundations={foundations} />
 
 Override the line height with a slash: `text-sm/6` is `0.875rem` on a `1.5rem` line.
 
@@ -68,7 +66,7 @@ Override the line height with a slash: `text-sm/6` is `0.875rem` on a `1.5rem` l
 unless a class says otherwise. Inter covers every step; Inconsolata starts at 200, so
 `font-thin` on code renders at 200.
 
-<FoundationTable name="typography.weights" />
+<FoundationTable name="typography.weights" foundations={foundations} />
 
 ## Elements
 

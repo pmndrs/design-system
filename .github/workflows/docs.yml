@@ -39,8 +39,7 @@ jobs:
       VERSION_URL_TEMPLATE: https://design-system-git-{branch}-pmndrs.vercel.app/design-system
       VERSION_PRODUCTION_BRANCH: ${{ github.event.repository.default_branch }}
       VERSION_BRANCHES_LIST: main
-      # Pages are compiled from out/docs, but assets and edit links belong to
-      # the editable sources checked into docs.
+      # Source pages, assets and edit links all refer to the authored docs.
       MDX_BASEURL: https://github.com/${{ github.repository }}/raw/${{ github.head_ref || github.ref_name }}/docs
       SOURCECODE_BASEURL: https://github.com/${{ github.repository }}/tree/${{ github.head_ref || github.ref_name }}
       EDIT_BASEURL: https://github.com/${{ github.repository }}/edit/${{ github.head_ref || github.ref_name }}/docs
@@ -60,16 +59,14 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # Resolve generated content in out/docs before compiling the site,
-      # preserving the editable MDX sources.
+      # docs.config.ts supplies native components and scope; MDX stays untouched.
       - run: pnpm run build-docs
-      - run: npx -y @pmndrs/docs@4 build out/docs out/site --format website
         env:
           BASE_PATH: ${{ steps.configurepages.outputs.base_path }}
           NEXT_PUBLIC_URL: ${{ steps.configurepages.outputs.base_url }}
       - id: version-url
         run: |
-          hostname=$(npx -y @pmndrs/docs@4 version-url --hostname)
+          hostname=$(npx -y @pmndrs/docs@4.25.0 version-url --hostname)
           echo "hostname=$hostname" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-pages-artifact@v5
         with:

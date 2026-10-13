@@ -101,7 +101,7 @@ Use Node.js 24 and pnpm 10.33.4 (pinned in `package.json`).
 ```sh
 pnpm install
 pnpm run build   # regenerate registry.json, CSS and figma/*.tokens.json
-pnpm run build-docs  # assemble publishable pages and assets in out/docs/
+pnpm run build-docs  # build the website from authored docs into out/site/
 pnpm run lgtm    # outputs are current and valid, preset code round-trips
 pnpm run refresh-catalog  # re-fetch the other repos' items listed in the docs catalog
 ```
@@ -116,25 +116,34 @@ Edit prose, headings and examples directly in `docs/**/*.mdx`. Builds never
 rewrite these files, `README.md` or `.changeset/README.md`.
 
 - Edit shared typography, spacing, radius, shadow and motion values in
-  [`foundations.json`](./foundations.json). The docs tables and Figma exports read
+  [`foundations.json`](./foundations.json). Documentation and Figma exports read
   the same data; headings and Markdown formatting have no effect on tokens.
 - Edit colour seeds in `registry/md3-base/md3.ts` and named presets in
   `registry/md3-base/presets.ts`.
-- The MDX references `<ThemePlayground />`, `<ThemePresets />`,
-  `<RegistryCatalog />` and `<FoundationTable name="typography.scale" />` insert
-  computed content into `out/docs/` only. Move or remove them like other content.
-- `{{release}}` explicitly means the current package release, and `{{v0Url}}`
-  inserts the Open in v0 URL. Literal versions and URLs stay as authored,
-  including historical examples. README links are maintained explicitly.
+- [`docs.config.ts`](./docs.config.ts) registers the React components
+  `FoundationTable` and `RegistryCatalog`, and exposes shared data as MDX scope.
+  They are ordinary React components under `docs/`, not preprocessing markers.
+- Pages use native expressions, such as `<ThemeSeeds presets={themePresets} />`,
+  `<Badge href={v0Url}>Open in v0</Badge>` and
+  `<FoundationTable name="spacing.scale" foundations={foundations} />`.
+  Literal URLs and historical versions remain exactly as authored.
 
-Run `pnpm run build` after changing tokens and `pnpm run build-docs` after changing
-documentation or its data. Only distribution outputs need committing; `out/` is
-ignored. CI prepares the documentation before compiling the site, and edit links
-still point at `docs/`.
+Run `pnpm run build` after changing tokens. `pnpm run build-docs` uses the published
+`@pmndrs/docs@4.25.0` CLI to compile `docs/` directly, discovering `docs.config.ts`
+at the repository root. Run it from this directory after `pnpm install`.
+The CLI is invoked through `npx` rather than installed into the isolated pnpm tree:
+the engine currently requires its temporary website app outside `node_modules`.
+There is no generated MDX directory. Only distribution outputs need committing;
+`out/` is ignored. CI installs consumer dependencies and uses the same build command.
+The custom components live under `docs/` so the engine's staged Tailwind source
+scan includes their static utility classes; data-driven preview dimensions use CSS values.
 
-Preview on http://localhost:3000 after preparing the pages:
+The engine's Markdown exports (including Copy Page and `llms-full.txt`) currently
+return the authored MDX: component tables and scope expressions are rendered on
+the website, but are not expanded in those text exports.
+
+Preview on http://localhost:3000:
 
 ```sh
-pnpm run build-docs
-curl -sL https://raw.githubusercontent.com/pmndrs/docs/refs/heads/main/preview.sh | MDX=out/docs NEXT_PUBLIC_LIBNAME=design-system sh
+curl -sL https://raw.githubusercontent.com/pmndrs/docs/refs/heads/main/preview.sh | VERSION=4.25.0 MDX=docs NEXT_PUBLIC_LIBNAME=design-system sh
 ```

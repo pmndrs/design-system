@@ -11,7 +11,7 @@ nav: 1.4
 
 ## Base
 
-<FoundationTable name="radius.base" />
+<pre><code>{`:root {\n  --radius: ${foundations.radius.base};\n}`}</code></pre>
 
 It comes from the poimandres shadcn preset (`b1VlIttI`, style `base-luma`, radius `default`),
 applied by `npx shadcn@latest init @pmndrs/preset`.
@@ -21,7 +21,7 @@ applied by `npx shadcn@latest init @pmndrs/preset`.
 The preset's `base-luma` style derives the scale by multiplication: each step is `--radius`
 times a factor. Values below are at a 16px root.
 
-<FoundationTable name="radius.scale" />
+<FoundationTable name="radius.scale" foundations={foundations} />
 
 The table is rendered from `foundations.json`: the previews below render this site's own radius scale, which
 can differ slightly from what your project gets.

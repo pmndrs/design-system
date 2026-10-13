@@ -1,7 +1,7 @@
 /** The pmndrs theme as a CSS file for Open in v0, which does not read cssVars. */
 import { mtbColors } from 'material-theme-builder/tailwind'
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
-import { hostedUrl } from './hosted-registry.mjs'
+import { hostedUrl } from './hosted-registry.url.ts'
 import { sansFont } from './packages.mjs'
 import { readRemap, tailwindColors } from './remap.mjs'
 

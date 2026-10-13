@@ -26,6 +26,19 @@ for (const [index, color] of customColors.entries()) {
 }
 playgroundUrl.searchParams.set('args', args.join(';'))
 
+/** The native Code component needs each runner for our shadcn commands. */
+function shadcnCommands(args: string) {
+  return {
+    pnpm: `pnpm dlx shadcn@latest ${args}`,
+    npm: `npx shadcn@latest ${args}`,
+    yarn: `yarn dlx shadcn@latest ${args}`,
+    bun: `bunx --bun shadcn@latest ${args}`,
+  }
+}
+
+// The catalog owns its pinned search targets; only the known runner prefix changes.
+const searchArguments = registrySearchCommand(registries).slice('npx shadcn@latest '.length)
+
 /** Shared values for authored Markdown tables, addressed by stable names. */
 export default {
   scope: {
@@ -46,6 +59,9 @@ export default {
     catalog: Object.fromEntries(registries.flatMap((registry) =>
       catalogEntries([registry]).map((entry) => [`${registry.repo}/${entry.name}`, entry]),
     )),
-    catalogSearchCommand: registrySearchCommand(registries),
+    installCommands: Object.fromEntries(['logo', 'theme', 'figma-tokens', 'md3-base'].map((item) =>
+      [item, shadcnCommands(`add pmndrs/design-system/${item}#${release}`)],
+    )),
+    catalogSearchCommands: shadcnCommands(searchArguments),
   },
 }

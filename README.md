@@ -142,8 +142,22 @@ The engine's Markdown exports (including Copy Page and `llms-full.txt`) currentl
 return the authored MDX: Markdown tables and their labels are preserved, but
 scope expressions in cells are not expanded in those text exports.
 
-Preview on http://localhost:3000:
+Preview on http://localhost:3000 with two terminals. If the old preview script left a
+generated `docs/out/` directory, move it outside `docs/` first: Markdown exports inside
+the source directory would otherwise be loaded as additional pages.
+
+In the first terminal, serve the source assets:
 
 ```sh
-curl -sL https://raw.githubusercontent.com/pmndrs/docs/refs/heads/main/preview.sh | VERSION=4.25.0 MDX=docs NEXT_PUBLIC_LIBNAME=design-system sh
+npx --yes serve docs --listen 3001 --no-port-switching --no-clipboard
 ```
+
+In the second terminal, build and serve the website:
+
+```sh
+MDX_BASEURL=http://localhost:3001 NEXT_PUBLIC_LIBNAME=design-system pnpm run build-docs
+npx --yes serve out/site --listen 3000 --no-port-switching --no-clipboard
+```
+
+The website is written to `out/site/`, outside the authored docs. Stop both servers
+with Ctrl+C when finished.

@@ -24,7 +24,7 @@ uses the equivalent preset code, `b1VlIttI`. On Next.js it loads through `next/f
 **Inconsolata** comes from the `font-mono` registry item, which `theme` depends on, so adding the
 theme installs it:
 
-<Code>{`npx shadcn@latest add pmndrs/design-system/theme#${release}`}</Code>
+<Code {...installCommands.theme} />
 
 It is scoped to `code, kbd, samp, pre`: those elements use it without a class, and the rest of
 the UI keeps Inter. In your own app code, add the `font-mono` utility to any other element that

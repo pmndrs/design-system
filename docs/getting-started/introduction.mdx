@@ -243,14 +243,14 @@ npx shadcn@latest add @pmndrs/logo @pmndrs/figma-tokens
 
 To browse a specific release across repos:
 
-<Code>{catalogSearchCommand}</Code>
+<Code {...catalogSearchCommands} />
 
 ## Versioning
 
 The hosted `/r/` URLs and `@pmndrs` follow `main`. To install a specific release,
 use a GitHub address with a tag:
 
-<Code>{`npx shadcn@latest add pmndrs/design-system/logo#${release}`}</Code>
+<Code {...installCommands.logo} />
 
 Each dependency keeps its own ref. Installing from a branch preview does not
 make its dependencies follow that branch.

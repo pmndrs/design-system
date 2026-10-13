@@ -1,7 +1,7 @@
 /** The pmndrs theme as a CSS file for Open in v0, which does not read cssVars. */
 import { mtbColors } from 'material-theme-builder/tailwind'
 import { pmndrsMtb } from '../registry/md3-base/md3.ts'
-import { hostedUrl } from './hosted-registry.mjs'
+import { hostedUrl } from './hosted-registry.url.ts'
 import { sansFont } from './packages.mjs'
 import { readRemap, tailwindColors } from './remap.mjs'
 
@@ -79,8 +79,3 @@ ${declarations([
 
 /** A public registry item URL is all Open in v0 needs. */
 export const v0Link = `https://v0.app/chat/api/open?${new URLSearchParams({ url: `${hostedUrl}v0.json`, title: 'pmndrs' })}`
-
-/** Keep documentation links pointed at the hosted theme item. */
-export function rewriteV0Links(text) {
-  return text.replace(/https:\/\/v0\.app\/chat\/api\/open\?[^\s)"']+/g, v0Link)
-}

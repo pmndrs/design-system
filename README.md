@@ -100,15 +100,64 @@ Use Node.js 24 and pnpm 10.33.4 (pinned in `package.json`).
 
 ```sh
 pnpm install
-pnpm run build   # regenerate registry.json, figma/*.tokens.json, the docs catalog
+pnpm run build   # regenerate registry.json, CSS and figma/*.tokens.json
+pnpm run build-docs  # build the website from authored docs into out/site/
 pnpm run lgtm    # outputs are current and valid, preset code round-trips
 pnpm run refresh-catalog  # re-fetch the other repos' items listed in the docs catalog
 ```
 
 Docs live in `docs/` ([pmndrs/docs](https://github.com/pmndrs/docs)), deployed to
 GitHub Pages on push to `main`, and to Vercel as well (a preview per pull request,
-which the sidebar's version switcher links to). Preview them on http://localhost:3000:
+which the sidebar's version switcher links to).
+
+### Editing documentation and tokens
+
+Edit prose, headings and examples directly in `docs/**/*.mdx`. Builds never
+rewrite these files, `README.md` or `.changeset/README.md`.
+
+- Edit shared typography, spacing, radius, shadow and motion values in
+  [`foundations.json`](./foundations.json). Documentation and Figma exports read
+  the same data; headings and Markdown formatting have no effect on tokens.
+- Edit colour seeds in `registry/md3-base/md3.ts` and named presets in
+  `registry/md3-base/presets.ts`.
+- [`docs.config.ts`](./docs.config.ts) exposes shared data as MDX scope, indexed
+  by token or registry item name. Tables are ordinary Markdown in the pages;
+  their cells use expressions such as `{spacing['4'].value}`. Edit their headings,
+  rows and order directly. Adding a token or registry item does not insert a row
+  automatically: add it to the relevant table when it should be documented.
+- The engine supplies the interactive palette preview with
+  `<ThemeSeeds presets={themePresets} />`. Literal URLs and historical versions
+  remain exactly as authored.
+
+Run `pnpm run build` after changing tokens. `pnpm run build-docs` uses the published
+`@pmndrs/docs@4.25.0` CLI to compile `docs/` directly, discovering `docs.config.ts`
+at the repository root. Run it from this directory after `pnpm install`.
+The CLI is invoked through `npx` rather than installed into the isolated pnpm tree:
+the engine currently requires its temporary website app outside `node_modules`.
+There is no generated MDX directory. Only distribution outputs need committing;
+`out/` is ignored. CI installs consumer dependencies and uses the same build command.
+There are no custom table components or table styles to maintain.
+
+The engine's Markdown exports (including Copy Page and `llms-full.txt`) currently
+return the authored MDX: Markdown tables and their labels are preserved, but
+scope expressions in cells are not expanded in those text exports.
+
+Preview on http://localhost:3000 with two terminals. If the old preview script left a
+generated `docs/out/` directory, move it outside `docs/` first: Markdown exports inside
+the source directory would otherwise be loaded as additional pages.
+
+In the first terminal, serve the source assets:
 
 ```sh
-curl -sL https://raw.githubusercontent.com/pmndrs/docs/refs/heads/main/preview.sh | MDX=docs NEXT_PUBLIC_LIBNAME=design-system sh
+npx --yes serve docs --listen 3001 --no-port-switching --no-clipboard
 ```
+
+In the second terminal, build and serve the website:
+
+```sh
+MDX_BASEURL=http://localhost:3001 NEXT_PUBLIC_LIBNAME=design-system pnpm run build-docs
+npx --yes serve out/site --listen 3000 --no-port-switching --no-clipboard
+```
+
+The website is written to `out/site/`, outside the authored docs. Stop both servers
+with Ctrl+C when finished.

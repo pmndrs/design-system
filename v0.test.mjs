@@ -11,7 +11,7 @@ import { mtbColors } from 'material-theme-builder/tailwind'
 import registry from './registry.json' with { type: 'json' }
 import { pmndrsMtb } from './registry/md3-base/md3.ts'
 import { readFoundations } from './scripts/foundations.mjs'
-import { hostedUrl } from './scripts/hosted-registry.mjs'
+import { hostedUrl } from './scripts/hosted-registry.url.ts'
 import { registersFamily } from './scripts/packages.mjs'
 import { readRemap, tailwindColors } from './scripts/remap.mjs'
 import { v0Link } from './scripts/v0.mjs'
@@ -206,10 +206,10 @@ test('the v0 globals.css sets the radius and both fonts, and declares every vari
 })
 
 /** The docs hand out the generated Open in v0 link to the hosted theme item. */
-test('the README and the Open in v0 page hand out the Open in v0 link, as generated', () => {
+test('the README links to the current hosted Open in v0 item', () => {
   assert.equal(new URL(v0Link).searchParams.get('url'), `${hostedUrl}v0.json`)
 
-  for (const page of ['README.md', 'docs/getting-started/v0.mdx']) {
+  for (const page of ['README.md']) {
     const text = readFileSync(new URL(page, import.meta.url), 'utf8')
     assert.ok(text.includes(v0Link), `${page} lacks ${v0Link}`)
   }

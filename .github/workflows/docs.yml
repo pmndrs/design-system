@@ -12,51 +12,71 @@ concurrency:
 
 jobs:
   build:
-    # `configure-pages` runs with `enablement: true`, which turns Pages on at the
-    # first run — that needs `pages: write` on the build job too.
+    runs-on: ubuntu-latest
+    # `configure-pages` can enable Pages on the first run.
     permissions:
       contents: read
       pages: write
       id-token: write
-    uses: pmndrs/docs/.github/workflows/build.yml@v4
-    with:
-      mdx: 'docs'
-      libname: 'design-system'
-      libname_short: 'ds'
-      home_redirect: '/getting-started/introduction'
-      icon: '🧱'
-      tag_match: 'v*.*.*'
-      github: 'https://github.com/pmndrs/design-system'
-      # The swatches of docs/tokens/colors are the site's own theme: these
-      # mirror the seed of registry/md3-base/md3.ts, so the MD3 posters of the
-      # page are the palette `theme` ships.
-      theme_primary: '#CAF543'
-      theme_scheme: 'tonalSpot'
-      theme_contrast: '0'
-      theme_color_match: 'true'
-      theme_neutral: '#c1b793'
-      theme_neutral_variant: '#495720'
-      theme_error: '#FF4980'
-      # No `theme_custom_colors`: the docs engine's palette already includes
-      # these custom colours (pmndrs/docs consumes md3-base from this release),
-      # so `<Color role="lime">` and `<Color role="note">` are roles of the
-      # site's theme without it.
-      # The version switcher in the sidebar footer. Each branch leads to the same page on its
-      # Vercel preview, at the URL the `vercel` job below aliases it to — `{branch}` is the slug
-      # that job computes, not Vercel's own (`{branch:vercel}`), which only its Git integration
-      # would create. The site lives under the Pages base path there too, hence the suffix.
-      # `main` needs no URL: it is the production branch, served at the site URL itself.
-      version_url_template: 'https://design-system-git-{branch}-pmndrs.vercel.app/design-system'
-      # The branches offered: `main` and the one being built, which the switcher always lists,
-      # and no other. Not the remote's branches, the default: most of them have no deployment
-      # behind their URL. An empty list would fall back to that default, hence `main` spelled out.
-      version_branches_list: 'main'
+    outputs:
+      version_hostname: ${{ steps.version-url.outputs.hostname }}
+    env:
+      NEXT_PUBLIC_LIBNAME: design-system
+      NEXT_PUBLIC_LIBNAME_SHORT: ds
+      HOME_REDIRECT: /getting-started/introduction
+      ICON: '🧱'
+      GITHUB: https://github.com/pmndrs/design-system
+      TAG_MATCH: 'v*.*.*'
+      # The swatches and the site use the same palette as the default theme.
+      THEME_PRIMARY: '#CAF543'
+      THEME_SCHEME: tonalSpot
+      THEME_CONTRAST: '0'
+      THEME_COLOR_MATCH: 'true'
+      THEME_NEUTRAL: '#c1b793'
+      THEME_NEUTRAL_VARIANT: '#495720'
+      THEME_ERROR: '#FF4980'
+      # Keep the version switcher and the Vercel preview alias in agreement.
+      VERSION_URL_TEMPLATE: https://design-system-git-{branch}-pmndrs.vercel.app/design-system
+      VERSION_PRODUCTION_BRANCH: ${{ github.event.repository.default_branch }}
+      VERSION_BRANCHES_LIST: main
+      # Source pages, assets and edit links all refer to the authored docs.
+      MDX_BASEURL: https://github.com/${{ github.repository }}/raw/${{ github.head_ref || github.ref_name }}/docs
+      SOURCECODE_BASEURL: https://github.com/${{ github.repository }}/tree/${{ github.head_ref || github.ref_name }}
+      EDIT_BASEURL: https://github.com/${{ github.repository }}/edit/${{ github.head_ref || github.ref_name }}/docs
+      CONTRIBUTORS_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          filter: blob:none
+      - id: configurepages
+        uses: actions/configure-pages@v6
+        with:
+          enablement: true
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # docs.config.ts supplies shared values through scope; MDX stays untouched.
+      - run: pnpm run build-docs
+        env:
+          BASE_PATH: ${{ steps.configurepages.outputs.base_path }}
+          NEXT_PUBLIC_URL: ${{ steps.configurepages.outputs.base_url }}
+      - id: version-url
+        run: |
+          hostname=$(npx -y @pmndrs/docs@4.25.0 version-url --hostname)
+          echo "hostname=$hostname" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: out/site
 
   #
   # The hosted registry: `registry.json` as static files under the site's `r/`, one
   # `<name>.json` per item plus the index, so `https://pmndrs.github.io/design-system/r/{name}.json`
-  # is a shadcn namespace (see `scripts/hosted-registry.mjs`). The reusable workflow above has
-  # no input for extra static files, so its `github-pages` artifact is unpacked here, gets
+  # is a shadcn namespace (see `scripts/hosted-registry.mjs`). The documentation build
+  # produces a `github-pages` artifact that is unpacked here, gets
   # `r/` and the composed Storybook at its root (served under the same base path), and
   # is uploaded again as `site`: the one artifact both deployments take, so they serve the same
   # files. A new name rather than `github-pages` overwritten, which the Vercel job may be
@@ -117,8 +137,8 @@ jobs:
   #
   # Whatever Pages got, we deploy to Vercel too (preview for branches, production for `main`),
   # the way pmndrs/docs deploys its own site — except that this site is static, built once above
-  # by the reusable workflow: so rather than having Vercel build it, the Pages artifact (`site`,
-  # the reusable workflow's plus the hosted registry's `r/`) is handed to it as is, in the Build
+  # by the build job: so rather than having Vercel build it, the Pages artifact (`site`,
+  # the docs plus the hosted registry's `r/`) is handed to it as is, in the Build
   # Output API layout (`.vercel/output`). A branch preview so serves that branch's `r/` files.
   #
   vercel:

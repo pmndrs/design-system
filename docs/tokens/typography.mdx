@@ -11,10 +11,10 @@ nav: 1.2
 
 ## Font family
 
-| Role | Family      | Utility     | Variable      | Comes from                                    |
-| ---- | ----------- | ----------- | ------------- | --------------------------------------------- |
-| Sans | Inter       | `font-sans` | `--font-sans` | the `preset` registry item                         |
-| Mono | Inconsolata | `font-mono` | `--font-mono` | the `font-mono` registry item, via `theme`    |
+| Role | Family | Utility | Variable |
+| --- | --- | --- | --- |
+| Sans | {fonts['font-sans'].family} | `font-sans` | `--font-sans` |
+| Mono | {fonts['font-mono'].family} | `font-mono` | `--font-mono` |
 
 **Inter** comes from the poimandres `preset` registry item, installed by the
 [getting-started command](/getting-started/introduction#install). The pinned setup
@@ -24,16 +24,14 @@ uses the equivalent preset code, `b1VlIttI`. On Next.js it loads through `next/f
 **Inconsolata** comes from the `font-mono` registry item, which `theme` depends on, so adding the
 theme installs it:
 
-```sh
-npx shadcn@latest add pmndrs/design-system/theme#v0.9.0
-```
+<Code {...installCommands.theme} />
 
 It is scoped to `code, kbd, samp, pre`: those elements use it without a class, and the rest of
 the UI keeps Inter. In your own app code, add the `font-mono` utility to any other element that
 should be monospace. Blocks never do: they inherit the font of the app they land in.
 
 The specimens below render with this site's CSS, which may not load the same fonts as your
-project. The table is the source of truth.
+project. The table is rendered from `foundations.json`.
 
 <div className="grid! gap-4 sm:grid-cols-2">
   <div className="flex flex-col gap-2 rounded-lg border p-6">
@@ -58,21 +56,21 @@ Each `text-*` utility sets a font size and its paired line height, from the `--t
 previews render with this site's CSS: its root is 17px, so they draw slightly larger than in
 your project.
 
-| Utility     | Font size             | Line height                     | Preview                          |
-| ----------- | --------------------- | ------------------------------- | -------------------------------- |
-| `text-xs`   | `0.75rem` (12px)      | `calc(1 / 0.75)` (16px)         | <span className="text-xs">Aa</span>   |
-| `text-sm`   | `0.875rem` (14px)     | `calc(1.25 / 0.875)` (20px)     | <span className="text-sm">Aa</span>   |
-| `text-base` | `1rem` (16px)         | `calc(1.5 / 1)` (24px)          | <span className="text-base">Aa</span> |
-| `text-lg`   | `1.125rem` (18px)     | `calc(1.75 / 1.125)` (28px)     | <span className="text-lg">Aa</span>   |
-| `text-xl`   | `1.25rem` (20px)      | `calc(1.75 / 1.25)` (28px)      | <span className="text-xl">Aa</span>   |
-| `text-2xl`  | `1.5rem` (24px)       | `calc(2 / 1.5)` (32px)          | <span className="text-2xl">Aa</span>  |
-| `text-3xl`  | `1.875rem` (30px)     | `calc(2.25 / 1.875)` (36px)     | <span className="text-3xl">Aa</span>  |
-| `text-4xl`  | `2.25rem` (36px)      | `calc(2.5 / 2.25)` (40px)       | <span className="text-4xl">Aa</span>  |
-| `text-5xl`  | `3rem` (48px)         | `1` (48px)                      | <span className="text-5xl">Aa</span>  |
-| `text-6xl`  | `3.75rem` (60px)      | `1` (60px)                      | <span className="text-6xl">Aa</span>  |
-| `text-7xl`  | `4.5rem` (72px)       | `1` (72px)                      | <span className="text-7xl">Aa</span>  |
-| `text-8xl`  | `6rem` (96px)         | `1` (96px)                      | <span className="text-8xl">Aa</span>  |
-| `text-9xl`  | `8rem` (128px)        | `1` (128px)                     | <span className="text-9xl">Aa</span>  |
+| Utility | Font size | Line height | Preview |
+| --- | --- | --- | --- |
+| `text-xs` | <code>{typeScale['text-xs'].fontSize}</code> ({typeScale['text-xs'].pixels.fontSize}px) | <code>{typeScale['text-xs'].lineHeight}</code> ({typeScale['text-xs'].pixels.lineHeight}px) | <span style={{ fontSize: typeScale['text-xs'].fontSize, lineHeight: typeScale['text-xs'].lineHeight }}>Aa</span> |
+| `text-sm` | <code>{typeScale['text-sm'].fontSize}</code> ({typeScale['text-sm'].pixels.fontSize}px) | <code>{typeScale['text-sm'].lineHeight}</code> ({typeScale['text-sm'].pixels.lineHeight}px) | <span style={{ fontSize: typeScale['text-sm'].fontSize, lineHeight: typeScale['text-sm'].lineHeight }}>Aa</span> |
+| `text-base` | <code>{typeScale['text-base'].fontSize}</code> ({typeScale['text-base'].pixels.fontSize}px) | <code>{typeScale['text-base'].lineHeight}</code> ({typeScale['text-base'].pixels.lineHeight}px) | <span style={{ fontSize: typeScale['text-base'].fontSize, lineHeight: typeScale['text-base'].lineHeight }}>Aa</span> |
+| `text-lg` | <code>{typeScale['text-lg'].fontSize}</code> ({typeScale['text-lg'].pixels.fontSize}px) | <code>{typeScale['text-lg'].lineHeight}</code> ({typeScale['text-lg'].pixels.lineHeight}px) | <span style={{ fontSize: typeScale['text-lg'].fontSize, lineHeight: typeScale['text-lg'].lineHeight }}>Aa</span> |
+| `text-xl` | <code>{typeScale['text-xl'].fontSize}</code> ({typeScale['text-xl'].pixels.fontSize}px) | <code>{typeScale['text-xl'].lineHeight}</code> ({typeScale['text-xl'].pixels.lineHeight}px) | <span style={{ fontSize: typeScale['text-xl'].fontSize, lineHeight: typeScale['text-xl'].lineHeight }}>Aa</span> |
+| `text-2xl` | <code>{typeScale['text-2xl'].fontSize}</code> ({typeScale['text-2xl'].pixels.fontSize}px) | <code>{typeScale['text-2xl'].lineHeight}</code> ({typeScale['text-2xl'].pixels.lineHeight}px) | <span style={{ fontSize: typeScale['text-2xl'].fontSize, lineHeight: typeScale['text-2xl'].lineHeight }}>Aa</span> |
+| `text-3xl` | <code>{typeScale['text-3xl'].fontSize}</code> ({typeScale['text-3xl'].pixels.fontSize}px) | <code>{typeScale['text-3xl'].lineHeight}</code> ({typeScale['text-3xl'].pixels.lineHeight}px) | <span style={{ fontSize: typeScale['text-3xl'].fontSize, lineHeight: typeScale['text-3xl'].lineHeight }}>Aa</span> |
+| `text-4xl` | <code>{typeScale['text-4xl'].fontSize}</code> ({typeScale['text-4xl'].pixels.fontSize}px) | <code>{typeScale['text-4xl'].lineHeight}</code> ({typeScale['text-4xl'].pixels.lineHeight}px) | <span style={{ fontSize: typeScale['text-4xl'].fontSize, lineHeight: typeScale['text-4xl'].lineHeight }}>Aa</span> |
+| `text-5xl` | <code>{typeScale['text-5xl'].fontSize}</code> ({typeScale['text-5xl'].pixels.fontSize}px) | <code>{typeScale['text-5xl'].lineHeight}</code> ({typeScale['text-5xl'].pixels.lineHeight}px) | <span style={{ fontSize: typeScale['text-5xl'].fontSize, lineHeight: typeScale['text-5xl'].lineHeight }}>Aa</span> |
+| `text-6xl` | <code>{typeScale['text-6xl'].fontSize}</code> ({typeScale['text-6xl'].pixels.fontSize}px) | <code>{typeScale['text-6xl'].lineHeight}</code> ({typeScale['text-6xl'].pixels.lineHeight}px) | <span style={{ fontSize: typeScale['text-6xl'].fontSize, lineHeight: typeScale['text-6xl'].lineHeight }}>Aa</span> |
+| `text-7xl` | <code>{typeScale['text-7xl'].fontSize}</code> ({typeScale['text-7xl'].pixels.fontSize}px) | <code>{typeScale['text-7xl'].lineHeight}</code> ({typeScale['text-7xl'].pixels.lineHeight}px) | <span style={{ fontSize: typeScale['text-7xl'].fontSize, lineHeight: typeScale['text-7xl'].lineHeight }}>Aa</span> |
+| `text-8xl` | <code>{typeScale['text-8xl'].fontSize}</code> ({typeScale['text-8xl'].pixels.fontSize}px) | <code>{typeScale['text-8xl'].lineHeight}</code> ({typeScale['text-8xl'].pixels.lineHeight}px) | <span style={{ fontSize: typeScale['text-8xl'].fontSize, lineHeight: typeScale['text-8xl'].lineHeight }}>Aa</span> |
+| `text-9xl` | <code>{typeScale['text-9xl'].fontSize}</code> ({typeScale['text-9xl'].pixels.fontSize}px) | <code>{typeScale['text-9xl'].lineHeight}</code> ({typeScale['text-9xl'].pixels.lineHeight}px) | <span style={{ fontSize: typeScale['text-9xl'].fontSize, lineHeight: typeScale['text-9xl'].lineHeight }}>Aa</span> |
 
 Override the line height with a slash: `text-sm/6` is `0.875rem` on a `1.5rem` line.
 
@@ -85,17 +83,17 @@ Override the line height with a slash: `text-sm/6` is `0.875rem` on a `1.5rem` l
 unless a class says otherwise. Inter covers every step; Inconsolata starts at 200, so
 `font-thin` on code renders at 200.
 
-| Utility           | Variable                   | Value | Preview                                       |
-| ----------------- | -------------------------- | ----- | --------------------------------------------- |
-| `font-thin`       | `--font-weight-thin`       | `100` | <span className="font-thin">Aa</span>       |
-| `font-extralight` | `--font-weight-extralight` | `200` | <span className="font-extralight">Aa</span> |
-| `font-light`      | `--font-weight-light`      | `300` | <span className="font-light">Aa</span>      |
-| `font-normal`     | `--font-weight-normal`     | `400` | <span className="font-normal">Aa</span>     |
-| `font-medium`     | `--font-weight-medium`     | `500` | <span className="font-medium">Aa</span>     |
-| `font-semibold`   | `--font-weight-semibold`   | `600` | <span className="font-semibold">Aa</span>   |
-| `font-bold`       | `--font-weight-bold`       | `700` | <span className="font-bold">Aa</span>       |
-| `font-extrabold`  | `--font-weight-extrabold`  | `800` | <span className="font-extrabold">Aa</span>  |
-| `font-black`      | `--font-weight-black`      | `900` | <span className="font-black">Aa</span>      |
+| Utility | Variable | Value | Preview |
+| --- | --- | --- | --- |
+| `font-thin` | `--font-weight-thin` | <code>{fontWeights['font-thin'].value}</code> | <span style={{ fontWeight: fontWeights['font-thin'].value }}>Aa</span> |
+| `font-extralight` | `--font-weight-extralight` | <code>{fontWeights['font-extralight'].value}</code> | <span style={{ fontWeight: fontWeights['font-extralight'].value }}>Aa</span> |
+| `font-light` | `--font-weight-light` | <code>{fontWeights['font-light'].value}</code> | <span style={{ fontWeight: fontWeights['font-light'].value }}>Aa</span> |
+| `font-normal` | `--font-weight-normal` | <code>{fontWeights['font-normal'].value}</code> | <span style={{ fontWeight: fontWeights['font-normal'].value }}>Aa</span> |
+| `font-medium` | `--font-weight-medium` | <code>{fontWeights['font-medium'].value}</code> | <span style={{ fontWeight: fontWeights['font-medium'].value }}>Aa</span> |
+| `font-semibold` | `--font-weight-semibold` | <code>{fontWeights['font-semibold'].value}</code> | <span style={{ fontWeight: fontWeights['font-semibold'].value }}>Aa</span> |
+| `font-bold` | `--font-weight-bold` | <code>{fontWeights['font-bold'].value}</code> | <span style={{ fontWeight: fontWeights['font-bold'].value }}>Aa</span> |
+| `font-extrabold` | `--font-weight-extrabold` | <code>{fontWeights['font-extrabold'].value}</code> | <span style={{ fontWeight: fontWeights['font-extrabold'].value }}>Aa</span> |
+| `font-black` | `--font-weight-black` | <code>{fontWeights['font-black'].value}</code> | <span style={{ fontWeight: fontWeights['font-black'].value }}>Aa</span> |
 
 ## Elements
 

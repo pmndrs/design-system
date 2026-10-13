@@ -2,7 +2,8 @@
  * Writes the hosted registry: `registry.json` as static files, one
  * `<name>.json` per item plus the index, the way a shadcn namespace reads them.
  *
- * The docs site serves them at `hostedUrl` (see `.github/workflows/docs.yml`).
+ * The docs site serves them at `hostedUrl` from `hosted-registry.url.ts`
+ * (see `.github/workflows/docs.yml`).
  * The official shadcn registry directory lets the CLI discover `@pmndrs`
  * automatically, so `npx shadcn@latest add @pmndrs/theme` works directly.
  * The deploy runs this from `main`, so the hosted files are always the latest
@@ -20,13 +21,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const root = new URL('../', import.meta.url)
 
-/** Where the docs site serves the hosted registry: `{name}` of a namespace is `<hostedUrl><name>.json`. */
-export const hostedUrl = 'https://pmndrs.github.io/design-system/r/'
-
 /** Where `pnpm run hosted-registry` writes without an argument: shadcn's own default, gitignored. */
 export const outDir = new URL('../public/r/', import.meta.url)
-
-const shadcn = fileURLToPath(import.meta.resolve('shadcn'))
 
 /**
  * Writes the registry at `registryUrl` into `dir`, emptied first so an item
@@ -46,6 +42,7 @@ export function writeHostedRegistry(dir, registryUrl = new URL('registry.json', 
   rmSync(dir, { recursive: true, force: true })
   mkdirSync(dir, { recursive: true })
   // `files[].path` is relative to the repo root, so that is where it runs.
+  const shadcn = fileURLToPath(import.meta.resolve('shadcn'))
   execFileSync(process.execPath, [shadcn, 'build', fileURLToPath(registryUrl), '--output', fileURLToPath(dir)], {
     cwd: fileURLToPath(root),
     stdio: 'pipe',

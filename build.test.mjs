@@ -1,20 +1,16 @@
-/**
- * `registry.json` is generated but committed, because GitHub-based resolution
- * reads it from the repo — and so are the install refs in the READMEs and the
- * docs pages, and the registry catalog. That
- * makes them the one class of file that can be wrong while every input is right:
- * change the seed, the config or the version, skip the rebuild, and nothing else
- * in this repo notices.
- *
- * The comparison runs against `build.mjs`'s own `outputs`, so it is the same
- * strings `pnpm run build` writes rather than a second opinion about them.
- */
+/** Committed distribution outputs must agree with their canonical sources. */
 import assert from 'node:assert/strict'
 import { existsSync, readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import { outputs } from './scripts/build.mjs'
 
 const root = new URL('./', import.meta.url)
+
+test('the build never owns editorial source files', () => {
+  const sources = outputs.map(([url]) => url.pathname.replace(root.pathname, ''))
+    .filter((path) => path.startsWith('docs/') || path === 'README.md' || path === '.changeset/README.md')
+  assert.deepEqual(sources, [])
+})
 
 for (const [url, next] of outputs) {
   const path = url.pathname.replace(root.pathname, '')

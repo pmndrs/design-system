@@ -11,11 +11,9 @@ nav: 1.4
 
 ## Base
 
-```css
-:root {
-  --radius: 0.625rem; /* 10px at a 16px root */
-}
-```
+| Token | Value |
+| --- | --- |
+| `--radius` | <code>{foundations.radius.base}</code> |
 
 It comes from the poimandres shadcn preset (`b1VlIttI`, style `base-luma`, radius `default`),
 applied by `npx shadcn@latest init @pmndrs/preset`.
@@ -25,18 +23,18 @@ applied by `npx shadcn@latest init @pmndrs/preset`.
 The preset's `base-luma` style derives the scale by multiplication: each step is `--radius`
 times a factor. Values below are at a 16px root.
 
-| Token          | Utility        | Value                         | rem        | px   |
-| -------------- | -------------- | ----------------------------- | ---------- | ---- |
-| `--radius-xs`  | `rounded-xs`   | inherited from Tailwind v4    | `0.125rem` | 2px  |
-| `--radius-sm`  | `rounded-sm`   | `calc(var(--radius) * 0.6)`   | `0.375rem` | 6px  |
-| `--radius-md`  | `rounded-md`   | `calc(var(--radius) * 0.8)`   | `0.5rem`   | 8px  |
-| `--radius-lg`  | `rounded-lg`   | `var(--radius)`               | `0.625rem` | 10px |
-| `--radius-xl`  | `rounded-xl`   | `calc(var(--radius) * 1.4)`   | `0.875rem` | 14px |
-| `--radius-2xl` | `rounded-2xl`  | `calc(var(--radius) * 1.8)`   | `1.125rem` | 18px |
-| `--radius-3xl` | `rounded-3xl`  | `calc(var(--radius) * 2.2)`   | `1.375rem` | 22px |
-| `--radius-4xl` | `rounded-4xl`  | `calc(var(--radius) * 2.6)`   | `1.625rem` | 26px |
+| Token | Utility | Value | rem | px |
+| --- | --- | --- | --- | --- |
+| `--radius-xs` | `rounded-xs` | {radii['--radius-xs'].formula} | <code>{radii['--radius-xs'].value}</code> | {radii['--radius-xs'].pixels}px |
+| `--radius-sm` | `rounded-sm` | <code>{radii['--radius-sm'].formula}</code> | <code>{radii['--radius-sm'].value}</code> | {radii['--radius-sm'].pixels}px |
+| `--radius-md` | `rounded-md` | <code>{radii['--radius-md'].formula}</code> | <code>{radii['--radius-md'].value}</code> | {radii['--radius-md'].pixels}px |
+| `--radius-lg` | `rounded-lg` | <code>{radii['--radius-lg'].formula}</code> | <code>{radii['--radius-lg'].value}</code> | {radii['--radius-lg'].pixels}px |
+| `--radius-xl` | `rounded-xl` | <code>{radii['--radius-xl'].formula}</code> | <code>{radii['--radius-xl'].value}</code> | {radii['--radius-xl'].pixels}px |
+| `--radius-2xl` | `rounded-2xl` | <code>{radii['--radius-2xl'].formula}</code> | <code>{radii['--radius-2xl'].value}</code> | {radii['--radius-2xl'].pixels}px |
+| `--radius-3xl` | `rounded-3xl` | <code>{radii['--radius-3xl'].formula}</code> | <code>{radii['--radius-3xl'].value}</code> | {radii['--radius-3xl'].pixels}px |
+| `--radius-4xl` | `rounded-4xl` | <code>{radii['--radius-4xl'].formula}</code> | <code>{radii['--radius-4xl'].value}</code> | {radii['--radius-4xl'].pixels}px |
 
-The table is the source of truth: the previews below render this site's own radius scale, which
+The table is rendered from `foundations.json`: the previews below render this site's own radius scale, which
 can differ slightly from what your project gets.
 
 ## Preview

@@ -30,6 +30,178 @@ nav: 0
 
 ![A classroom whiteboard with the word "bleu" written in red and "jaune" in green](bleu-jaune.jpg)
 
+## INSTALL
+
+<Steps>
+
+<Step>Create the app</Step>
+
+<Tabs defaultValue="react" syncKey="install-framework">
+  <TabsList>
+    <TabsTrigger value="react">React</TabsTrigger>
+    <TabsTrigger value="vue">Vue</TabsTrigger>
+    <TabsTrigger value="vanilla">HTML and CSS</TabsTrigger>
+  </TabsList>
+  <TabsContent value="react">
+
+```sh
+npx shadcn@latest init @pmndrs/preset --template next --name my-app --no-monorepo
+```
+
+<details>
+  <summary>Or for an existing shadcn app</summary>
+
+```sh
+npx shadcn@latest add @pmndrs/theme
+```
+
+</details>
+
+  </TabsContent>
+  <TabsContent value="vue">
+
+```sh
+npx shadcn-vue@latest init --preset https://pmndrs.github.io/design-system/r/preset-vue.json --template vite --name my-app
+```
+
+<details>
+  <summary>Or for an existing shadcn-vue app</summary>
+
+```sh
+npx shadcn-vue@latest apply --preset https://pmndrs.github.io/design-system/r/preset-vue.json
+```
+
+Reapplies the preset to existing components, fonts and CSS.
+
+</details>
+
+  </TabsContent>
+  <TabsContent value="vanilla">
+
+```sh
+npm create vite@latest my-app -- --template vanilla-ts
+```
+
+  </TabsContent>
+</Tabs>
+
+<Step>Install items</Step>
+
+<Tabs defaultValue="react" syncKey="install-framework">
+  <TabsList>
+    <TabsTrigger value="react">React</TabsTrigger>
+    <TabsTrigger value="vue">Vue</TabsTrigger>
+    <TabsTrigger value="vanilla">HTML and CSS</TabsTrigger>
+  </TabsList>
+  <TabsContent value="react">
+
+```sh
+npx shadcn@latest add button
+```
+
+Install components or blocks (items) from [shadcn](https://ui.shadcn.com/blocks) or other React-compatible registries: [React Bits](https://reactbits.dev/get-started/installation), [Aceternity UI](https://ui.aceternity.com/components/spotlight), [Magic UI](https://magicui.design/docs/installation), etc.
+
+  </TabsContent>
+  <TabsContent value="vue">
+
+```sh
+npx shadcn-vue@latest add button
+```
+
+Install components or blocks (items) from [shadcn-vue](https://www.shadcn-vue.com/blocks) or other Vue-compatible registries.
+
+  </TabsContent>
+  <TabsContent value="vanilla">
+
+```sh
+npm install
+npx shadcn@latest add @pmndrs/palette
+npm install @fontsource-variable/inter @fontsource-variable/inconsolata
+```
+
+  </TabsContent>
+</Tabs>
+
+<Step>Consume tokens</Step>
+
+<Tabs defaultValue="react" syncKey="install-framework">
+  <TabsList>
+    <TabsTrigger value="react">React</TabsTrigger>
+    <TabsTrigger value="vue">Vue</TabsTrigger>
+    <TabsTrigger value="vanilla">HTML and CSS</TabsTrigger>
+  </TabsList>
+  <TabsContent value="react">
+
+```tsx title="app/page.tsx"
+import { Button } from '@/components/ui/button'
+
+export default function Page() {
+  return (
+    <main className="min-h-screen bg-background p-8 text-foreground">
+      <Button>Hello, Poimandres</Button>
+    </main>
+  )
+}
+```
+
+  </TabsContent>
+  <TabsContent value="vue">
+
+```html title="src/App.vue"
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+</script>
+
+<template>
+  <main class="min-h-screen bg-background p-8 text-foreground">
+    <Button>Hello, Poimandres</Button>
+  </main>
+</template>
+```
+
+  </TabsContent>
+  <TabsContent value="vanilla">
+
+```html title="index.html"
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Poimandres</title>
+    <script type="module">
+      import '@fontsource-variable/inter'
+      import '@fontsource-variable/inconsolata'
+      import './src/assets/pmndrs.css'
+    </script>
+    <style>
+      body {
+        margin: 0;
+        padding: 2rem;
+        font-family: 'Inter Variable', sans-serif;
+        background: var(--md-sys-color-background);
+        color: var(--md-sys-color-on-background);
+      }
+      code { font-family: 'Inconsolata Variable', monospace; }
+    </style>
+  </head>
+  <body>
+    <h1>Hello, Poimandres</h1>
+    <p>Shared colours through <code>CSS variables</code>.</p>
+    <button type="button" onclick="document.documentElement.classList.toggle('dark')">
+      Toggle dark mode
+    </button>
+  </body>
+</html>
+```
+
+  </TabsContent>
+</Tabs>
+
+Add `dark` to `<html>` to switch schemes.
+
+</Steps>
+
 ## Registry items
 
 Install code and assets from the
@@ -37,9 +209,9 @@ Install code and assets from the
 or another [GitHub registry](https://ui.shadcn.com/docs/registry/github).
 
 ```sh
-pnpm dlx shadcn@latest search @pmndrs
-pnpm dlx shadcn@latest view @pmndrs/logo
-pnpm dlx shadcn@latest add @pmndrs/logo @pmndrs/figma-tokens
+npx shadcn@latest search @pmndrs
+npx shadcn@latest view @pmndrs/logo
+npx shadcn@latest add @pmndrs/logo @pmndrs/figma-tokens
 ```
 
 > [!NOTE]

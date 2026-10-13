@@ -42,10 +42,8 @@ explains how item versions resolve.
 
 ## Integrations
 
-- [Vanilla HTML and CSS](https://pmndrs.github.io/design-system/getting-started/vanilla): shared palette, fonts and native elements.
+- [INSTALL](https://pmndrs.github.io/design-system/getting-started/introduction#install): React, Vue or HTML and CSS.
 - [Open in v0](https://pmndrs.github.io/design-system/getting-started/v0): import the theme through the public registry.
-- [Vue](https://pmndrs.github.io/design-system/getting-started/vue): preset, theme and components with shadcn-vue, or standard CSS.
-- [React and Tailwind](https://pmndrs.github.io/design-system/getting-started/react): preset, theme and components.
 
 <details>
   <summary>Prototype in v0</summary>

@@ -211,6 +211,6 @@ test('the README and the Open in v0 page hand out the Open in v0 link, as genera
 
   for (const page of ['README.md', 'docs/getting-started/v0.mdx']) {
     const text = readFileSync(new URL(page, import.meta.url), 'utf8')
-    assert.ok(text.includes(`(${v0Link})`), `${page} lacks ${v0Link}`)
+    assert.ok(text.includes(v0Link), `${page} lacks ${v0Link}`)
   }
 })

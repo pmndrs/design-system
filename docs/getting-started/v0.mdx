@@ -1,50 +1,24 @@
 ---
 title: Open in v0
-description: Use the pmndrs theme in v0 through a public shadcn registry item.
+description: Import the pmndrs theme into v0.
 nav: 0.4
 ---
 
+<Badge href="https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs">Open in v0</Badge>
+
 <Intro>
-  Open the pmndrs theme in v0, then describe the interface you want to build.
-  The registry supplies the shared colours, fonts and radius.
+  The pmndrs colours, fonts and radius in v0.
 </Intro>
 
-## Open the theme
+[Open in v0](https://ui.shadcn.com/docs/registry/open-in-v0) ignores `css` and
+`cssVars`. Our [`v0` item](https://pmndrs.github.io/design-system/r/v0.json)
+supplies `app/globals.css` with the shadcn and MD3 Tailwind mappings instead.
 
-[Open in v0](https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs)
-
-The link points v0 at the public
-[`v0.json` registry item](https://pmndrs.github.io/design-system/r/v0.json).
-It supplies the theme without a demo page, layout or logos. Give v0 a prompt
-for the page or component you want to create.
-
-## Why a separate item?
-
-[Open in v0 is built into shadcn registries](https://ui.shadcn.com/docs/registry/open-in-v0),
-but it does not support `css`, `cssVars` or namespaced registries. Our normal
-`theme` item supplies its colours through `css`, so the `v0` item supplies a CSS file through
-an ordinary registry URL instead.
-
-This adapts the theme for import; it does not replace shadcn components.
-
-## One shared palette
-
-The `v0` item depends on the public
-[`palette.json` item](https://pmndrs.github.io/design-system/r/palette.json).
-That item supplies `src/assets/pmndrs.css`, the same palette available to
-[vanilla HTML and CSS projects](/getting-started/vanilla).
-
-The v0 stylesheet imports it:
+Its [`palette.json` dependency](https://pmndrs.github.io/design-system/r/palette.json)
+supplies the shared light and dark colours, imported once:
 
 ```css title="app/globals.css"
 @import "../src/assets/pmndrs.css";
 ```
 
-It adds the shadcn and MD3 Tailwind utility mappings, Inter and Inconsolata,
-the base radius and base styles. Colour values are defined in the shared
-palette, with light and dark schemes; they are not copied into the v0 stylesheet.
-Use the `dark` class on `<html>` to switch schemes.
-
-Both registry URLs follow `main`. For a project you set up yourself, use the
-[React and Tailwind guide](/getting-started/react) to install `theme` or
-`preset` through the shadcn CLI.
+Both registry URLs follow `main`.

@@ -49,7 +49,7 @@ explains how item versions resolve.
 <details>
   <summary>Prototype in v0</summary>
 
-To prototype with the theme and logo in v0:
+To use the theme in v0:
 [Open in v0](https://v0.app/chat/api/open?url=https%3A%2F%2Fpmndrs.github.io%2Fdesign-system%2Fr%2Fv0.json&title=pmndrs).
 
 </details>

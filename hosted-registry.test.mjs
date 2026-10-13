@@ -102,7 +102,7 @@ test('every dependency on this registry points at an item it serves, at this rel
  * What v0 fetches when an "Open in v0" link is followed: the hosted `v0`
  * item. It has to stand on its own there, since v0 drops `css` and `cssVars`
  * and resolves neither a namespace nor a GitHub address: every file inlined,
- * the stylesheet with literal colours, and nothing to resolve but absolute
+ * the standalone stylesheet, and nothing to resolve but absolute
  * URLs.
  */
 test('the hosted v0 item carries its files inline, with nothing v0 cannot resolve', () => {
@@ -114,14 +114,11 @@ test('the hosted v0 item carries its files inline, with nothing v0 cannot resolv
     (hosted.registryDependencies ?? []).filter((dependency) => !dependency.startsWith('https://')),
     []
   )
-  for (const target of ['app/globals.css', 'app/layout.tsx', 'app/page.tsx', 'public/pmndrs/logo_complete.svg']) {
-    const file = hosted.files.find((entry) => entry.target === target)
-    assert.ok(file?.content, `no ${target} inline`)
-  }
-  const { content } = hosted.files.find((entry) => entry.target === 'app/globals.css')
-  assert.match(content, /^:root \{[^}]*--primary: #[0-9a-f]{6};/m)
-  assert.match(content, /^:root \{[^}]*--md-sys-color-primary-container: #[0-9a-f]{6};/m)
-  assert.match(content, /^\.dark \{[^}]*--primary: #[0-9a-f]{6};/m)
+  assert.deepEqual(hosted.files.map(({ target }) => target), ['app/globals.css'])
+  const { content } = hosted.files[0]
+  assert.ok(content, 'no stylesheet content inline')
+  assert.match(content, /^:root \{[^}]*--primary: var\(--md-sys-color-primary\);/m)
+  assert.match(content, /^\.dark \{[^}]*--primary: var\(--md-sys-color-primary\);/m)
 })
 
 /**

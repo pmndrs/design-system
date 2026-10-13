@@ -40,7 +40,8 @@ import { foundationStyles, foundationVariables } from './foundation-tokens.mjs'
 import { readFoundations } from './foundations.mjs'
 import { hostedUrl } from './hosted-registry.mjs'
 import { readRemap, tailwindColors } from './remap.mjs'
-import { rewriteV0Links, sansFont, v0GlobalsCss } from './v0.mjs'
+import { rewriteV0Links, v0GlobalsCss } from './v0.mjs'
+import { sansFont } from './packages.mjs'
 
 /**
  * Refs are not inherited, so a cross-item dependency carries its own — and it
@@ -97,7 +98,7 @@ const registry = {
 }
 
 /**
- * The `logo` item's files, which the `v0` item ships too: see `logo` below.
+ * The `logo` item's files: see `logo` below.
  */
 const logoFiles = ['logo_complete', 'logo_idle', 'logo_animated', 'logo_loading'].map((logo) => ({
   path: `docs/assets/${logo}.svg`,
@@ -386,35 +387,20 @@ const items = [
       target: `~/design/tokens/pmndrs/${name}.tokens.json`,
     })),
   },
-  /**
-   * What an "Open in v0" link opens. v0 drops `css`, `cssVars` and
-   * namespaces, and resolves no GitHub address, so nothing above reaches it:
-   * this item carries everything as files of v0's Next.js project instead.
-   * The `globals.css`, generated below with every colour resolved to a
-   * literal; a layout and a starter page, so the preview shows the theme as
-   * soon as it opens rather than nothing; and the `logo` item's own files.
-   * The shape is shadcn's own Open in v0 payload's: `registry:file`s at the
-   * project's paths, which is why no target has a `~/` (v0 reads them, not the
-   * CLI).
-   */
+  /** Open in v0 reads files, so the theme is supplied as CSS rather than cssVars. */
   {
     name: 'v0',
     type: 'registry:item',
     title: 'pmndrs theme for v0',
     description:
-      'The pmndrs theme as a v0 project, for Open in v0: an `app/globals.css` with the shadcn colours and the Material Design 3 roles resolved to the pmndrs palette, light and dark, Inter and Inconsolata, and the default radius; a layout and a starter page; the logo in `public/pmndrs/`. In your own project, install `theme` or `preset` instead.',
+      'The pmndrs theme as `app/globals.css` for Open in v0: the light and dark palette, shadcn and MD3 colour utilities, Inter, Inconsolata and the default radius. In your own project, install `theme` or `preset` instead.',
     author: 'pmndrs',
     dependencies: [
       'shadcn@latest',
       'tw-animate-css',
       ...[sansFont(foundations), fontMono].map(({ dependency }) => `${dependency}@${pkg.devDependencies[dependency]}`),
     ],
-    files: [
-      { path: 'registry/v0/globals.css', target: 'app/globals.css' },
-      { path: 'registry/v0/app/layout.tsx', target: 'app/layout.tsx' },
-      { path: 'registry/v0/app/page.tsx', target: 'app/page.tsx' },
-      ...logoFiles.map(({ path, target }) => ({ path, target: target.replace(/^~\//, '') })),
-    ].map((file) => ({ ...file, type: 'registry:file' })),
+    files: [{ path: 'registry/v0/globals.css', target: 'app/globals.css', type: 'registry:file' }],
   },
 ]
 
@@ -600,7 +586,7 @@ const presetsStart = '{/* theme-presets:start */}'
 const presetsEnd = '{/* theme-presets:end */}'
 const colorPageUrl = new URL('tokens/colors.mdx', docsDir)
 
-// The Open in v0 links are rewritten too: a prompt names tokens, and each link is written once, in `v0.mjs`.
+// Keep the Open in v0 URL consistent across documentation.
 for (const url of docs) {
   let page = rewriteV0Links(bumpInstallRefs(readFileSync(url, 'utf8')))
   if (url.href === pageUrl.href) page = writeCatalog(page, registries)

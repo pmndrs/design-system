@@ -61,7 +61,7 @@ const catalogDescriptions = {
   preset: 'Initialise shadcn with pmndrs colours, fonts, radius and icons.',
   logo: 'Static and animated pmndrs logos as SVG files.',
   'figma-tokens': 'Colour and foundation tokens for Figma and Tokens Studio.',
-  v0: 'A complete pmndrs starter project for Open in v0.',
+  v0: 'The pmndrs theme as CSS for Open in v0.',
 }
 
 function descriptionCell(repo, { name, description = '' }) {

@@ -102,7 +102,6 @@ Use Node.js 24 and pnpm 10.33.4 (pinned in `package.json`).
 pnpm install
 pnpm run build   # regenerate registry.json, CSS and figma/*.tokens.json
 pnpm run build-docs  # build the website from authored docs into out/site/
-pnpm run build-docs:fragments  # standalone HTML in out/fragments/
 pnpm run lgtm    # outputs are current and valid, preset code round-trips
 pnpm run refresh-catalog  # re-fetch the other repos' items listed in the docs catalog
 ```
@@ -131,16 +130,17 @@ rewrite these files, `README.md` or `.changeset/README.md`.
   remain exactly as authored.
 
 Run `pnpm run build` after changing tokens. `pnpm run build-docs` uses the published
-`@pmndrs/docs@4.25.0` CLI to compile `docs/` directly, discovering `docs.config.ts`
+`@pmndrs/docs@4` CLI to compile `docs/` directly, discovering `docs.config.ts`
 at the repository root. Run it from this directory after `pnpm install`.
-The CLI is installed locally; the hoisted install in `.npmrc` lets it stage its
-temporary Next app outside `node_modules`.
-There is no generated MDX directory. Only distribution outputs need committing;
-`out/` is ignored. CI installs consumer dependencies and uses the same build command.
+Website builds and CI's version URLs invoke `npx -y @pmndrs/docs@4`, as in the other
+pmndrs documentation builds. The local development dependency supplies configuration
+types and the theme integration used by consumer components. Build commands do not
+update dependencies or the lockfile. There is no generated MDX directory; `out/`
+is ignored. CI installs consumer dependencies and uses the same build command.
 
-The engine's Markdown exports (including Copy Page and `llms-full.txt`) currently
-return the authored MDX: Markdown tables and their labels are preserved, but
-scope expressions in cells are not expanded in those text exports.
+The engine's Markdown exports (including Copy Page and `llms-full.txt`) resolve
+scope expressions and serialize component content as Markdown. Inline code and
+fenced examples remain literal; the authored MDX files are never rewritten.
 
 Preview on http://localhost:3000 with two terminals. If the old preview script left a
 generated `docs/out/` directory, move it outside `docs/` first: Markdown exports inside
@@ -163,11 +163,7 @@ The website is written to `out/site/`, outside the authored docs. Stop both serv
 with Ctrl+C when finished.
 
 `docs.config.ts` registers the local `ThemeSeeds` component and imports the shared scope
-from `docs.scope.ts` through the fragment config. Its hooks and UI imports use the
+directly from `docs.scope.ts`. Its hooks and UI imports use the
 renderer’s `@/` aliases to share the site's theme providers and footer preferences.
-Keep the docs dependency pinned and check preset selection and footer controls when
-upgrading it.
-
-Fragments use `docs.config.fragment.ts` directly: the same shared data with a local static
-preview of the first preset. Its seed table is shared with the live component and uses
-native markup, so fragments need no renderer-internal aliases or theme providers.
+Check preset selection and footer controls
+when changing these integrations with the renderer.

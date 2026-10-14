@@ -102,7 +102,6 @@ Use Node.js 24 and pnpm 10.33.4 (pinned in `package.json`).
 pnpm install
 pnpm run build   # regenerate registry.json, CSS and figma/*.tokens.json
 pnpm run build-docs  # build the website from authored docs into out/site/
-pnpm run build-docs:fragments  # standalone HTML in out/fragments/
 pnpm run lgtm    # outputs are current and valid, preset code round-trips
 pnpm run refresh-catalog  # re-fetch the other repos' items listed in the docs catalog
 ```
@@ -133,7 +132,7 @@ rewrite these files, `README.md` or `.changeset/README.md`.
 Run `pnpm run build` after changing tokens. `pnpm run build-docs` uses the published
 `@pmndrs/docs@4` CLI to compile `docs/` directly, discovering `docs.config.ts`
 at the repository root. Run it from this directory after `pnpm install`.
-Website builds, fragment builds and CI's version URLs use the `docs` script.
+Website builds and CI's version URLs use the `docs` script.
 It updates the local `@pmndrs/docs` dependency within v4 before invoking the CLI,
 so a frozen install does not keep builds on an older release. This also refreshes
 the lockfile. The engine and consumer components share the same installation,
@@ -167,11 +166,7 @@ The website is written to `out/site/`, outside the authored docs. Stop both serv
 with Ctrl+C when finished.
 
 `docs.config.ts` registers the local `ThemeSeeds` component and imports the shared scope
-from `docs.scope.ts` through the fragment config. Its hooks and UI imports use the
+directly from `docs.scope.ts`. Its hooks and UI imports use the
 renderer’s `@/` aliases to share the site's theme providers and footer preferences.
 Builds follow the latest v4 release. Check preset selection and footer controls
 when changing these integrations with the renderer.
-
-Fragments use `docs.config.fragment.ts` directly: the same shared data with a local static
-preview of the first preset. Its seed table is shared with the live component and uses
-native markup, so fragments need no renderer-internal aliases or theme providers.

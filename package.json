@@ -25,8 +25,7 @@
     "check-storybook": "tsc -p .storybook/tsconfig.json && pnpm run build-storybook",
     "docs": "pnpm update @pmndrs/docs --use-stderr && pnpm exec pmndrs-docs",
     "build-docs": "pnpm run docs build docs out/site --format website",
-    "check-docs": "tsc -p tsconfig.docs.json",
-    "build-docs:fragments": "pnpm run docs build docs out/fragments --config docs.config.fragment.ts"
+    "check-docs": "tsc -p tsconfig.docs.json"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.1",

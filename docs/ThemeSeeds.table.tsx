@@ -6,7 +6,7 @@ type ThemeSeedsTableProps = {
 }
 
 /**
- * Seed table shared by the website and standalone fragments, without host imports.
+ * Seed table for the website's active theme.
  */
 export function ThemeSeedsTable({ config }: ThemeSeedsTableProps) {
   const options = [
@@ -75,16 +75,4 @@ export function ThemeSeedsTable({ config }: ThemeSeedsTableProps) {
       </div>
     </div>
   )
-}
-
-type ThemeSeedsStaticProps = {
-  /** Presets in display order; standalone fragments show the first one's seeds. */
-  presets: { config: MtbConfig }[]
-}
-
-/**
- * Static palette preview for fragments that have no live theme provider.
- */
-export function ThemeSeedsStatic({ presets }: ThemeSeedsStaticProps) {
-  return presets[0] ? <ThemeSeedsTable config={presets[0].config} /> : null
 }

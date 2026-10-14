@@ -1,8 +1,8 @@
 import type { DocsConfig } from '@pmndrs/docs/src/config'
-import fragmentConfig from './docs.config.fragment'
+import scopeConfig from './docs.scope'
 import { ThemeSeeds } from './docs/ThemeSeeds'
 
 export default {
-  ...fragmentConfig,
+  ...scopeConfig,
   components: { ThemeSeeds },
 } satisfies DocsConfig

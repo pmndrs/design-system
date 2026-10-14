@@ -1,5 +1,21 @@
 # @pmndrs/design-system
 
+## 0.10.0
+
+### Minor Changes
+
+- [#62](https://github.com/pmndrs/design-system/pull/62) [`9e758a7`](https://github.com/pmndrs/design-system/commit/9e758a7a18728721f5ef54ce7494f0ac949613fd) Thanks [@abernier](https://github.com/abernier)! - Add seven static source-seed themes (`theme-lime`, `theme-teal`, `theme-cyan`, `theme-purple`, `theme-red`, `theme-orange` and `theme-yellow`). The Colors page previews the same presets through a seed dropdown, using the existing Material Theme Builder controls. Emit complete light and dark declarations so installing another preset or restoring the default replaces every colour.
+  
+  Only Lime keeps explicit neutral seeds; other presets use native MD3 neutral generation. Leave contrast out of the seed presets and preserve the reader's contrast preference in the preview. The seed table hides contrast and undefined entries.
+
+- [#53](https://github.com/pmndrs/design-system/pull/53) [`c7af750`](https://github.com/pmndrs/design-system/commit/c7af750bbf2bbb9b56d5e755f42691e1c9e0a836) Thanks [@abernier](https://github.com/abernier)! - Add `preset-vue` to scaffold Vue and Tailwind apps with the shared palette, fonts and radius through shadcn-vue. Add `palette`, a framework-independent registry item that ships the same light and dark CSS variables as `theme`, without runtime dependencies. Separate the React, Vue and Vanilla quickstarts from the shared design-system introduction, retaining standard CSS as an alternative in the Vue guide.
+
+### Patch Changes
+
+- [#48](https://github.com/pmndrs/design-system/pull/48) [`0fd1a9c`](https://github.com/pmndrs/design-system/commit/0fd1a9ca792a0523bc23c33f424a7af77ec09998) Thanks [@abernier](https://github.com/abernier)! - `font-mono` declares the `latin` subset, so on Next shadcn writes `subsets: ["latin"]` into the `next/font/google` call. Before, the call had no subsets: nothing was preloaded, and `next build --webpack` failed with "Preload is enabled but no subsets were specified". To fix an existing layout, re-run `shadcn add` for `font-mono` (or `theme`) at the new tag: it rewrites the `--font-mono` initializer.
+
+- [#57](https://github.com/pmndrs/design-system/pull/57) [`3c3802b`](https://github.com/pmndrs/design-system/commit/3c3802bd1a52e83f9a3cdd7411f74ae8ffe4f4b2) Thanks [@abernier](https://github.com/abernier)! - Document preset installation through the official `@pmndrs` registry namespace.
+
 ## 0.9.0
 
 ### Minor Changes

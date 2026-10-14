@@ -132,14 +132,11 @@ rewrite these files, `README.md` or `.changeset/README.md`.
 Run `pnpm run build` after changing tokens. `pnpm run build-docs` uses the published
 `@pmndrs/docs@4` CLI to compile `docs/` directly, discovering `docs.config.ts`
 at the repository root. Run it from this directory after `pnpm install`.
-Website builds and CI's version URLs use the `docs` script.
-It updates the local `@pmndrs/docs` dependency within v4 before invoking the CLI,
-so a frozen install does not keep builds on an older release. This also refreshes
-the lockfile. The engine and consumer components share the same installation,
-including their theme providers; configuration types use that same engine.
-There is no generated MDX directory. Commit distribution changes and a refreshed
-lockfile when the engine changes; `out/` is ignored. CI installs consumer
-dependencies and uses the same build command.
+Website builds and CI's version URLs invoke `npx -y @pmndrs/docs@4`, as in the other
+pmndrs documentation builds. The local development dependency supplies configuration
+types and the theme integration used by consumer components. Build commands do not
+update dependencies or the lockfile. There is no generated MDX directory; `out/`
+is ignored. CI installs consumer dependencies and uses the same build command.
 
 The engine's Markdown exports (including Copy Page and `llms-full.txt`) resolve
 scope expressions and serialize component content as Markdown. Inline code and
@@ -168,5 +165,5 @@ with Ctrl+C when finished.
 `docs.config.ts` registers the local `ThemeSeeds` component and imports the shared scope
 directly from `docs.scope.ts`. Its hooks and UI imports use the
 renderer’s `@/` aliases to share the site's theme providers and footer preferences.
-Builds follow the latest v4 release. Check preset selection and footer controls
+Check preset selection and footer controls
 when changing these integrations with the renderer.
